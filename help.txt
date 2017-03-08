@@ -20,3 +20,26 @@ git commit -m "Initial Commit" -a
 
 #only file
 git commit -m "Initial Commit" file  
+
+
+#check all
+git branch -a  
+
+#create 
+git checkout -b develop  
+
+git checkout master
+git checkout develop  
+git add develop 
+
+#commit develop
+git commit -m "develop file" develop 
+
+git branch  
+
+#hebing
+git merge develop --no-ff  
+
+#auto input user,password
+1. git config --global credential.helper store
+2. push code
