@@ -81,7 +81,7 @@ touch /mnt/guest/etc/1
 
 mkdir /mnt/guest/root/.ssh
 echo << EOF >>/mnt/guest/root/.ssh/authorized_keys 
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDr0CdJmr1dT4InF/1lBv53qPrF1xP7ivv3tbXe5AhGx2trG1S5r1vnSsG2eRUaQ01NAsjvdSf9fIHaa2pDHJ7zrvRq+y2oVoGRWJEnB8mCFDP5n6i3gpf7CRxUra8c7TXo7bP3MWkeeXCFcMOQHUDg1M5OYIsgUvJfRY/rG/nqQ3lEJ08MpF7KX9G+TVA37E0WKpBreA+z4bPfvbsGlc7MWNGHWUNwmKnnyf2cVfZ6XDmR6FMm5yCQ7CSOAzM/vm7Swq423WZZ0v0KVfWpzQV88MQ1cl10nWHu4X941S0aIiTjTcJtUMwXAa6mXDTfkOYOzywTTm8vFDAKd7p1MHHb root@controller
+xxxxxxxxxx
 EOF
 
 chmod 600 /mnt/guest/root/.ssh/authorized_keys
@@ -90,4 +90,4 @@ guestunmount /mnt/guest/
 
 openstack image create "ubunut14.04" --file /root/ubuntu14.04.5 --disk-format qcow2 --container-format bare --public
 
-#第二种方式是通过 cloud-init
+
