@@ -1,0 +1,5 @@
+
+git remote add origin https://github.com/nlwng/smeyun.git
+git push origin master
+git add README
+git commit -m "some_message"
