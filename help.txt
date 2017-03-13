@@ -34,6 +34,7 @@ git add develop
 
 #commit develop
 git commit -m "develop file" develop 
+git commit -am"develop file" . 
 
 git branch  
 
