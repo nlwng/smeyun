@@ -1,0 +1,37 @@
+http://docs.openstack.org/mitaka/zh_CN/install-guide-ubuntu/overview.html
+
+
+deb http://cn.archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse
+deb http://cn.archive.ubuntu.com/ubuntu/ trusty-security main restricted universe multiverse
+deb http://cn.archive.ubuntu.com/ubuntu/ trusty-updates main restricted universe multiverse
+deb http://cn.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
+##²âÊÔ°æÔ´
+deb http://cn.archive.ubuntu.com/ubuntu/ trusty-proposed main restricted universe multiverse
+# Ô´Âë
+deb-src http://cn.archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse
+deb-src http://cn.archive.ubuntu.com/ubuntu/ trusty-security main restricted universe multiverse
+deb-src http://cn.archive.ubuntu.com/ubuntu/ trusty-updates main restricted universe multiverse
+deb-src http://cn.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
+##²âÊÔ°æÔ´
+deb-src http://cn.archive.ubuntu.com/ubuntu/ trusty-proposed main restricted universe multiverse
+
+apt-get -qy update && apt-get -qy dist-upgrade
+----------------------------------
+auto eth1
+iface eth1 inet manual
+up ip link set dev $IFACE up
+down ip link set dev $IFACE down
+
+
+#controller
+192.168.31.135    controller
+#compute1
+192.168.31.136    compute1
+
+iface eth0 inet static
+address 192.168.31.135
+netmask 255.255.255.0
+gateway 1192.168.31.2
+dns-nameservers 114.114.114.114
+
+
