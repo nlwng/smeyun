@@ -99,7 +99,7 @@ crudini --set /etc/nova/nova.conf neutron url  http://controller:9696
 crudini --set /etc/nova/nova.conf neutron auth_url  http://controller:35357
 crudini --set /etc/nova/nova.conf neutron auth_type  password
 crudini --set /etc/nova/nova.conf neutron project_domain_name  default
-crudini --set /etc/nova/nova.conf neutron user_domain_name =default
+crudini --set /etc/nova/nova.conf neutron user_domain_name default
 crudini --set /etc/nova/nova.conf neutron region_name  RegionOne
 crudini --set /etc/nova/nova.conf neutron project_name  service
 crudini --set /etc/nova/nova.conf neutron username  neutron
