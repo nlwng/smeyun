@@ -24,8 +24,11 @@ Storage集群采用了分组存储方式。storage集群由一个或多个组构
 3.2 storageServer
 3.3 nginx和fastDFS整合
 
-#install libevent
-yum -y install libevent
+#------------
+#Tracker跟踪器
+#------------
+#安装依赖
+yum install -y gcc perl
 
 #install libfastcommonv1.0.7
 git clone https://github.com/happyfish100/libfastcommon.git
@@ -34,3 +37,131 @@ cd libfastcommon/
 ./make.sh install
 
 #only trackerServer storageServer,
+cd ~/fdfs/libfastcommon && ./make.sh && ./make.sh install
+cd ~/fdfs/fastdfs && ./make.sh && ./make.sh install
+
+ls /usr/bin/fdfs_*
+#配置目录
+ls /etc/fdfs
+
+#set config
+mkdir -p /data/fastdfs
+cd /etc/fdfs
+cp tracker.conf.sample tracker.conf
+cp /root/fastdfs/FastDFS/conf/http.conf .
+cp /root/fastdfs/FastDFS/conf/mime.types .
+sed -i 's:base_path=.*:base_path=/data/fastdfs:g' tracker.conf
+sed -i 's:http.server_port=.*:http.server_port=80:g' tracker.conf
+
+#set start pc
+bash -c 'cat > /usr/lib/systemd/system/fdfs_trackerd.service << EOF
+[Unit]
+Description=fastdfs tracker server
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/data/fastdfs/data/fdfs_trackerd.pid
+ExecStart=/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf
+ExecReload=/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf restart
+ExecStop=/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf stop
+
+[Install]
+WantedBy=multi-user.target
+EOF'
+systemctl enable fdfs_trackerd.service
+systemctl start fdfs_trackerd.service
+
+#check running
+cat /data/fastdfs/logs/trackerd.log
+
+
+#install nginx
+yum  -y install openssl openssl-devel pcre-devel
+yum install -y epel-release    # 安装 EPEL 软件仓库
+yum install -y nginx
+systemctl enable nginx
+systemctl start nginx
+
+#配置反向代理
+打开 /etc/nginx/nginx.conf，在 http {} 中添加：
+upstream fdfs {
+    server   192.168.71.127:80;
+    server   192.168.71.128:80;
+}
+
+在 server{} 中添加：
+location /M00 {
+    proxy_pass http://fdfs;
+}
+
+#-------------------------------
+#Storage存储节点1
+#-------------------------------
+#配置文件
+mkdir -p /data/fastdfs
+cd /etc/fdfs
+cp storage.conf.sample storage.conf
+cp /root/fastdfs/fastdfs/conf/http.conf .
+cp /root/fastdfs/fastdfs/conf/mime.types .
+sed -i 's:base_path=.*:base_path=/data/fastdfs:g' storage.conf
+sed -i 's:store_path0=.*:store_path0=/data/fastdfs:g' storage.conf
+sed -i 's/tracker_server=.*/tracker_server=192.168.71.126:22122/g' storage.conf
+sed -i 's:http.server_port=.*:http.server_port=80:g' storage.conf
+
+#开机自启动
+bash -c 'cat > /usr/lib/systemd/system/fdfs_storaged.service << EOF
+[Unit]
+Description=fastdfs storage server
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/data/fastdfs/data/fdfs_storaged.pid
+ExecStart=/usr/bin/fdfs_storaged /etc/fdfs/storage.conf
+ExecReload=/usr/bin/fdfs_storaged /etc/fdfs/storage.conf restart
+ExecStop=/usr/bin/fdfs_storaged /etc/fdfs/storage.conf stop
+
+[Install]
+WantedBy=multi-user.target
+EOF'
+systemctl enable fdfs_storaged.service
+systemctl start fdfs_storaged.service
+
+#check
+cat /data/fastdfs/logs/storaged.log
+
+-------------------------------
+#Storage存储节点2
+-------------------------------
+#client客户端配置
+#在tracker, storage之外的一台主机上安装FastDFS，然后执行：
+mkdir -p /data/fastdfs
+cd /etc/fdfs
+cp client.conf.sample client.conf
+sed -i 's:base_path=.*:base_path=/data/fastdfs:g' client.conf
+sed -i 's/tracker_server=.*/tracker_server=192.168.71.126:22122/g' client.conf
+
+
+#------------------------
+测试
+#------------------------
+
+上传测试:
+joelhy@arminix: ~ $ fdfs_upload_file /etc/fdfs/client.conf pom.xml
+group1/M00/00/00/wKhHf1S-oryAZCpgAAAE2uRlJkA126.xml
+查看文件信息:
+
+joelhy@arminix: ~ $ fdfs_file_info /etc/fdfs/client.conf
+group1/M00/00/00/wKhHf1S-oryAZCpgAAAE2uRlJkA126.xml
+source storage id: 0
+source ip address: 192.168.71.127
+file create timestamp: 2015-01-26 02:47:24
+file size: 1242
+file crc32: 3831834176 (0xE4652640)
+
+下载测试:
+joelhy@arminix: ~ $ fdfs_download_file /etc/fdfs/client.conf \
+    group1/M00/00/00/wKhHf1S-oryAZCpgAAAE2uRlJkA126.xml downtest.xml
+joelhy@arminix: ~ $ ls
+downtest.xml
