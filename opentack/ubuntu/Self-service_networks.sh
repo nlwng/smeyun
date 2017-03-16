@@ -1,9 +1,10 @@
 注意如果是ubuntu或者centos桌面环境需要：
-1.开启网卡混杂模式
-ifconfig eth1 promisc
+1.开启网卡混杂模式，enp4s0真实转发数据网卡
+ifconfig enp4s0 promisc
 2.设置网卡文件权限
-sudo  chmod a+w /dev/vmnet*
-
+sudo  chmod a+w /dev/vmnet0
+3.将vm通讯网卡自定义到vmnet0
+4.解决vm下无法通讯问题
 
 二.网络节点部署
 2.1.允许转发
