@@ -1,5 +1,5 @@
 注意如果是ubuntu或者centos桌面环境需要：
-1.开启网卡混杂模式，enp4s0真实转发数据网卡
+1.开启网卡混杂模式，enp4s0为本地真实网卡
 ifconfig enp4s0 promisc
 2.设置网卡文件权限
 sudo  chmod a+w /dev/vmnet0
