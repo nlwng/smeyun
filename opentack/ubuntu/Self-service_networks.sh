@@ -1,3 +1,10 @@
+注意如果是ubuntu或者centos桌面环境需要：
+1.开启网卡混杂模式
+ifconfig eth1 promisc
+2.设置网卡文件权限
+sudo  chmod a+w /dev/vmnet*
+
+
 二.网络节点部署
 2.1.允许转发
 /etc/sysctl.conf
@@ -82,7 +89,7 @@ crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini prevent_arp_spoofin
 #l3配置Linuxbridge接口驱动和外部网络网桥
 crudini --set /etc/neutron/l3_agent.ini DEFAULT interface_driver  neutron.agent.linux.interface.BridgeInterfaceDriver
 #选项故意缺乏一个值，以便在一个代理上启用多个外部网络。
-crudini --set /etc/neutron/l3_agent.ini DEFAULT external_network_bridge 
+crudini --set /etc/neutron/l3_agent.ini DEFAULT external_network_bridge
 #dhcp
 crudini --set /etc/neutron/dhcp_agent.ini DEFAULT interface_driver neutron.agent.linux.interface.BridgeInterfaceDriver
 crudini --set /etc/neutron/dhcp_agent.ini DEFAULT dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
@@ -193,6 +200,3 @@ ip netns
 neutron router-port-list router
 #手动增加防火墙22、icmp端口
 ping -c 4 192.168.2.12
-
-
-
