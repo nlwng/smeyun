@@ -35,3 +35,6 @@ gitbook init
 gitbook build
 #可以生成pdf文件
 gitbook pdf ~/gitbookworkspace/demo ~/gitbookworkspace/demo.pdf
+
+$ gitbook serve .
+你可以你的浏览器中打开这个网址：http://localhost:4000：
