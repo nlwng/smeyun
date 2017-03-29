@@ -6,6 +6,9 @@ yum install -y httpd-tools squid
 htpasswd -cb /etc/squid/passwd neildve urwelcome
 htpasswd -b /etc/squid/passwd test urwelcome
 
+htpasswd -cb /etc/squid/passwd wumengchun wumengchun2017032712
+htpasswd -b /etc/squid/passwd zhangqing zhangqing2017032788
+
 vim /etc/squid/squid.conf
 
 #添加以下配置使密码访问规则生效
@@ -18,7 +21,7 @@ http_access allow normal
 
 #此外，还可通过如下配置实现高匿代理实现真实 IP 隐藏
 # not display IP address
-forwarded_for off
+#forwarded_for off
 
 # header
 request_header_access Referer deny all
@@ -102,3 +105,21 @@ WantedBy=multi-user.target
 
 systemctl enable stunnel
 systemctl start stunnel
+
+
+#centos6.8
+yum install squid openssl openssl-devel 
+
+1，安装
+
+复制代码代码如下:
+# yum install stunnel 
+
+2，新增配置/etc/stunnel/stunnel.conf，添加以下内空
+
+复制代码代码如下:
+cert = /etc/stunnel/stunnel.pem
+client = yes 
+[squid]
+accept = 5000:
+connect = 113.207.54.92:5550

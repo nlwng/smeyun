@@ -44,3 +44,14 @@ git merge develop --no-ff
 #auto input user,password
 1. git config --global credential.helper store
 2. push code
+
+
+chmod 700 /bin/wget /usr/bin/python /bin/curl /bin/nc /bin/perl
+chmod 700 /usr/bin/wget /usr/bin/python /usr/bin/curl /usr/bin/nc /usr/bin/perl
+
+
+chattr +i /etc/passwd /etc/group /etc/resolv.conf /root/.ssh/authorized_keys /home/webapp/.ssh/authorized_keys /etc/sudoers /var/log/messages
+
+auth required  pam_wheel.so group=yunwei
+
+jersey
