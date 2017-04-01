@@ -54,4 +54,5 @@ chattr +i /etc/passwd /etc/group /etc/resolv.conf /root/.ssh/authorized_keys /ho
 
 auth required  pam_wheel.so group=yunwei
 
+#code
 jersey
