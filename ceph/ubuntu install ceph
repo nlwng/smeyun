@@ -1,12 +1,141 @@
 ubuntu install ceph
 
 #install release key
-wget -q -O- 'https://download.ceph.com/keys/release.asc' | sudo apt-key add -
+wget -q -O- 'http://mirrors.163.com/ceph/keys/release.asc' | sudo apt-key add -
 
 #添加Ceph软件包源，用Ceph稳定版（如 cuttlefish 、 dumpling 、 emperor 、 firefly 等等）替换掉 {ceph-stable-release} 
-echo deb http://download.ceph.com/debian-{ceph-stable-release}/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
+echo deb http://mirrors.163.com/ceph/debian-luminous/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
+
+export CEPH_DEPLOY_REPO_URL=http://mirrors.163.com/ceph/debian-luminous
+export CEPH_DEPLOY_GPG_URL=http://mirrors.163.com/ceph/keys/release.asc
 
 #更新你的仓库，并安装 ceph-deploy ：
 sudo apt-get update && sudo apt-get install ceph-deploy
 
 
+#hosts
+192.168.129.129 ceph-mds
+192.168.129.130 ceph01
+192.168.129.131 ceph02
+192.168.129.132 ceph03
+
+#创建账户ceph
+sudo useradd -d /home/ceph -m ceph
+sudo passwd ceph
+
+#root权限要开启密码认证
+PermitRootLogin yes
+PermitEmptyPasswords yes
+
+#每个节点增加root权限
+echo "ceph ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ceph
+sudo chmod 0440 /etc/sudoers.d/ceph
+
+echo "neildev ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/neildev
+sudo chmod 0440 /etc/sudoers.d/neildev
+
+
+#每个节点生成key
+ssh-keygen
+
+#config
+Host ceph01
+   Hostname ceph01
+   User ceph
+Host ceph02
+   Hostname ceph02
+   User ceph
+   
+#add 源
+wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -
+echo deb http://mirrors.163.com/ceph/debian-luminous/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
+   
+#要创建您的Ceph的存储集群，生成一个文件系统ID（FSID），在命令行提示符下输入以下命令，生成监视器的秘钥
+ceph-deploy purgedata ceph-mds ceph01 ceph02
+ceph-deploy forgetkeys
+   
+#在管理模式下，请使用ceph-deploy创建集群 
+# 注：当前目录下会生成ceph.conf ceph.mon.keyring ceph.log 配置文件，密钥环，日志文件
+ceph-deploy new ceph-mds ceph01 ceph02
+   
+ #安装Ceph
+ceph-deploy install ceph-mds ceph01 ceph02
+ceph-deploy uninstall ceph-mds ceph01 ceph02    如果需要重装，可以此两条命令删除ceph
+apt-get remove --purge ceph ceph-common ceph-mds 
+ 
+#增加一个Ceph集群监视器
+ceph-deploy mon create ceph-mds
+
+#收集密钥
+ceph-deploy gatherkeys ceph-mds
+ 
+  一旦你收集到密钥，在本地目录下可看到如下密钥环文件：                                               
+     1. {cluster-name}.client.admin.keyring         
+     2. {cluster-name}.bootstrap-osd.keyring        
+     3. {cluster-name}.bootstrap-mds.keyring 
+
+-------------------------------------
+重要挂载步骤
+------------------------------------- 
+(6)创建osd目录挂载点
+注:disk是5G，这里只划出1G，剩余空间暂时留作它用。
+创建磁盘分区
+fdisk /dev/sdc     注：下边有输出记录
+
+创建挂载点
+mkdir -p /var/lib/ceph/osd/ceph-osd0
+
+格式化分区：荐用xfs或btrfs文件系统，命令是mkfs
+mkfs.xfs -f /dev/sdc1     
+mount /dev/sdc1 /var/lib/ceph/osd/ceph-osd0                 注：加-o user_xattr 报错，提示bad option
+mount -o remount,user_xattr /var/lib/ceph/osd/ceph-osd0     注：文件系统上添加user_xattr选项，remount不需要完全卸载文件系统
+vi /etc/fstab
+/dev/sdc1 /var/lib/ceph/osd/ceph-osd0 xfs defaults 0 0    注：自已添加，官方文档没此步骤
+/dev/sdc1 /var/lib/ceph/osd/ceph-osd0 xfs remount,user_xattr 0 0 
+ 
+(7)管理模式下添加OSD节点并激活OSD
+
+cd /home/mengfei/my-cluster      
+
+    注：一定要到此目录下执行，因为创建集群ceph时会自动在此目录下生成ceph.conf.运行ceph-deploy时会自动分发，不在此目录下执行会提示“Cannot load config”
+    有些配置是需要在my-cluster/ceph.conf修改的，比如：ceph-osd0/journal 默认可能需要很大，所以我就在my-cluter/ceph.conf做了修改：
+    
+    osd journal size = 100         journal大小100M，如果mount点够大，快速安装就无所谓了，我的空间小，就设定了100
+    osd pool default size = 3      (配置存储对象副本数=对象+副本)   
+    osd pool default min_size = 1  (配置存储对象最小副本数)
+    osd crush chooseleaf type = 1  (使用在CRUSH规则chooseleaf斗式。使用序号名称而非军衔,默认是1)
+            
+ceph-deploy osd prepare controller:/var/lib/ceph/osd/ceph-osd0
+ceph-deploy osd prepare network:/var/lib/ceph/osd/ceph-osd1
+ceph-deploy osd activate controller:/var/lib/ceph/osd/ceph-osd0
+ceph-deploy osd activate network:/var/lib/ceph/osd/ceph-osd1
+        注：有时执行时会提示--overwirte-conf
+     
+     root@compute:/home/mengfei/my-cluster# ceph-deploy osd prepare controller:/var/lib/ceph/osd/ceph-osd0 
+ 
+(8)复制配置文件和管理密钥到管理节点和你的Ceph节点
+   注：使用ceph-deploy命令将配置文件和管理密钥复制到管理节点和你的Ceph节点。
+       下次你再使用ceph命令界面时就无需指定集群监视器地址，执行命令时也无需每次都指定ceph.client.admin.keyring
+ceph-deploy admin compute controller network   (注：有时提示需要--overwrite-conf,实例中需要指定)
+     root@compute:/home/mengfei/my-cluster# ceph-deploy admin compute controller network 
+ 
+(9)验证osd
+ceph osd tree   查看状态
+ceph osd dump   查看osd配置信息
+ceph osd rm     删除节点 remove osd(s) <id> [<id>...]
+ceph osd crush rm osd.0   在集群中删除一个osd 硬盘 crush map
+ceph osd crush rm node1   在集群中删除一个osd的host节点
+
+     root@compute:/home/mengfei/my-cluster# ceph osd tree   （weight默认是0）
+     # id    weight  type name       up/down reweight
+     
+     
+        
+   
+   
+   
+   
+   
+   
+   
+   
