@@ -1,4 +1,15 @@
-[TOC]
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [nodejs nmp 安装](#nodejs-nmp-安装)
+- [安装atom需要插件](#安装atom需要插件)
+- [python-tools](#python-tools)
+- [atom-simplified-chinese-menu](#atom-simplified-chinese-menu)
+- [seti-ui](#seti-ui)
+- [script](#script)
+- [markdown系列](#markdown系列)
+- [toc](#toc)
+
+<!-- /TOC -->
 
 #nodejs nmp 安装
 ln -s /usr/bin/nodejs /usr/local/bin/node
@@ -46,9 +57,5 @@ apm install markdown-themeable-pdf
 
 apm install pdf-view
 
-
-apm install markdown-writer
-
-apm install markdown-preview-enhanced
-
-命令Create Toc可以在当前位置生成md文件的toc
+#toc
+apm install markdown-toc
