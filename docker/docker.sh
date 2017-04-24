@@ -49,6 +49,9 @@ docker pull centos 下载
 docker images [ centos ] 查看
 docker run -i -t centos /bin/bash
 
+#指定用户启动
+docker exec -u root -it  a1b1da01d34f bash
+
 #进入正在运行的docker容器
 docker exec -it [container_id] /bin/bash
 docker run -i -t -p <host_port:contain_port> #映射 HOST 端口到容器，方便外部访问容器内服务，host_port 可以省略，
@@ -79,7 +82,7 @@ docker run -itd --name centos_aways --restart=always centos #创建一个名称c
 docker search <image> # 在docker index中搜索image
 # 下载镜像
 docker pull <image>  # 从docker registry server 中下拉image
-# 查看镜像 
+# 查看镜像
 docker images： # 列出images
 docker images -a # 列出所有的images（包含历史）
 docker rmi  <image ID>： # 删除一个或多个image
@@ -91,12 +94,12 @@ docker rmi  <image ID>： # 删除一个或多个image
 #docker容器随系统自启参数
 docker run --restart=always redis
 	no – 默认值，如果容器挂掉不自动重启
-	on-failure – 当容器以非 0 码退出时重启容器 
+	on-failure – 当容器以非 0 码退出时重启容器
 		同时可接受一个可选的最大重启次数参数 (e.g. on-failure:5).
 	always – 不管退出码是多少都要重启
 
 #查看容器状态信息
-docker stats 
+docker stats
 docker stats --no-stream
 
 #持久化容器与镜像
@@ -115,9 +118,3 @@ docker stats --no-stream
 #
 ##下载ubuntu镜像并启动一个镜像来验证安装是否正常。
 #docker run -i -t ubuntu /bin/bash
-
-
-
-
-
-

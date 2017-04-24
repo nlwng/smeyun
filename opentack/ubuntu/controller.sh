@@ -5,20 +5,20 @@ PASSWD='pass'
 apt-get -qy install crudini chrony
 
 cp /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime
-echo  "server time.windows.com iburst" >> /etc/chrony/chrony.conf 
+echo  "server time.windows.com iburst" >> /etc/chrony/chrony.conf
 /etc/init.d/chrony restart
 
-#ÆôÓÃOpenStack¿â
+#å¯ç”¨OpenStackåº“
 apt-get -qy install software-properties-common
 add-apt-repository cloud-archive:mitaka
 
 #update
 apt-get -qy update && apt-get -qy dist-upgrade
-#°²×° OpenStack ¿Í»§¶Ë£º
+#å®‰è£… OpenStack å®¢æˆ·ç«¯ï¼š
 apt-get -qy install python-openstackclient
 
-#install Mysql 
-#/etc/mysql/my.cnfÖĞ#!includedir /etc/mysql/mariadb.conf.d/×¢ÊÍÕâĞĞ
+#install Mysql
+#/etc/mysql/my.cnfä¸­#!includedir /etc/mysql/mariadb.conf.d/æ³¨é‡Šè¿™è¡Œ
 apt-get -qy install mariadb-server python-pymysql
 
 #vim /etc/mysql/conf.d/openstack.cnf
@@ -43,7 +43,7 @@ crudini --set /etc/mongodb.conf '' smallfiles true
 rm /var/lib/mongodb/journal/prealloc.*
 /etc/init.d/mongodb start
 
-#ÏûÏ¢¶ÓÁĞ
+#æ¶ˆæ¯é˜Ÿåˆ—
 apt-get -qy install rabbitmq-server
 rabbitmqctl add_user openstack pass
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
@@ -62,22 +62,22 @@ GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'pass';
 FLUSH PRIVILEGES;
 EOF
 
-#°²×°ºó½ûÖ¹keystone ·şÎñ×Ô¶¯Æô¶¯£º
+#å®‰è£…åç¦æ­¢keystone æœåŠ¡è‡ªåŠ¨å¯åŠ¨ï¼š
 echo "manual" > /etc/init/keystone.override
 apt-get -qy install keystone apache2 libapache2-mod-wsgi
 
-#¶¨Òå³õÊ¼¹ÜÀíÁîÅÆµÄÖµ£º
+#å®šä¹‰åˆå§‹ç®¡ç†ä»¤ç‰Œçš„å€¼ï¼š
 crudini --set /etc/keystone/keystone.conf DEFAULT admin_token pass
 crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:pass@controller/keystone
 crudini --set /etc/keystone/keystone.conf token provider fernet
 
-#³õÊ¼»¯Éí·İÈÏÖ¤·şÎñµÄÊı¾İ¿â£º
+#åˆå§‹åŒ–èº«ä»½è®¤è¯æœåŠ¡çš„æ•°æ®åº“ï¼š
 su -s /bin/sh -c "keystone-manage db_sync" keystone
-#³õÊ¼»¯Fernet keys£º
+#åˆå§‹åŒ–Fernet keysï¼š
 keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
 
 
-#ÅäÖÃ Apache HTTP ·şÎñÆ÷
+#é…ç½® Apache HTTP æœåŠ¡å™¨
 crudini --set /etc/apache2/apache2.conf '' ServerName controller
 
 vim /etc/apache2/sites-available/wsgi-keystone.conf
@@ -144,19 +144,19 @@ openstack user create --domain default --password-prompt demo
 openstack role create user
 openstack role add --project demo --user demo user
 
-#ÒòÎª°²È«ĞÔµÄÔ­Òò£¬¹Ø±ÕÁÙÊ±ÈÏÖ¤ÁîÅÆ»úÖÆ£º
-#±à¼­ /etc/keystone/keystone-paste.ini ÎÄ¼ş£¬´Ó``[pipeline:public_api]``£¬
-#[pipeline:admin_api]``ºÍ``[pipeline:api_v3]``²¿·ÖÉ¾³ı``admin_token_auth ¡£
+#å› ä¸ºå®‰å…¨æ€§çš„åŸå› ï¼Œå…³é—­ä¸´æ—¶è®¤è¯ä»¤ç‰Œæœºåˆ¶ï¼š
+#ç¼–è¾‘ /etc/keystone/keystone-paste.ini æ–‡ä»¶ï¼Œä»``[pipeline:public_api]``ï¼Œ
+#[pipeline:admin_api]``å’Œ``[pipeline:api_v3]``éƒ¨åˆ†åˆ é™¤``admin_token_auth ã€‚
 
-#Verify operation 
+#Verify operation
 unset OS_TOKEN OS_URL
 
-#×÷Îª admin ÓÃ»§£¬ÇëÇóÈÏÖ¤ÁîÅÆ£º
+#ä½œä¸º admin ç”¨æˆ·ï¼Œè¯·æ±‚è®¤è¯ä»¤ç‰Œï¼š
 openstack --os-auth-url http://controller:35357/v3 \
   --os-project-domain-name default --os-user-domain-name default \
   --os-project-name admin --os-username admin token issue
 
-#×÷Îª``demo`` ÓÃ»§£¬ÇëÇóÈÏÖ¤ÁîÅÆ£º
+#ä½œä¸º``demo`` ç”¨æˆ·ï¼Œè¯·æ±‚è®¤è¯ä»¤ç‰Œï¼š
 openstack --os-auth-url http://controller:5000/v3 \
   --os-project-domain-name default --os-user-domain-name default \
   --os-project-name demo --os-username demo token issue
@@ -182,8 +182,8 @@ export OS_AUTH_URL=http://controller:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 ----------------------------------------
-source admin-openrc 
-#ÇëÇóÈÏÖ¤ÁîÅÆ:
+source admin-openrc
+#è¯·æ±‚è®¤è¯ä»¤ç‰Œ:
 openstack token issue
 
 #glance install
@@ -215,7 +215,7 @@ crudini --set /etc/glance/glance-api.conf keystone_authtoken password pass
 crudini --set /etc/glance/glance-api.conf paste_deploy flavor keystone
 crudini --set /etc/glance/glance-api.conf glance_store stores file,http
 crudini --set /etc/glance/glance-api.conf glance_store default_store file
-#ÅäÖÃ±¾µØÎÄ¼şÏµÍ³´æ´¢ºÍ¾µÏñÎÄ¼şÎ»ÖÃ£º
+#é…ç½®æœ¬åœ°æ–‡ä»¶ç³»ç»Ÿå­˜å‚¨å’Œé•œåƒæ–‡ä»¶ä½ç½®ï¼š
 crudini --set /etc/glance/glance-api.conf glance_store filesystem_store_datadir /var/lib/glance/images/
 
 crudini --set /etc/glance/glance-registry.conf database connection  mysql+pymysql://glance:pass@controller/glance
@@ -228,7 +228,7 @@ crudini --set /etc/glance/glance-registry.conf keystone_authtoken user_domain_na
 crudini --set /etc/glance/glance-registry.conf keystone_authtoken project_name service
 crudini --set /etc/glance/glance-registry.conf keystone_authtoken username glance
 crudini --set /etc/glance/glance-registry.conf keystone_authtoken password pass
-crudini --set /etc/glance/glance-registry.conf paste_deploy flavor keystone 
+crudini --set /etc/glance/glance-registry.conf paste_deploy flavor keystone
 
 su -s /bin/sh -c "glance-manage db_sync" glance
 service glance-registry restart
@@ -298,16 +298,16 @@ for i in {nova-api,nova-consoleauth,nova-scheduler,nova-conductor,nova-novncprox
 
 #install dashboard
 apt-get -qy install openstack-dashboard
-#Ubuntu °²Ñb openstack-dashboard •r£¬•ş×Ô„Ó°²Ñb` ``ubuntu-theme``` ˜Ó°åÌ×¼ş£¬Èô°lÉú†–î}»òÕß²»ĞèÒª£¬¿ÉÒÔÖ±½Ó„h³ıÔ“Ì×¼ş¡£
+#Ubuntu å®‰è£ openstack-dashboard æ™‚ï¼Œæœƒè‡ªå‹•å®‰è£` ``ubuntu-theme``` æ¨£æ¿å¥—ä»¶ï¼Œè‹¥ç™¼ç”Ÿå•é¡Œæˆ–è€…ä¸éœ€è¦ï¼Œå¯ä»¥ç›´æ¥åˆªé™¤è©²å¥—ä»¶ã€‚
 apt-get remove --purge openstack-dashboard-ubuntu-theme
 
 vim /etc/openstack-dashboard/local_settings.py
-#ÔÚ controller ½ÚµãÉÏÅäÖÃÒÇ±íÅÌÒÔÊ¹ÓÃ OpenStack ·şÎñ£º
+#åœ¨ controller èŠ‚ç‚¹ä¸Šé…ç½®ä»ªè¡¨ç›˜ä»¥ä½¿ç”¨ OpenStack æœåŠ¡ï¼š
 OPENSTACK_HOST = "controller"
-#ÔÊĞíËùÓĞÖ÷»ú·ÃÎÊÒÇ±í°å£º
+#å…è®¸æ‰€æœ‰ä¸»æœºè®¿é—®ä»ªè¡¨æ¿ï¼š
 ALLOWED_HOSTS = ['*', ]
 
-#ÅäÖÃ memcached »á»°´æ´¢·şÎñ£º
+#é…ç½® memcached ä¼šè¯å­˜å‚¨æœåŠ¡ï¼š
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 CACHES = {
     'default': {
@@ -317,19 +317,19 @@ CACHES = {
 }
 
 OPENSTACK_KEYSTONE_URL = "http://%s:5000/v3" % OPENSTACK_HOST
-#ÆôÓÃ¶ÔÓòµÄÖ§³Ö
+#å¯ç”¨å¯¹åŸŸçš„æ”¯æŒ
 OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = true
-#ÅäÖÃAPI°æ±¾:
+#é…ç½®APIç‰ˆæœ¬:
 OPENSTACK_API_VERSIONS = {
     "identity": 3,
     "image": 2,
     "volume": 2,
 }
-#Í¨¹ıÒÇ±íÅÌ´´½¨ÓÃ»§Ê±µÄÄ¬ÈÏÓòÅäÖÃÎª default :
+#é€šè¿‡ä»ªè¡¨ç›˜åˆ›å»ºç”¨æˆ·æ—¶çš„é»˜è®¤åŸŸé…ç½®ä¸º default :
 OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = "default"
 OPENSTACK_KEYSTONE_DEFAULT_ROLE = "user"
 
-#Èç¹ûÄúÑ¡ÔñÍøÂç²ÎÊı1£¬½ûÓÃÖ§³Ö3²ãÍøÂç·şÎñ£º
+#å¦‚æœæ‚¨é€‰æ‹©ç½‘ç»œå‚æ•°1ï¼Œç¦ç”¨æ”¯æŒ3å±‚ç½‘ç»œæœåŠ¡ï¼š
 OPENSTACK_NEUTRON_NETWORK = {
     ...
     'enable_router': False,
@@ -346,4 +346,86 @@ TIME_ZONE = "Asia/Shanghai"
 service apache2 reload
 
 
-#
+#network
+#install neutron
+mysql -uroot -ppass <<EOF
+CREATE DATABASE neutron;
+GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'pass';
+GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'pass';
+FLUSH PRIVILEGES;
+EOF
+
+openstack user create --domain default --password-prompt neutron
+openstack role add --project service --user neutron admin
+openstack service create --name neutron --description "OpenStack Networking" network
+openstack endpoint create --region RegionOne network public http://controller:9696
+openstack endpoint create --region RegionOne network internal http://controller:9696
+openstack endpoint create --region RegionOne network admin http://controller:9696
+
+#å®‰è£…æ§åˆ¶èŠ‚ç‚¹
+#é€šè®¯ç½‘å¡é…ç½®
+auto eth1
+iface eth1 inet manual
+up ip link set dev $IFACE up
+down ip link set dev $IFACE down
+
+apt-get -qy install neutron-server neutron-plugin-ml2
+
+crudini --set /etc/neutron/neutron.conf database connection mysql+pymysql://neutron:pass@controller/neutron
+crudini --set /etc/neutron/neutron.conf DEFAULT core_plugin ml2
+crudini --set /etc/neutron/neutron.conf DEFAULT service_plugins router
+crudini --set /etc/neutron/neutron.conf DEFAULT allow_overlapping_ips True
+crudini --set /etc/neutron/neutron.conf DEFAULT rpc_backend rabbit
+crudini --set /etc/neutron/neutron.conf oslo_messaging_rabbit rabbit_host controller
+crudini --set /etc/neutron/neutron.conf oslo_messaging_rabbit rabbit_userid openstack
+crudini --set /etc/neutron/neutron.conf oslo_messaging_rabbit rabbit_password pass
+crudini --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
+crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_uri http://controller:5000
+crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_url http://controller:35357
+crudini --set /etc/neutron/neutron.conf keystone_authtoken memcached_servers controller:11211
+crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_type password
+crudini --set /etc/neutron/neutron.conf keystone_authtoken project_domain_name default
+crudini --set /etc/neutron/neutron.conf keystone_authtoken user_domain_name default
+crudini --set /etc/neutron/neutron.conf keystone_authtoken project_name service
+crudini --set /etc/neutron/neutron.conf keystone_authtoken username neutron
+crudini --set /etc/neutron/neutron.conf keystone_authtoken password pass
+crudini --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_status_changes True
+crudini --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_data_changes True
+crudini --set /etc/neutron/neutron.conf nova auth_url http://controller:35357
+crudini --set /etc/neutron/neutron.conf nova auth_type password
+crudini --set /etc/neutron/neutron.conf nova project_domain_name default
+crudini --set /etc/neutron/neutron.conf nova user_domain_name default
+crudini --set /etc/neutron/neutron.conf nova region_name RegionOne
+crudini --set /etc/neutron/neutron.conf nova project_name service
+crudini --set /etc/neutron/neutron.conf nova username nova
+crudini --set /etc/neutron/neutron.conf nova password pass
+
+#ml2
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 type_drivers flat,vlan,vxlan,gre
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 tenant_network_types vxlan
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 mechanism_drivers linuxbridge,l2population
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 extension_drivers port_security
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_flat flat_networks provider
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_vxlan vni_ranges 1:1000
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup enable_ipset true
+
+-----------------------------
+#nova ä¸ºè®¡ç®—æœåŠ¡é…ç½®ç½‘ç»œæœåŠ¡
+-----------------------------
+crudini --set /etc/nova/nova.conf neutron url  http://controller:9696
+crudini --set /etc/nova/nova.conf neutron auth_url  http://controller:35357
+crudini --set /etc/nova/nova.conf neutron auth_type  password
+crudini --set /etc/nova/nova.conf neutron project_domain_name  default
+crudini --set /etc/nova/nova.conf neutron user_domain_name default
+crudini --set /etc/nova/nova.conf neutron region_name  RegionOne
+crudini --set /etc/nova/nova.conf neutron project_name  service
+crudini --set /etc/nova/nova.conf neutron username  neutron
+crudini --set /etc/nova/nova.conf neutron password  pass
+crudini --set /etc/nova/nova.conf neutron service_metadata_proxy  True
+crudini --set /etc/nova/nova.conf neutron metadata_proxy_shared_secret  pass
+
+
+su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf \
+  --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
+
+for i in {nova-api,neutron-server,};do service $i restart;done

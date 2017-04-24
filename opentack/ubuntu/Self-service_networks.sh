@@ -8,30 +8,20 @@ sudo  chmod a+w /dev/vmnet0
 
 二.网络节点部署
 2.1.允许转发
-/etc/sysctl.conf
+vim /etc/sysctl.conf
 net.ipv4.ip_forward=1
 net.ipv4.conf.all.rp_filter=0
 net.ipv4.conf.default.rp_filter=0
 
 sysctl -p
 
-#install neutron
-mysql -uroot -ppass <<EOF
-CREATE DATABASE neutron;
-GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'pass';
-GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'pass';
-FLUSH PRIVILEGES;
-EOF
-
-openstack user create --domain default --password-prompt neutron
-openstack role add --project service --user neutron admin
-openstack service create --name neutron --description "OpenStack Networking" network
-openstack endpoint create --region RegionOne network public http://controller:9696
-openstack endpoint create --region RegionOne network internal http://controller:9696
-openstack endpoint create --region RegionOne network admin http://controller:9696
-
-
 #2: Self-service networks
+#通讯网卡配置
+auto eth1
+iface eth1 inet manual
+up ip link set dev $IFACE up
+down ip link set dev $IFACE down
+
 apt-get -qy install neutron-server neutron-plugin-ml2 \
   neutron-linuxbridge-agent neutron-l3-agent neutron-dhcp-agent \
   neutron-metadata-agent
@@ -80,12 +70,12 @@ crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup enable_ipset t
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini linux_bridge physical_interface_mappings  provider:eth1
 #替换为处理覆盖网络的底层物理网络接口的IP地址
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan enable_vxlan True
-crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan local_ip  192.168.31.135
+crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan local_ip  192.168.1.22
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan l2_population  True
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup enable_security_group  true
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup firewall_driver  neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 #阻止arp欺骗
-crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini prevent_arp_spoofing true
+#crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini prevent_arp_spoofing true
 
 #l3配置Linuxbridge接口驱动和外部网络网桥
 crudini --set /etc/neutron/l3_agent.ini DEFAULT interface_driver  neutron.agent.linux.interface.BridgeInterfaceDriver
@@ -100,75 +90,9 @@ crudini --set /etc/neutron/dhcp_agent.ini DEFAULT enable_isolated_metadata True
 crudini --set /etc/neutron/metadata_agent.ini DEFAULT nova_metadata_ip controller
 crudini --set /etc/neutron/metadata_agent.ini DEFAULT metadata_proxy_shared_secret pass
 
------------------------------
-#nova 为计算节点配置网络服务
------------------------------
-crudini --set /etc/nova/nova.conf neutron url  http://controller:9696
-crudini --set /etc/nova/nova.conf neutron auth_url  http://controller:35357
-crudini --set /etc/nova/nova.conf neutron auth_type  password
-crudini --set /etc/nova/nova.conf neutron project_domain_name  default
-crudini --set /etc/nova/nova.conf neutron user_domain_name default
-crudini --set /etc/nova/nova.conf neutron region_name  RegionOne
-crudini --set /etc/nova/nova.conf neutron project_name  service
-crudini --set /etc/nova/nova.conf neutron username  neutron
-crudini --set /etc/nova/nova.conf neutron password  pass
-crudini --set /etc/nova/nova.conf neutron service_metadata_proxy  True
-crudini --set /etc/nova/nova.conf neutron metadata_proxy_shared_secret  pass
-
-su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf \
-  --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
-
-service nova-api restart
-
-service neutron-server restart
-service neutron-linuxbridge-agent restart
-service neutron-dhcp-agent restart
-service neutron-metadata-agent restart
-
-service neutron-l3-agent restart
-
-for i in {nova-api,neutron-server,neutron-linuxbridge-agent,neutron-dhcp-agent,neutron-metadata-agent,neutron-l3-agent};do service $i restart;done
+for i in {neutron-server,neutron-linuxbridge-agent,neutron-dhcp-agent,neutron-metadata-agent,neutron-l3-agent};do service $i restart;done
 ----------------------------------------------------------------------------------------------------------
-#计算节点安装网络
-apt-get -qy install neutron-linuxbridge-agent
-
-crudini --set /etc/neutron/neutron.conf DEFAULT rpc_backend rabbit
-crudini --set /etc/neutron/neutron.conf oslo_messaging_rabbit rabbit_host controller
-crudini --set /etc/neutron/neutron.conf oslo_messaging_rabbit rabbit_userid openstack
-crudini --set /etc/neutron/neutron.conf oslo_messaging_rabbit rabbit_password pass
-crudini --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
-crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_uri http://controller:5000
-crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_url http://controller:35357
-crudini --set /etc/neutron/neutron.conf keystone_authtoken memcached_servers controller:11211
-crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_type password
-crudini --set /etc/neutron/neutron.conf keystone_authtoken project_domain_name default
-crudini --set /etc/neutron/neutron.conf keystone_authtoken user_domain_name default
-crudini --set /etc/neutron/neutron.conf keystone_authtoken roject_name service
-crudini --set /etc/neutron/neutron.conf keystone_authtoken username neutron
-crudini --set /etc/neutron/neutron.conf keystone_authtoken password pass
-
-#2: Self-service networks 将公共虚拟网络和公共物理网络接口对应起来
-crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini linux_bridge physical_interface_mappings provider:eth1
-crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan enable_vxlan True
-crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan local_ip 192.168.31.136
-crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan l2_population True
-crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup enable_security_group True
-crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
-
-crudini --set /etc/nova/nova.conf neutron url http://controller:9696
-crudini --set /etc/nova/nova.conf neutron auth_url http://controller:35357
-crudini --set /etc/nova/nova.conf neutron auth_type password
-crudini --set /etc/nova/nova.conf neutron project_domain_name default
-crudini --set /etc/nova/nova.conf neutron user_domain_name default
-crudini --set /etc/nova/nova.conf neutron region_name RegionOne
-crudini --set /etc/nova/nova.conf neutron project_name service
-crudini --set /etc/nova/nova.conf neutron username neutron
-crudini --set /etc/nova/nova.conf neutron password pass
-
-service nova-compute restart
-service neutron-linuxbridge-agent restart
-
-----------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------
 #创建网络：创建self-service network之前必须创建Provider network
 #创建Provider网络,
 source admin-openrc
@@ -177,15 +101,15 @@ neutron net-create --shared --provider:physical_network provider \
 
 #创建子网
 neutron subnet-create --name provider \
-  --allocation-pool start=192.168.2.10,end=192.168.2.50 \
-  --dns-nameserver 114.114.114.114 --gateway 192.168.2.1 \
-  provider 192.168.2.0/24
+  --allocation-pool start=10.23.127.100,end=10.23.127.200 \
+  --dns-nameserver 114.114.114.114 --gateway 10.23.127.1 \
+  provider 10.23.127.0/24
 
 neutron net-create ex-net
 
 #在网络上创建一个子网：
 neutron subnet-create --name ex-net --dns-nameserver 114.114.114.114 \
-	--gateway 10.10.30.1 ex-net 10.10.30.0/24
+	--gateway 30.10.30.1 ex-net 30.10.30.0/24
 
 # Self-service 网络连接到Provider网络使用一个虚拟路由器通常是双向NAT。
 #每个路由器包含一个或多个self-service网络的接口和一个provider网络的网关。

@@ -111,3 +111,17 @@ sudo apt-get update
 sudo apt-get install macbuntu-os-bscreen-lts-v7
 如果你喜欢 MBuntu 启动界面，你想恢复到 Ubuntu ，使用命令：
 sudo apt-get autoremove macbuntu-os-bscreen-lts-v7
+	
+#来源不信任	
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192
+gpg -a --export 16126D3A3E5C1192 | sudo apt-key add -
+
+#W: Failed to fetch http://mirrors.sohu.com/ubuntu/dists/precise/universe/i18n/Index  No Hash entry in Release file /var/lib/apt/lists/partial/mirrors.sohu.com_ubuntu_dists_precise_universe_i18n_Index
+将/var/lib/apt/lists/partial/下的所有文件删除	
+
+
+
+	
+	
+	
+	
