@@ -1,6 +1,8 @@
+
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [1.安装atom](#1安装atom)
+	- [依赖安装](#依赖安装)
 	- [1.1 nodejs nmp 安装](#11-nodejs-nmp-安装)
 	- [1.2 安装atom需要插件](#12-安装atom需要插件)
 		- [1.2.1 python-tools](#121-python-tools)
@@ -18,8 +20,13 @@
 	- [2.1 表格功能](#21-表格功能)
 
 <!-- /TOC -->
+[点击跳转](#jump)
+
 
 #1.安装atom
+##依赖安装
+npm install -g npm
+
 ##1.1 nodejs nmp 安装
 ln -s /usr/bin/nodejs /usr/local/bin/node
 sudo apt-get install nmp
@@ -72,6 +79,7 @@ apm install markdown-toc
 
 
 #2.相关功能展示
+<span id="jump">跳转到的地方</span>
 ##2.1 表格功能
 | Tables        | Are           | Cool  |
 | ------------- |:-------------:| -----:|
