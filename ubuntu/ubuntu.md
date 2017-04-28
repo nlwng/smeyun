@@ -12,8 +12,14 @@
 	- [1.8 关闭自动更新](#18-关闭自动更新)
 	- [1.9 输入法出现2个图标](#19-输入法出现2个图标)
 	- [1.10 安装mac皮肤](#110-安装mac皮肤)
-- [1.11 系统备份](#111-系统备份)
-- [1.12 来源不信任](#112-来源不信任)
+	- [1.11 系统备份](#111-系统备份)
+	- [1.12 来源不信任](#112-来源不信任)
+	- [1.13 vim调优](#113-vim调优)
+	- [1.14 安装vnc](#114-安装vnc)
+	- [1.15 安装zsh](#115-安装zsh)
+	- [1.16 python相关](#116-python相关)
+	- [1.17 优化terminator](#117-优化terminator)
+- [1.18 python相关](#118-python相关)
 - [错误处理](#错误处理)
 
 <!-- /TOC -->
@@ -121,15 +127,100 @@ sudo apt-get install macbuntu-os-bscreen-lts-v7
 如果你喜欢 MBuntu 启动界面，你想恢复到 Ubuntu ，使用命令:  
 sudo apt-get autoremove macbuntu-os-bscreen-lts-v7  
 
-# 1.11 系统备份
+## 1.11 系统备份
 sudo add-apt-repository ppa:nemh/systemback  
 sudo apt-get update  
 sudo apt-get install systemback  
 
-# 1.12 来源不信任  
+## 1.12 来源不信任  
 apt-get install ubuntu-cloud-keyring  
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192  
 gpg -a --export 16126D3A3E5C1192 | sudo apt-key add -  
+
+## 1.13 vim调优
+install vundle 在.vimrc中跟踪和管理插件  
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
+## 1.14 安装vnc
+install vnc  
+apt-get install x11vnc  
+
+set passwd  
+x11vnc -storepasswd  
+
+start server  
+x11vnc -auth guess -once -loop -noxdamage -repeat -rfbauth /root/.vnc/passwd -rfbport 5900 -shared
+
+设置开机启动  
+vim /lib/systemd/system/x11vnc.service  
+```shell
+[Unit]  
+Description=Start x11vnc at startup.   
+After=multi-user.  
+
+[Service]  
+Type=simple   
+ExecStart=/usr/bin/x11vnc -auth guess -once -loop -noxdamage -repeat -rfbauth /root/.vnc/passwd -rfbport 5900 -shared
+
+[Install]  
+WantedBy=multi-user.target  
+```
+sudo systemctl daemon-reload  
+sudo systemctl enable x11vnc.service  
+
+## 1.15 安装zsh
+sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"  
+主题  
+ZSH_THEME="wedisagree"   
+http://ohmyz.sh/
+
+
+## 1.16 python相关
+安装mysql依赖  
+环境ubuntu desktop 16.04  
+sudo apt-get install python-pip   
+sudo apt-get install libmysqlclient-dev   
+sudo apt-get install python-dev  
+sudo pip install mysql-python   
+
+## 1.17 优化terminator
+修改配置文件  
+```
+[global_config]
+  enabled_plugins = CustomCommandsMenu, TestPlugin, ActivityWatch, TerminalShot, MavenPluginURLHandler
+[keybindings]
+[layouts]
+  [[default]]
+    [[[child1]]]
+      parent = window0
+      profile = default
+      type = Terminal
+    [[[window0]]]
+      parent = ""
+      type = Window
+[plugins]
+[profiles]
+  [[default]]
+    background_darkness = 0.86
+    background_image = None
+    background_type = image
+    copy_on_selection = True
+    cursor_color = "#eee8d5"
+    font = Monospace 12
+    foreground_color = "#00ff00"
+    scroll_on_output = False
+    scrollback_lines = 50000
+    use_system_font = False
+  [[New Profile]]
+    background_image = None
+```
+# 1.18 python相关
+环境ubuntu desktop 16.04  
+sudo apt-get install python-pip  
+sudo apt-get install libmysqlclient-dev   
+sudo apt-get install python-dev  
+sudo pip install mysql-python  
+
 
 # 错误处理
 W: Failed to fetch    http://mirrors.sohu.com/ubuntu/dists/precise/universe/i18n/Index  No Hash entry in Release file     /var/lib/apt/lists/partial/mirrors.sohu.com_ubuntu_dists_precise_universe_i18n_Index   
