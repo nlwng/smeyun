@@ -1,26 +1,4 @@
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-- [1 环境部署](#1-环境部署)
-	- [1.1 安装模块](#11-安装模块)
-	- [1.2 设置config](#12-设置config)
-	- [1.3 测试联通](#13-测试联通)
-	- [1.4 安装软件](#14-安装软件)
-		- [1.4.1 基于Salt管理iptables防火墙规则](#141-基于salt管理iptables防火墙规则)
-- [2 Salt-api 搭建](#2-salt-api-搭建)
-	- [2.1 安装](#21-安装)
-	- [2.2 配置api:](#22-配置api)
-	- [2.3 生成自签名证书](#23-生成自签名证书)
-	- [2.4 获取token](#24-获取token)
-- [3 sls编写](#3-sls编写)
-	- [3.1 调用多状态](#31-调用多状态)
-	- [3.2 模板SLS的模块](#32-模板sls的模块)
-	- [3.3 使用GRAINS模板](#33-使用grains模板)
-		- [3.3.1 在SLS模块中使用环境变量](#331-在sls模块中使用环境变量)
-		- [3.3.2 在模板中调用模块](#332-在模板中调用模块)
-		- [3.3.3 更高级的SLS模块语法](#333-更高级的sls模块语法)
-- [参考资料](#参考资料)
-
-<!-- /TOC -->
 
 
 # 1 环境部署
@@ -80,7 +58,6 @@ Service目录，通用服务的状态描述文件。
 
 更新所有的minion的状态
 salt 'sme-y-001-s-02.novalocal' state.highstate
-
 salt 'sme-y-001-s-02.novalocal' state.sls base.iptables test=True
 ```
 
@@ -109,7 +86,6 @@ external_auth:
 ## 2.3 生成自签名证书
 ```
 salt-call tls.create_self_signed_cert
-
 生成私有key
 make testcert
 openssl rsa -in localhost.key -out localhost_nopass.key
@@ -126,8 +102,7 @@ curl -k https://10.10.0.52:8000 -H "Accept: application/x-yaml" -H "X-Auth-Token
 
 #3 sls编写
 ##3.1 调用多状态
-
-```
+```yaml
 apache:
   pkg.installed: []
   service.running:
@@ -140,10 +115,10 @@ apache:
     - source: salt://webserver/index.html   # function arg
     - require:                              # requisite declaration
       - pkg: apache                         # requisite reference
+```
 
-```
 如果你想使用**Salt**创建一个虚拟主机配置文件并希望当文件发生改变时重启apache web服务 ，你可以我们之前的apache 配置
-```
+```yaml
 /etc/httpd/extra/httpd-vhosts.conf:
   file.managed:
     - source: salt://webserver/httpd-vhosts.conf
@@ -158,7 +133,7 @@ apache:
 ```
 ##3.2 模板SLS的模块
 SLS模板块可能需要编程的逻辑或则嵌套的执行。这是通过模块的模板，默认的模块模板系统使用的是`Jinja2`， 我们可以通过更改主配置的:conf_master:`renderer`值来改变这个
-```
+```yaml
 {% for usr in 'moe','larry','curly' %}
 {{ usr }}:
   group:
@@ -172,7 +147,7 @@ SLS模板块可能需要编程的逻辑或则嵌套的执行。这是通过模�
 ```
 ##3.3 使用GRAINS模板
 很多时候一个state 在不同的系统上行为要不一样， Salt grains 在模板文本中将可以被应用，grains可以被使用在模板内。
-```
+```yaml
 apache:
   pkg.installed:
     {% if grains['os'] == 'RedHat' %}
@@ -182,7 +157,7 @@ apache:
     {% endif %}
 ```
 ### 3.3.1 在SLS模块中使用环境变量
-```
+```yaml
 salt['environ.get']('VARNAME')
 MYENVVAR="world" salt-call state.template test.sls
 
@@ -207,7 +182,7 @@ Fail - no environment passed in:
 ### 3.3.2 在模板中调用模块
 salt:一个可用的模块函数在salt模板中,就像下面这样。
 运行简单shell命令在SLS模块中:salt['network.hw_addr']('eth0')
-```
+```yaml
 moe:
   user.present:
     - gid: {{ salt['file.group_to_gid']('some_group_that_exists') }}
