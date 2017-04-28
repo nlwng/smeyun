@@ -225,8 +225,7 @@ sudo pip install mysql-python
 
 # 2 github环境配置
 
-
-git自动提交脚本
+git自动提交脚本:/home/neildev/tmp/git/update.sh
 ```shell
 #config 为配置文件将文件拷贝到用户目录
 times=`date "+%Y%m%d_%H:%M:%S"`
@@ -235,8 +234,8 @@ git add .
 git commit -am"commit file $times"
 git push origin master
 cd ../
-
 ```
+
 
 
 # 错误处理
