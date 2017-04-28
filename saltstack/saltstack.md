@@ -188,8 +188,13 @@ moe:
     - gid: {{ salt['file.group_to_gid']('some_group_that_exists') }}
 ```
 ### 3.3.3 更高级的SLS模块语法
-state 树
+
 python/python-libs.sls:
+```yaml
+python-dateutil:
+  pkg.installed
+```
+python/django.sls:
 ```yaml
 include:
   - python.python-libs
@@ -199,7 +204,7 @@ django:
     - require:
       - pkg: python-dateutil
 ```
-
+EXTEND DECLARATION:
 apache/apache.sls:
 ```yaml
 apache:
@@ -222,8 +227,32 @@ extend:
   file.managed:
     - source: salt://apache/httpd-vhosts.conf
 ```
+apache/mywebsite.sls:
+```yaml
+include:
+  - apache.apache
 
+extend:
+  apache:
+    service:
+      - running
+      - watch:
+        - file: mywebsite
 
+mywebsite:
+  file.managed:
+    - name: /etc/httpd/extra/httpd-vhosts.conf
+    - source: salt://apache/httpd-vhosts.conf
+
+```
+```yaml
+stooges:
+  user.present:
+    - names:
+      - moe
+      - larry
+      - curly
+```
 
 
 
