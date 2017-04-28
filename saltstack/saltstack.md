@@ -16,6 +16,8 @@
 	- [3.2 模板SLS的模块](#32-模板sls的模块)
 	- [3.3 使用GRAINS模板](#33-使用grains模板)
 		- [3.3.1 在SLS模块中使用环境变量](#331-在sls模块中使用环境变量)
+		- [3.3.2 在模板中调用模块](#332-在模板中调用模块)
+		- [3.3.3 更高级的SLS模块语法](#333-更高级的sls模块语法)
 - [参考资料](#参考资料)
 
 <!-- /TOC -->
@@ -202,6 +204,55 @@ Fail - no environment passed in:
     A. fail_without_changes
 {% endif %}
 ```
+### 3.3.2 在模板中调用模块
+salt:一个可用的模块函数在salt模板中,就像下面这样。
+运行简单shell命令在SLS模块中:salt['network.hw_addr']('eth0')
+```
+moe:
+  user.present:
+    - gid: {{ salt['file.group_to_gid']('some_group_that_exists') }}
+```
+### 3.3.3 更高级的SLS模块语法
+state 树
+python/python-libs.sls:
+```yaml
+include:
+  - python.python-libs
+
+django:
+  pkg.installed:
+    - require:
+      - pkg: python-dateutil
+```
+
+apache/apache.sls:
+```yaml
+apache:
+  pkg.installed
+```
+
+apache/mywebsite.sls:
+```yaml
+include:
+  - apache.apache
+
+extend:
+  apache:
+    service:
+      - running
+      - watch:
+        - file: /etc/httpd/extra/httpd-vhosts.conf
+
+/etc/httpd/extra/httpd-vhosts.conf:
+  file.managed:
+    - source: salt://apache/httpd-vhosts.conf
+```
+
+
+
+
+
+
 
 
 
