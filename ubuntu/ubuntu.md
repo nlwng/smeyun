@@ -22,8 +22,9 @@
 - [2 github环境配置](#2-github环境配置)
 	- [2.1 git 免密码提交](#21-git-免密码提交)
 	- [2.2 git自动提交脚本](#22-git自动提交脚本)
-- [apt更新报错](#apt更新报错)
-- [ubuntu16 每次休眠之后进入窗口两侧都有一块白色的区域](#ubuntu16-每次休眠之后进入窗口两侧都有一块白色的区域)
+- [ubuntu错误集合](#ubuntu错误集合)
+	- [apt更新报错](#apt更新报错)
+	- [ubuntu16 每次休眠之后进入窗口两侧都有一块白色的区域](#ubuntu16-每次休眠之后进入窗口两侧都有一块白色的区域)
 
 <!-- /TOC -->
 
@@ -254,13 +255,13 @@ cd ../
 ```
 
 
-
-#apt更新报错  
+# ubuntu错误集合
+## apt更新报错  
 W: Failed to fetch    http://mirrors.sohu.com/ubuntu/dists/precise/universe/i18n/Index  No Hash entry in Release file     /var/lib/apt/lists/partial/mirrors.sohu.com_ubuntu_dists_precise_universe_i18n_Index
 
 将/var/lib/apt/lists/partial/下的所有文件删除
 
-#ubuntu16 每次休眠之后进入窗口两侧都有一块白色的区域  
+## ubuntu16 每次休眠之后进入窗口两侧都有一块白色的区域  
 在英伟达 375 和 378 版本的驱动上会有这个白边的问题， 在最新的 381 版本上已经修复  
 
 最好的办法就是更新驱动为 381 或者降驱动版本降为 340.  
