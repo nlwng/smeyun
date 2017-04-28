@@ -1,9 +1,9 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [1 环境部署](#1-环境部署)
-	- [1.1 install](#11-install)
-	- [1.2 set config](#12-set-config)
-	- [1.3 Test](#13-test)
+	- [1.1 安装模块](#11-安装模块)
+	- [1.2 设置config](#12-设置config)
+	- [1.3 测试联通](#13-测试联通)
 	- [1.4 安装软件](#14-安装软件)
 		- [1.4.1 基于Salt管理iptables防火墙规则](#141-基于salt管理iptables防火墙规则)
 - [2 Salt-api 搭建](#2-salt-api-搭建)
@@ -28,7 +28,7 @@ yum -y install https://repo.saltstack.com/yum/redhat/salt-repo-2016.11-1.el7.noa
 yum clean expire-cache
 ```
 
-##1.1 install
+##1.1 安装模块
 ```
 master安装salt
 yum -y install salt-master
@@ -36,7 +36,7 @@ yum -y install salt-master
 client安装
 yum -y install salt-minion
 ```
-##1.2 set config
+##1.2 设置config
 
 ```
 修改client配置文件 （这里保持默认配置）
@@ -49,7 +49,7 @@ yum -y install salt-minion
 [root@salt-client-02 /]# echo "192.168.119.132   salt" >> /etc/hosts
 ```
 
-## 1.3 Test
+## 1.3 测试联通
 ```
 salt-key -L
 salt '*' state.highstate -t 60
