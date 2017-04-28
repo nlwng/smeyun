@@ -14,7 +14,7 @@
 	- [1.10 安装mac皮肤](#110-安装mac皮肤)
 	- [1.11 系统备份](#111-系统备份)
 	- [1.12 来源不信任](#112-来源不信任)
-	- [1.13 vim调优## 2.2](#113-vim调优-22)
+	- [1.13 vim调优](#113-vim调优)
 	- [1.14 安装vnc](#114-安装vnc)
 	- [1.15 安装zsh](#115-安装zsh)
 	- [1.16 python相关](#116-python相关)
@@ -100,35 +100,31 @@ sudo apt-get install  macbuntu-os-ithemes-lts-v7
 sudo apt-get install  macbuntu-os-icons-lts-v7  
 sudo apt-get install macbuntu-os-plank-theme-lts-v7  
 sudo apt-get install unity-tweak-tool  
-unity-tweak-tool 中设皮肤、图标点击左上角的dash菜单搜索“plank”，并打开   
+unity-tweak-tool 中设皮肤、图标  
+点击左上角的dash菜单搜索“plank”，并打开  
 sudo apt-get install gnome-tweak-tool  
 
-安装 Slingscold（替代Launchpad）  
---
+安装 Slingscold（替代Launchpad）   
 sudo add-apt-repository ppa:noobslab/macbuntu  
 sudo apt-get update  
 sudo apt-get install slingscold  
 
 安装Albert Spotlight (替代 Mac Spotlight)  
---
 sudo add-apt-repository ppa:noobslab/macbuntu  
 sudo apt-get update  
 sudo apt-get install albert  
 
 启动自运行，需要创建以下链接:  
---
 sudo ln -s /usr/share/applications/plank.desktop /etc/xdg/autostart/  
 
-配置 Mac 字体:
---
-安装字体命令:   
+配置 Mac 字体:  
+安装字体命令:  
 wget -O mac-fonts.zip http://drive.noobslab.com/data/Mac/macfonts.zip  
 sudo unzip mac-fonts.zip -d /usr/share/fonts; rm mac-fonts.zip  
 sudo fc-cache -f -v  
 使用 Unity-Tweak-Tool, Gnome-Tweak-Tool 或 Ubuntu Tweak 软件更换字体.  
 
 修改启动界面:  
---
 sudo add-apt-repository ppa:noobslab/themes  
 sudo apt-get update  
 sudo apt-get install macbuntu-os-bscreen-lts-v7   
@@ -145,25 +141,21 @@ apt-get install ubuntu-cloud-keyring
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192  
 gpg -a --export 16126D3A3E5C1192 | sudo apt-key add -  
 
-## 1.13 vim调优## 2.2
+## 1.13 vim调优
 install vundle 在.vimrc中跟踪和管理插件  
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 ## 1.14 安装vnc
 install vnc  
---
 apt-get install x11vnc  
 
 set passwd  
---
 x11vnc -storepasswd  
 
 start server  
---
 x11vnc -auth guess -once -loop -noxdamage -repeat -rfbauth /root/.vnc/passwd -rfbport 5900 -shared
 
-设置开机启动   
---
+设置开机启动  
 vim /lib/systemd/system/x11vnc.service  
 ```shell
 [Unit]  
@@ -183,14 +175,12 @@ sudo systemctl enable x11vnc.service
 ## 1.15 安装zsh
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"  
 主题  
---
 ZSH_THEME="wedisagree"   
 http://ohmyz.sh/
 
 
 ## 1.16 python相关
 安装mysql依赖  
---
 环境ubuntu desktop 16.04  
 sudo apt-get install python-pip   
 sudo apt-get install libmysqlclient-dev   
@@ -238,11 +228,9 @@ sudo pip install mysql-python
 # 2 github环境配置
 ## 2.1 git 免密码提交
 vim .git-credentials  
---
 https://{username}:{password}@github.com
 
 git config --global credential.helper store  
---
 vim ~/.gitconfig 会发现多了一项   
 [credential]
 helper = store
