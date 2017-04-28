@@ -273,8 +273,9 @@ sudo pip install mysql-python
 Displays --> sticky edges关闭
 
 
-
 # 2 github环境配置
+sudo apt-get intsall git
+
 ## 2.1 git 免密码提交
 vim .git-credentials  
 https://{username}:{password}@github.com
