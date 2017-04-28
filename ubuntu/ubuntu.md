@@ -1,4 +1,3 @@
-
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [1 ubuntu系统初次安装](#1-ubuntu系统初次安装)
@@ -23,8 +22,8 @@
 - [2 github环境配置](#2-github环境配置)
 	- [2.1 git 免密码提交](#21-git-免密码提交)
 	- [2.2 git自动提交脚本](#22-git自动提交脚本)
-- [config 为配置文件将文件拷贝到用户目录](#config-为配置文件将文件拷贝到用户目录)
-- [错误处理](#错误处理)
+- [apt更新报错](#apt更新报错)
+- [ubuntu16 每次休眠之后进入窗口两侧都有一块白色的区域](#ubuntu16-每次休眠之后进入窗口两侧都有一块白色的区域)
 
 <!-- /TOC -->
 
@@ -244,8 +243,8 @@ helper = store
 ```
 
 ## 2.2 git自动提交脚本
+config 为配置文件将文件拷贝到用户目录
 ```shell
-#config 为配置文件将文件拷贝到用户目录
 times=`date "+%Y%m%d_%H:%M:%S"`
 cd ./mytest
 git add .
@@ -256,8 +255,21 @@ cd ../
 
 
 
+#apt更新报错  
+W: Failed to fetch    http://mirrors.sohu.com/ubuntu/dists/precise/universe/i18n/Index  No Hash entry in Release file     /var/lib/apt/lists/partial/mirrors.sohu.com_ubuntu_dists_precise_universe_i18n_Index
 
-
-# 错误处理
-W: Failed to fetch    http://mirrors.sohu.com/ubuntu/dists/precise/universe/i18n/Index  No Hash entry in Release file     /var/lib/apt/lists/partial/mirrors.sohu.com_ubuntu_dists_precise_universe_i18n_Index   
 将/var/lib/apt/lists/partial/下的所有文件删除
+
+#ubuntu16 每次休眠之后进入窗口两侧都有一块白色的区域  
+在英伟达 375 和 378 版本的驱动上会有这个白边的问题， 在最新的 381 版本上已经修复  
+
+最好的办法就是更新驱动为 381 或者降驱动版本降为 340.  
+升级为 381方法是命令行终端下（Ctrl-Shift-T呼出）输入如下命令， 然后重启电脑  
+sudo add-apt-repository ppa:graphics-drivers/ppa  
+
+sudo apt update  
+sudo apt purge nvidia*  
+sudo apt install nvidia-381  
+
+临时的解决办法就是在命令行终端下（Ctrl-Shift-T呼出）输入如下命令：   
+compiz --replace  
