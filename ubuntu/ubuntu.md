@@ -227,10 +227,10 @@ sudo pip install mysql-python
 
 # 2 github环境配置
 ## 2.1 git 免密码提交
-*vim .git-credentials  
+**vim .git-credentials  
 https://{username}:{password}@github.com
 
-*git config --global credential.helper store  
+**git config --global credential.helper store  
 vim ~/.gitconfig 会发现多了一项   
 [credential]
 helper = store
