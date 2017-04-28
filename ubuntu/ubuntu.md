@@ -20,6 +20,8 @@
 	- [1.16 python相关](#116-python相关)
 	- [1.17 优化terminator](#117-优化terminator)
 - [1.18 python相关](#118-python相关)
+- [2 github环境配置](#2-github环境配置)
+- [config 为配置文件将文件拷贝到用户目录](#config-为配置文件将文件拷贝到用户目录)
 - [错误处理](#错误处理)
 
 <!-- /TOC -->
@@ -220,6 +222,21 @@ sudo apt-get install python-pip
 sudo apt-get install libmysqlclient-dev   
 sudo apt-get install python-dev  
 sudo pip install mysql-python  
+
+# 2 github环境配置
+
+
+git自动提交脚本
+```shell
+#config 为配置文件将文件拷贝到用户目录
+times=`date "+%Y%m%d_%H:%M:%S"`
+cd ./mytest
+git add .
+git commit -am"commit file $times"
+git push origin master
+cd ../
+
+```
 
 
 # 错误处理
