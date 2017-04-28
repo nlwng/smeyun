@@ -1,38 +1,34 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-- [1 epel](#1-epel)
-- [2 install](#2-install)
-- [3 set config](#3-set-config)
-- [4 Test](#4-test)
-- [5 用列](#5-用列)
-	- [5.1 安装软件](#51-安装软件)
-	- [5.2 基于Salt管理iptables防火墙规则](#52-基于salt管理iptables防火墙规则)
-- [6 Salt-api 搭建](#6-salt-api-搭建)
-	- [6.1 安装](#61-安装)
-	- [6.2 配置api:](#62-配置api)
-	- [6.3 生成自签名证书](#63-生成自签名证书)
+- [1 环境部署](#1-环境部署)
+	- [1.1 install](#11-install)
+	- [1.2 set config](#12-set-config)
+	- [1.3 Test](#13-test)
+	- [1.4 安装软件](#14-安装软件)
+		- [1.4.1 基于Salt管理iptables防火墙规则](#141-基于salt管理iptables防火墙规则)
+- [2 Salt-api 搭建](#2-salt-api-搭建)
+	- [2.1 安装](#21-安装)
+	- [2.2 配置api:](#22-配置api)
+	- [2.3 生成自签名证书](#23-生成自签名证书)
 	- [6.4 获取token](#64-获取token)
-- [7 sls编写](#7-sls编写)
-	- [7.1 调用多状态](#71-调用多状态)
-	- [7.2 模板SLS的模块](#72-模板sls的模块)
-	- [7.3 使用GRAINS模板](#73-使用grains模板)
-		- [7.3.1 在SLS模块中使用环境变量](#731-在sls模块中使用环境变量)
+- [3 sls编写](#3-sls编写)
+	- [3.1 调用多状态](#31-调用多状态)
+	- [3.2 模板SLS的模块](#32-模板sls的模块)
+	- [3.3 使用GRAINS模板](#33-使用grains模板)
+		- [3.3.1 在SLS模块中使用环境变量](#331-在sls模块中使用环境变量)
 - [参考资料](#参考资料)
 
 <!-- /TOC -->
 
 
-#1 epel
+#1 环境部署
 ```
 yum -y install https://repo.saltstack.com/yum/redhat/salt-repo-2016.11-1.el6.noarch.rpm
-
 yum -y install https://repo.saltstack.com/yum/redhat/salt-repo-2016.11-1.el7.noarch.rpm
+yum clean expire-cache
 ```
 
-
-yum clean expire-cache
-
-#2 install
+##1.1 install
 ```
 master安装salt
 yum -y install salt-master
@@ -40,7 +36,8 @@ yum -y install salt-master
 client安装
 yum -y install salt-minion
 ```
-#3 set config
+##1.2 set config
+
 ```
 修改client配置文件 （这里保持默认配置）
 [root@salt-client-01 /]# vim /etc/salt/minion
@@ -52,21 +49,20 @@ yum -y install salt-minion
 [root@salt-client-02 /]# echo "192.168.119.132   salt" >> /etc/hosts
 ```
 
-#4 Test
+## 1.3 Test
 ```
 salt-key -L
-
 salt '*' state.highstate -t 60
 salt-minion -l debug &  
-
 hostname > /etc/salt/minion_id
 sed -i 's/#master: salt/master: smesalt/g' /etc/salt/minion;echo "10.30.1.184 smesalt" >> /etc/hosts
 ```
-#5 用列
-## 5.1 安装软件
+
+
+## 1.4 安装软件
 salt '*' pkg.install lrzsz
 
-## 5.2 基于Salt管理iptables防火墙规则
+### 1.4.1 基于Salt管理iptables防火墙规则
 ```
 上述配置文件定义了两个根目录的路径。如有需要也可以修改定义。在/srv/salt目录下除了必备的top.sls。设置如下几个目录：
 
@@ -86,14 +82,14 @@ salt 'sme-y-001-s-02.novalocal' state.highstate
 salt 'sme-y-001-s-02.novalocal' state.sls base.iptables test=True
 ```
 
-#6 Salt-api 搭建
-## 6.1 安装
+#2 Salt-api 搭建
+## 2.1 安装
 ```
 yum -y install salt-api pyOpenSSL
 useradd -M -s /sbin/nologin neildev    
 echo 'neil1983' | passwd neildev --stdin   
 
-## 6.2 配置api:
+## 2.2 配置api:
 [root@operation ops]# cat /etc/salt/master.d/api.conf   
 rest_cherrypy:    
   port: 8000    
@@ -106,7 +102,7 @@ external_auth:
       - '@wheel'  
       - '@runner'
 ```
-## 6.3 生成自签名证书
+## 2.3 生成自签名证书
 ```
 salt-call tls.create_self_signed_cert
 
@@ -124,8 +120,8 @@ curl -k https://10.10.0.52:8000/login -H "Accept: application/x-yaml" -d usernam
 curl -k https://10.10.0.52:8000 -H "Accept: application/x-yaml" -H "X-Auth-Token: 392f2eed2aa808cfaa6824ec24e466feec663365" -d client='local' -d tgt='*' -d fun='test.ping'
 ```
 
-#7 sls编写
-##7.1 调用多状态
+#3 sls编写
+##3.1 调用多状态
 
 ```
 apache:
@@ -156,7 +152,7 @@ apache:
     - require:
       - pkg: apache
 ```
-##7.2 模板SLS的模块
+##3.2 模板SLS的模块
 SLS模板块可能需要编程的逻辑或则嵌套的执行。这是通过模块的模板，默认的模块模板系统使用的是`Jinja2`， 我们可以通过更改主配置的:conf_master:`renderer`值来改变这个
 ```
 {% for usr in 'moe','larry','curly' %}
@@ -170,7 +166,7 @@ SLS模板块可能需要编程的逻辑或则嵌套的执行。这是通过模�
       - group: {{ usr }}
 {% endfor %}
 ```
-##7.3 使用GRAINS模板
+##3.3 使用GRAINS模板
 很多时候一个state 在不同的系统上行为要不一样， Salt grains 在模板文本中将可以被应用，grains可以被使用在模板内。
 ```
 apache:
@@ -181,7 +177,7 @@ apache:
     - name: apache2
     {% endif %}
 ```
-### 7.3.1 在SLS模块中使用环境变量
+### 3.3.1 在SLS模块中使用环境变量
 ```
 salt['environ.get']('VARNAME')
 MYENVVAR="world" salt-call state.template test.sls
