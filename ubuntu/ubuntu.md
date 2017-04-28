@@ -63,6 +63,9 @@ sudo apt-get remove gnome-sudoku
 sudo apt-get remove onboard deja-dup  
 sudo apt-get install vim git  
 
+美化工具  
+sudo apt-get install unity-tweak-tool  
+
 ## 1.4 安装经典菜单指示器
 sudo add-apt-repository ppa:diesch/testing  
 sudo apt-get update  
@@ -272,6 +275,26 @@ sudo pip install mysql-python
 ## 1.19 屏幕边缘鼠标粘滞
 Displays --> sticky edges关闭
 
+## 1.20 安装compiz
+sudo apt-get install compiz-plugins  
+sudo apt-get install compizconfig-settings-manager   
+
+打开compiz自行配置  
+destop --> expo
+					desktop cube
+					rotate cube
+					viewport switcher
+
+effects --> anmations
+					cube reflection and deformation
+					fading windows
+					motion blur
+					firepaint
+					trailfocus
+					wizard
+快捷键
+ctrl+alt+拖动  
+Shift Switcher  
 
 # 2 github环境配置
 sudo apt-get intsall git
