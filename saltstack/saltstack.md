@@ -21,14 +21,14 @@
 <!-- /TOC -->
 
 
-#1 环境部署
+# 1 环境部署
 ```
 yum -y install https://repo.saltstack.com/yum/redhat/salt-repo-2016.11-1.el6.noarch.rpm
 yum -y install https://repo.saltstack.com/yum/redhat/salt-repo-2016.11-1.el7.noarch.rpm
 yum clean expire-cache
 ```
 
-##1.1 安装模块
+## 1.1 安装模块
 ```
 master安装salt
 yum -y install salt-master
@@ -36,7 +36,7 @@ yum -y install salt-master
 client安装
 yum -y install salt-minion
 ```
-##1.2 设置config
+## 1.2 设置config
 
 ```
 修改client配置文件 （这里保持默认配置）
@@ -82,7 +82,7 @@ salt 'sme-y-001-s-02.novalocal' state.highstate
 salt 'sme-y-001-s-02.novalocal' state.sls base.iptables test=True
 ```
 
-#2 Salt-api 搭建
+# 2 Salt-api 搭建
 ## 2.1 安装
 ```
 yum -y install salt-api pyOpenSSL
