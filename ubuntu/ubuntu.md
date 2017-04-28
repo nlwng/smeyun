@@ -21,6 +21,8 @@
 	- [1.17 优化terminator](#117-优化terminator)
 - [1.18 python相关](#118-python相关)
 - [2 github环境配置](#2-github环境配置)
+	- [2.1 git 免密码提交](#21-git-免密码提交)
+	- [2.2 git自动提交脚本](#22-git自动提交脚本)
 - [config 为配置文件将文件拷贝到用户目录](#config-为配置文件将文件拷贝到用户目录)
 - [错误处理](#错误处理)
 
@@ -224,8 +226,26 @@ sudo apt-get install python-dev
 sudo pip install mysql-python  
 
 # 2 github环境配置
+## 2.1 git 免密码提交
+cd ~  
+touch .git-credentials  
+vim .git-credentials  
+https://{username}:{password}@github.com
 
-git自动提交脚本:/home/neildev/tmp/git/update.sh
+git config --global credential.helper store  
+vim ~/.gitconfig 会发现多了一项   
+[credential]
+helper = store
+
+```conf
+[user]
+	name = {username}@gmail.com
+	email = {username}@gmail.com
+[credential]
+	helper = store
+```
+
+## 2.2 git自动提交脚本
 ```shell
 #config 为配置文件将文件拷贝到用户目录
 times=`date "+%Y%m%d_%H:%M:%S"`
@@ -235,6 +255,8 @@ git commit -am"commit file $times"
 git push origin master
 cd ../
 ```
+
+
 
 
 
