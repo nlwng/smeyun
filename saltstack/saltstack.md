@@ -279,11 +279,6 @@ stooges:
 
 
 
-
-
-
-
-
 #参考资料
 <http://docs.saltstack.cn/topics/tutorials/states_pt4.html><br>
 <https://yq.aliyun.com/articles/44377>
