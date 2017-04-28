@@ -117,7 +117,7 @@ ssl_key: /etc/pki/tls/private/localhost_nopass.key
 ## 2.4 获取token
 ```
 curl -k https://10.10.0.52:8000/login -H "Accept: application/x-yaml" -d username='neildev' -d password='neil1983' -d eauth='pam'
-curl -k https://10.10.0.52:8000 -H "Accept: application/x-yaml" -H "X-Auth-Token: 392f2eed2aa808cfaa6824ec24e466feec663365" -d client='local' -d tgt='*' -d fun='test.ping'
+curl -k https://10.10.0.52:8000 -H "Accept: application/x-yaml" -H "X-Auth-Token: 3***" -d client='local' -d tgt='*' -d fun='test.ping'
 ```
 
 #3 sls编写
