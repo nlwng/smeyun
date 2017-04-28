@@ -122,8 +122,8 @@ curl -k https://10.10.0.52:8000/login -H "Accept: application/x-yaml" -d usernam
 curl -k https://10.10.0.52:8000 -H "Accept: application/x-yaml" -H "X-Auth-Token: 3***" -d client='local' -d tgt='*' -d fun='test.ping'
 ```
 
-#3 sls编写
-##3.1 调用多状态
+# 3 sls编写
+## 3.1 调用多状态
 ```yaml
 apache:
   pkg.installed: []
