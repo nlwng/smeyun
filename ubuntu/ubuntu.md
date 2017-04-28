@@ -4,29 +4,29 @@ curl -kL https://raw.github.com/cstrap/monaco-font/master/install-font-ubuntu.sh
 
 
 #sublime 左侧目录与背景同步插件
-SyncedSidebarBg 
+SyncedSidebarBg
 
 #安装ubuntu优化
 sudo apt-get remove unity-webapps-common  
-sudo apt-get remove libreoffice-common 
+sudo apt-get remove libreoffice-common
 sudo apt-get remove thunderbird totem rhythmbox empathy brasero simple-scan gnome-mahjongg aisleriot gnome-mines cheese transmission-common gnome-orca webbrowser-app gnome-sudoku  landscape-client-ui-install
 
 sudo apt-get remove thunderbird（邮箱）
  sudo apt-get remove  totem （视频播放器）
  sudo apt-get remove rhythmbox（音乐播放器）
- sudo apt-get remove empathy 
+ sudo apt-get remove empathy
  sudo apt-get remove brasero
  sudo apt-get remove simple-scan
- sudo apt-get remove gnome-mahjongg 
- sudo apt-get remove aisleriot 
- sudo apt-get remove gnome-mines 
- sudo apt-get remove transmission-common 
- sudo apt-get remove gnome-orca 
- sudo apt-get remove webbrowser-app 
- sudo apt-get remove gnome-sudoku 
+ sudo apt-get remove gnome-mahjongg
+ sudo apt-get remove aisleriot
+ sudo apt-get remove gnome-mines
+ sudo apt-get remove transmission-common
+ sudo apt-get remove gnome-orca
+ sudo apt-get remove webbrowser-app
+ sudo apt-get remove gnome-sudoku
 
 
-sudo apt-get remove onboard deja-dup 
+sudo apt-get remove onboard deja-dup
 sudo apt-get install vim git
 
 #install sublime
@@ -37,19 +37,19 @@ sudo apt-get install sublime-text
 #安装经典菜单指示器
 sudo add-apt-repository ppa:diesch/testing  
 sudo apt-get update  
-sudo apt-get install classicmenu-indicator 
+sudo apt-get install classicmenu-indicator
 
 
 #安装系统指示器SysPeek
 sudo add-apt-repository ppa:nilarimogard/webupd8    
 sudo apt-get update    
-sudo apt-get install syspeek 
+sudo apt-get install syspeek
 
 #nav工具是在终端界面看日志的神器
-sudo apt-get install lnav 
+sudo apt-get install lnav
 
 #安装unrar
-sudo apt-get install unrar 
+sudo apt-get install unrar
 
 
 #关闭自动更新
@@ -74,9 +74,9 @@ curl -kL https://raw.github.com/cstrap/monaco-font/master/install-font-ubuntu.sh
 #安装mac皮肤
 sudo add-apt-repository ppa:noobslab/macbuntu
 sudo apt-get install  macbuntu-os-ithemes-lts-v7
-sudo apt-get install  macbuntu-os-icons-lts-v7 
+sudo apt-get install  macbuntu-os-icons-lts-v7
 sudo apt-get install macbuntu-os-plank-theme-lts-v7
-sudo apt-get install unity-tweak-tool 
+sudo apt-get install unity-tweak-tool
 unity-tweak-tool 中设皮肤、图标
 点击左上角的dash菜单搜索“plank”，并打开
 
@@ -111,17 +111,15 @@ sudo apt-get update
 sudo apt-get install macbuntu-os-bscreen-lts-v7
 如果你喜欢 MBuntu 启动界面，你想恢复到 Ubuntu ，使用命令：
 sudo apt-get autoremove macbuntu-os-bscreen-lts-v7
-	
-#来源不信任	
+
+#系统备份
+sudo add-apt-repository ppa:nemh/systemback
+sudo apt-get update
+sudo apt-get install systemback
+
+#来源不信任
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192
 gpg -a --export 16126D3A3E5C1192 | sudo apt-key add -
 
 #W: Failed to fetch http://mirrors.sohu.com/ubuntu/dists/precise/universe/i18n/Index  No Hash entry in Release file /var/lib/apt/lists/partial/mirrors.sohu.com_ubuntu_dists_precise_universe_i18n_Index
-将/var/lib/apt/lists/partial/下的所有文件删除	
-
-
-
-	
-	
-	
-	
+将/var/lib/apt/lists/partial/下的所有文件删除
