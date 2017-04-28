@@ -10,7 +10,7 @@
 	- [2.1 安装](#21-安装)
 	- [2.2 配置api:](#22-配置api)
 	- [2.3 生成自签名证书](#23-生成自签名证书)
-	- [6.4 获取token](#64-获取token)
+	- [2.4 获取token](#24-获取token)
 - [3 sls编写](#3-sls编写)
 	- [3.1 调用多状态](#31-调用多状态)
 	- [3.2 模板SLS的模块](#32-模板sls的模块)
@@ -114,7 +114,7 @@ openssl rsa -in localhost.key -out localhost_nopass.key
 ssl_crt: /etc/pki/tls/certs/localhost.crt
 ssl_key: /etc/pki/tls/private/localhost_nopass.key
 ```
-## 6.4 获取token
+## 2.4 获取token
 ```
 curl -k https://10.10.0.52:8000/login -H "Accept: application/x-yaml" -d username='neildev' -d password='neil1983' -d eauth='pam'
 curl -k https://10.10.0.52:8000 -H "Accept: application/x-yaml" -H "X-Auth-Token: 392f2eed2aa808cfaa6824ec24e466feec663365" -d client='local' -d tgt='*' -d fun='test.ping'
