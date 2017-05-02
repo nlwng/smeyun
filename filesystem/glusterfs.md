@@ -10,6 +10,7 @@
 		- [1.1.5 分布式+复制](#115-分布式复制)
 		- [1.1.6 磁条化+复制](#116-磁条化复制)
 		- [1.1.6 配置GlusterFS客户端硬盘](#116-配置glusterfs客户端硬盘)
+		- [1.1.7 删除节点](#117-删除节点)
 
 <!-- /TOC -->
 
@@ -40,8 +41,6 @@ mkdir -p /glusterfs/distributed
 创建集群:[node01]  
 增加集群:  
 gluster peer probe node02  
-删除集群    
-gluster peer detach node02
 
 查看节点:  
 gluster peer status  
@@ -177,3 +176,7 @@ yum -y install glusterfs glusterfs-fuse
 
 配置好hosts以后直接配置挂载:  
 mount -t glusterfs node01:/vol_distributed /mnt   
+
+### 1.1.7 删除节点
+删除集群    
+gluster peer detach node02  
