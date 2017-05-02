@@ -244,34 +244,55 @@ gluster volume rebalance vol_distributed fix-layout start
 gluster volume rebalance vol_distributed migrate-data start  
 
 gluster volume rebalance vol_distributed start  
-gluster volume rebalance vol_distributed status //你可以在在平衡过程中查看平衡信息  
-gluster volume rebalance vol_distributed stop //你也可以暂停平衡，再次启动平衡的时候会从上次暂停的地方继续开始平衡  
+你可以在在平衡过程中查看平衡信息  
+gluster volume rebalance vol_distributed status  
+你也可以暂停平衡，再次启动平衡的时候会从上次暂停的地方继续开始平衡    
+gluster volume rebalance vol_distributed stop  
 
 #### 1.1.7.5 I/O 信息查看
-Profile Command 提供接口查看一个卷中的每一个brick 的IO 信息  
-gluster volume profile VOLNAME start //启动profiling，之后则可以进行IO 信息查看  
-gluster volume profile VOLNAME info //查看IO 信息，可以查看到每一个Brick 的IO 信息  
-gluster volume profile VOLNAME stop //查看结束之后关闭profiling 功能  
+提供接口查看一个卷中的每一个brick 的IO 信息   
+Profile Command  
+启动profiling，之后则可以进行IO 信息查看  
+gluster volume profile VOLNAME start  
+查看IO 信息，可以查看到每一个Brick 的IO 信息  
+gluster volume profile VOLNAME info  
+查看结束之后关闭profiling 功能  
+gluster volume profile VOLNAME stop  
 
 #### 1.1.7.6 top监控
 Top command 允许你查看bricks 的性能例如:  
 read, write, fileopen calls, file read calls, file,write calls,directory open calls, and directory real calls  
-
-gluster volume top VOLNAME open [brick BRICK-NAME] [list-cnt cnt] //查看打开的fd  
-gluster volume top VOLNAME read [brick BRICK-NAME] [list-cnt cnt] //查看调用次数最多的读调用  
-gluster volume top VOLNAME write [brick BRICK-NAME] [list-cnt cnt] //查看调用次数最多的写调用  
-gluster volume top VOLNAME opendir [brick BRICK-NAME] [list-cnt cnt] //查看次数最多的目录调用  
-gluster volume top VOLNAME readdir [brick BRICK-NAME] [list-cnt cnt] //查看次数最多的目录调用  
-gluster volume top VOLNAME read-perf [bs blk-size count count]   [brickBRICK-NAME] [list-cnt cnt] //查看每个Brick 的读性能  
-gluster volume top VOLNAME write-perf [bs blk-size count count] [brickBRICK-NAME] [list-cnt cnt] //查看每个Brick 的写性能  
+查看打开的fd  
+gluster volume top VOLNAME open [brick BRICK-NAME] [list-cnt cnt]   
+查看调用次数最多的读调用   
+gluster volume top VOLNAME read [brick BRICK-NAME] [list-cnt cnt]  
+查看调用次数最多的写调用   
+gluster volume top VOLNAME write [brick BRICK-NAME] [list-cnt cnt]  
+查看次数最多的目录调用   
+gluster volume top VOLNAME opendir [brick BRICK-NAME] [list-cnt cnt]   
+查看次数最多的目录调用   
+gluster volume top VOLNAME readdir [brick BRICK-NAME] [list-cnt cnt]  
+查看每个Brick 的读性能  
+gluster volume top VOLNAME read-perf [bs blk-size count count]   [brickBRICK-NAME] [list-cnt cnt]    
+查看每个Brick 的写性能  
+gluster volume top VOLNAME write-perf [bs blk-size count count] [brickBRICK-NAME] [list-cnt cnt]   
 
 #### 1.1.7.7 性能优化配置选项
-gluster volume set arch-img cluster.min-free-disk 默认是10% 磁盘剩余告警  
-gluster volume set arch-img cluster.min-free-inodes 默认是5% inodes 剩余告警  
-gluster volume set img performance.read-ahead-page-count 8 默认4，预读取的数量  
-gluster volume set img performance.io-thread-count 16 默认16 io 操作的最大线程  
-gluster volume set arch-img network.ping-timeout 10 默认42s  
-gluster volume set arch-img performance.cache-size 2GB 默认128M 或32MB，  
-gluster volume set arch-img cluster.self-heal-daemon on 开启目录索引的自动愈合进程  
-gluster volume set arch-img cluster.heal-timeout 300 自动愈合的检测间隔，默认为600s #3.4.2版本才有  
-gluster volume set arch-img performance.write-behind-window-size 256MB #默认是1M 能提高写性能单个文件后写缓冲区的大小默认1M  
+默认是10% 磁盘剩余告警  
+gluster volume set arch-img cluster.min-free-disk  
+默认是5% inodes 剩余告警  
+gluster volume set arch-img cluster.min-free-inodes   
+默认4，预读取的数量  
+gluster volume set img performance.read-ahead-page-count 8  
+默认16 io 操作的最大线程  
+gluster volume set img performance.io-thread-count 16  
+默认42s  
+gluster volume set arch-img network.ping-timeout 10  
+默认128M 或32MB  
+gluster volume set arch-img performance.cache-size 2GB   
+开启目录索引的自动愈合进程  
+gluster volume set arch-img cluster.self-heal-daemon on    
+自动愈合的检测间隔，默认为600s #3.4.2版本才有  
+gluster volume set arch-img cluster.heal-timeout 300  
+默认是1M 能提高写性能单个文件后写缓冲区的大小默认1M   
+gluster volume set arch-img performance.write-behind-window-size 256MB  
