@@ -176,8 +176,6 @@ docker run --restart=always redis
 docker stats
 docker stats --no-stream
 
-## 2.12 持久化容器与镜像
-
 # 3 docker实例子
 ## 3.1 mysql in docker
 update gcc:  
