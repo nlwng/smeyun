@@ -2,10 +2,12 @@
 
 - [docker实践](#docker实践)
 - [1 安装docker](#1-安装docker)
-	- [1.1 测试docker](#11-测试docker)
-	- [1.2 Upgrade Docker](#12-upgrade-docker)
-	- [1.3 卸载Docker](#13-卸载docker)
-	- [1.4 使用 DaoCloud 镜像站点，高速安装Docker](#14-使用-daocloud-镜像站点高速安装docker)
+	- [1.1 ubuntu环境安装](#11-ubuntu环境安装)
+	- [1.2 centos环境安装](#12-centos环境安装)
+	- [1.3 测试docker](#13-测试docker)
+	- [1.4 Upgrade Docker](#14-upgrade-docker)
+	- [1.5 卸载Docker](#15-卸载docker)
+	- [1.6 使用 DaoCloud 镜像站点，高速安装Docker](#16-使用-daocloud-镜像站点高速安装docker)
 - [2 docker使用](#2-docker使用)
 	- [2.1 基本信息查看](#21-基本信息查看)
 	- [2.2 指定用户启动](#22-指定用户启动)
@@ -18,8 +20,10 @@
 	- [2.9 容器资源限制参数](#29-容器资源限制参数)
 	- [2.10 docker容器随系统自启参数](#210-docker容器随系统自启参数)
 	- [2.11 查看容器状态信息](#211-查看容器状态信息)
-	- [2.12 持久化容器与镜像](#212-持久化容器与镜像)
-- [3](#3)
+- [3 docker实例子](#3-docker实例子)
+	- [3.1 mysql in docker](#31-mysql-in-docker)
+	- [3.2 nginx in docker](#32-nginx-in-docker)
+	- [3.3](#33)
 
 <!-- /TOC -->
 
