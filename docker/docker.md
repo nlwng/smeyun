@@ -19,11 +19,13 @@
 	- [2.10 docker容器随系统自启参数](#210-docker容器随系统自启参数)
 	- [2.11 查看容器状态信息](#211-查看容器状态信息)
 	- [2.12 持久化容器与镜像](#212-持久化容器与镜像)
+- [3](#3)
 
 <!-- /TOC -->
 
 # docker实践
 # 1 安装docker
+## 1.1 ubuntu环境安装
 ```
 apt-get update
 apt-get install -y --no-install-recommends \
@@ -65,21 +67,38 @@ sudo apt-get install lxc-docker
 下载ubuntu镜像并启动一个镜像来验证安装是否正常。
 docker run -i -t ubuntu /bin/bash
 ```
+## 1.2 centos环境安装
+Uninstall old versions:  
+yum remove docker docker-common container-selinux docker-selinux docker-engine  
+rpm -Uvh http://ftp.riken.jp/Linux/fedora/epel/6Server/x86_64/epel-release-6-8.noarch.rpm  
+yum install -y docker-io   
 
-## 1.1 测试docker
+开机自启动与启动Docker  
+service docker start  
+chkconfig docker on  
+
+更改配置文件  
+vim /etc/sysconfig/docker  
+other-args列更改为：other_args="--exec-driver=lxc --selinux-enabled"  
+docker search centos  
+
+需要改/etc/sysconfig/network-scripts/ifcfg-eth0  
+PEERDNS=no  
+
+## 1.3 测试docker
 docker run hello-world
 
-## 1.2 Upgrade Docker
+## 1.4 Upgrade Docker
 https://apt.dockerproject.org/repo/pool/main/d/docker-engine/
 dpkg -i /path/to/package.deb
 docker run hello-world
 
-## 1.3 卸载Docker
+## 1.5 卸载Docker
 apt-get purge docker-engine
 rm -rf /var/lib/docker
 
 
-## 1.4 使用 DaoCloud 镜像站点，高速安装Docker
+## 1.6 使用 DaoCloud 镜像站点，高速安装Docker
 修改Docker配置文件/etc/default/docker如下：
 DOCKER_OPTS="--registry-mirror=http://aad0405c.m.daocloud.io"
 
@@ -158,3 +177,18 @@ docker stats
 docker stats --no-stream
 
 ## 2.12 持久化容器与镜像
+
+# 3 docker实例子
+## 3.1 mysql in docker
+update gcc:  
+wget http://ftpmirror.gnu.org/gcc/gcc-5.2.0/gcc-5.2.0.tar.bz2  
+tar -xf  gcc-5.2.0.tar.bz2  
+
+./contrib/download_prerequisites  
+ Linux没有网络连接（我主机和虚拟机是Host-only，不能联网，所以另外想办法），则用Windows上网下载这几个包
+
+## 3.2 nginx in docker
+yum install -y gcc gcc-c++  
+./configure --with-http_ssl_module --with-pcre=/root/pcre-8.39 --with-zlib=/root/zlib-1.2.11 --with-openssl=/root/openssl-fips-2.0.14  
+
+## 3.3
