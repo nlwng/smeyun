@@ -9,8 +9,8 @@
 		- [1.1.4 磁盘条带化配置](#114-磁盘条带化配置)
 		- [1.1.5 分布式+复制](#115-分布式复制)
 		- [1.1.6 磁条化+复制](#116-磁条化复制)
-		- [1.1.6 配置GlusterFS客户端硬盘](#116-配置glusterfs客户端硬盘)
-		- [1.1.7 删除节点](#117-删除节点)
+		- [1.1.7 配置GlusterFS客户端硬盘](#117-配置glusterfs客户端硬盘)
+		- [1.1.8 删除节点](#118-删除节点)
 
 <!-- /TOC -->
 
@@ -170,13 +170,13 @@ gluster volume start vol_strip-replica
 gluster volume info
 
 
-### 1.1.6 配置GlusterFS客户端硬盘
+### 1.1.7 配置GlusterFS客户端硬盘
 yum -y install centos-release-gluster38  
 yum -y install glusterfs glusterfs-fuse  
 
 配置好hosts以后直接配置挂载:  
 mount -t glusterfs node01:/vol_distributed /mnt   
 
-### 1.1.7 删除节点
+### 1.1.8 删除节点
 删除集群    
 gluster peer detach node02  
