@@ -87,8 +87,8 @@ salt 'sme-y-001-s-02.novalocal' state.sls base.iptables test=True
 ## 2.1 安装
 ```
 yum -y install salt-api pyOpenSSL
-useradd -M -s /sbin/nologin neildev    
-echo 'neil1983' | passwd neildev --stdin   
+useradd -M -s /sbin/nologin user    
+echo 'passwd' | passwd user --stdin   
 ```
 
 ## 2.2 配置api:
@@ -100,7 +100,7 @@ rest_cherrypy:
   ssl_key: /etc/pki/tls/certs/localhost.key  
 external_auth:    
   pam:    
-    neildev:              
+    user:              
       - .*  
       - '@wheel'  
       - '@runner'
