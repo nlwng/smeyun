@@ -300,6 +300,9 @@ for i in {nova-api,nova-consoleauth,nova-scheduler,nova-conductor,nova-novncprox
 apt-get -qy install openstack-dashboard
 #Ubuntu 安裝 openstack-dashboard 時，會自動安裝` ``ubuntu-theme``` 樣板套件，若發生問題或者不需要，可以直接刪除該套件。
 apt-get remove --purge openstack-dashboard-ubuntu-theme
+cd /usr/share/openstack-dashboard
+./manage.py collectstatic
+./manage.py compress
 
 vim /etc/openstack-dashboard/local_settings.py
 #在 controller 节点上配置仪表盘以使用 OpenStack 服务：

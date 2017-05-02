@@ -18,7 +18,10 @@
 	- [1.15 安装zsh](#115-安装zsh)
 	- [1.16 python相关](#116-python相关)
 	- [1.17 优化terminator](#117-优化terminator)
-- [1.18 python相关](#118-python相关)
+	- [1.18 python相关](#118-python相关)
+	- [1.19 屏幕边缘鼠标粘滞](#119-屏幕边缘鼠标粘滞)
+	- [1.20 安装compiz](#120-安装compiz)
+	- [1.21 禁止guest账号登录](#121-禁止guest账号登录)
 - [2 github环境配置](#2-github环境配置)
 	- [2.1 git 免密码提交](#21-git-免密码提交)
 	- [2.2 git自动提交脚本](#22-git自动提交脚本)
@@ -295,6 +298,13 @@ effects --> anmations
 快捷键
 ctrl+alt+拖动  
 Shift Switcher  
+
+## 1.21 禁止guest账号登录
+禁止guest:  
+sudo sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" >/usr/share/lightdm/lightdm.conf.d/50-no-guest.conf'
+
+开启guest:
+sudo rm -f /usr/share/lightdm/lightdm.conf.d/50-no-guest.conf
 
 # 2 github环境配置
 sudo apt-get intsall git
