@@ -18,11 +18,16 @@
 			- [1.1.7.5 I/O 信息查看](#1175-io-信息查看)
 			- [1.1.7.6 top监控](#1176-top监控)
 			- [1.1.7.7 性能优化配置选项](#1177-性能优化配置选项)
+	- [1.2 ubutnu下安装](#12-ubutnu下安装)
 
 <!-- /TOC -->
 
 # GlusterFS
 GlusterFS适合存储大文件，小文件性能较差
+官方下载网站:  
+https://download.gluster.org/pub/gluster/  
+https://buildlogs.centos.org/centos/6/storage/x86_64/gluster-3.10/  
+
 ## 1 安装
 ## 1.1 centos6.8环境下安装使用
 vim /etc/hosts  
@@ -36,6 +41,15 @@ vim /etc/hosts
 ### 1.1.1 安装GlusterFS  
 yum -y install xfsprogs wget fuse fuse-libs  
 yum -y install centos-release-gluster38.noarch  
+
+glusterfs-server:  
+https://buildlogs.centos.org/centos/6/storage/x86_64/gluster-3.10/glusterfs-server-3.10.1-1.el6.x86_64.rpm  
+glusterfs-client:  
+https://buildlogs.centos.org/centos/6/storage/x86_64/gluster-3.10/glusterfs-client-xlators-3.10.1-1.el6.x86_64.rpm  
+glusterfs-common  
+
+glusterfs-dbg
+
 sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-Gluster-3.8.repo  
 yum --enablerepo=centos-gluster38,epel -y install glusterfs-server  
 
@@ -108,7 +122,7 @@ gluster volume start vol_striped
 查看卷:  
 gluster volume info
 
-
+apt-get install fuse libdevmapper-event1.02.1 libaio1 libibverbs1 liblvm2app2.2 librdmacm1
 ### 1.1.5 分布式+复制
 Distributed Replicated:分布式的复制卷，volume中brick所包含的存储服务器数必须是 replica 的倍数(>=2倍)，兼顾分布式和复制式的功能。  
 ```
@@ -188,7 +202,7 @@ yum -y install centos-release-gluster38
 yum -y install glusterfs glusterfs-fuse  
 
 配置好hosts以后直接配置挂载:  
-mount -t glusterfs node01:/vol_distributed /mnt   
+mount -t glusterfs node01:/vol_dist-replica /data   
 
 ### 1.1.8 GlusterFS卷维护
 删除集群[本文以vol_distributed为列]  
@@ -296,3 +310,7 @@ gluster volume set arch-img cluster.self-heal-daemon on
 gluster volume set arch-img cluster.heal-timeout 300  
 默认是1M 能提高写性能单个文件后写缓冲区的大小默认1M   
 gluster volume set arch-img performance.write-behind-window-size 256MB  
+
+## 1.2 ubutnu下安装
+依赖环境:  
+apt-get install fuse libdevmapper-event1.02.1 libaio1 libibverbs1 liblvm2app2.2 librdmacm1  
