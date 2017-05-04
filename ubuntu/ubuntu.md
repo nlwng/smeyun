@@ -100,7 +100,7 @@ sudo dpkg -l|grep qimpanel
 sudo dpkg -P 上面查出来的结果  
 
 
-## 1.10 安装mac皮肤
+## 1.10 安装mac皮肤和dock
 sudo add-apt-repository ppa:noobslab/macbuntu  
 sudo apt-get install  macbuntu-os-ithemes-lts-v7  
 sudo apt-get install  macbuntu-os-icons-lts-v7  
@@ -136,6 +136,11 @@ sudo apt-get update
 sudo apt-get install macbuntu-os-bscreen-lts-v7   
 如果你喜欢 MBuntu 启动界面，你想恢复到 Ubuntu ，使用命令:  
 sudo apt-get autoremove macbuntu-os-bscreen-lts-v7  
+
+docky:  
+sudo add-apt-repository ppa:docky-core/ppa   
+sudo apt-get update  
+sudo apt-get install docky  
 
 ## 1.11 系统备份
 sudo add-apt-repository ppa:nemh/systemback  
@@ -265,9 +270,12 @@ sudo pip install mysql-python
     scroll_on_output = False
     scrollback_lines = 50000
     use_system_font = False
+		show_titlebar = False
   [[New Profile]]
     background_image = None
 ```
+
+
 ## 1.18 python相关
 环境ubuntu desktop 16.04  
 sudo apt-get install python-pip  

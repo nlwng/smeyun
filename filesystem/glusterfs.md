@@ -40,7 +40,7 @@ vim /etc/hosts
 
 ### 1.1.1 安装GlusterFS  
 yum -y install xfsprogs wget fuse fuse-libs  
-yum -y install centos-release-gluster38.noarch  
+yum -y install centos-release-gluster310.noarch  
 
 glusterfs-server:  
 https://buildlogs.centos.org/centos/6/storage/x86_64/gluster-3.10/glusterfs-server-3.10.1-1.el6.x86_64.rpm  
@@ -50,8 +50,10 @@ glusterfs-common
 
 glusterfs-dbg
 
-sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-Gluster-3.8.repo  
-yum --enablerepo=centos-gluster38,epel -y install glusterfs-server  
+sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-Gluster-3.10.repo  
+
+yum clean all;yum makecache
+yum --enablerepo=centos-gluster310,epel -y install glusterfs-server   
 
 /etc/rc.d/init.d/glusterd start    
 chkconfig glusterd on
@@ -122,7 +124,7 @@ gluster volume start vol_striped
 查看卷:  
 gluster volume info
 
-apt-get install fuse libdevmapper-event1.02.1 libaio1 libibverbs1 liblvm2app2.2 librdmacm1
+
 ### 1.1.5 分布式+复制
 Distributed Replicated:分布式的复制卷，volume中brick所包含的存储服务器数必须是 replica 的倍数(>=2倍)，兼顾分布式和复制式的功能。  
 ```
@@ -155,7 +157,7 @@ node03:/glusterfs/dist-replica \
 node04:/glusterfs/dist-replica force
 
 启动卷:  
-gluster volume start vol_dist-replica   
+gluster volume start vol_dist-replica  
 
 查看卷:  
 gluster volume info
@@ -198,11 +200,15 @@ gluster volume start vol_strip-replica
 gluster volume info  
 
 ### 1.1.7 配置GlusterFS客户端硬盘
-yum -y install centos-release-gluster38  
+yum -y install xfsprogs wget fuse fuse-libs   
+yum -y install centos-release-gluster310    
 yum -y install glusterfs glusterfs-fuse  
 
 配置好hosts以后直接配置挂载:  
-mount -t glusterfs node01:/vol_dist-replica /data   
+```
+mount -t glusterfs node01:/strip-replica /data   
+echo "172.28.26.102:/img /mnt/ glusterfs defaults,_netdev 0 0" >> /etc/fstab (开机自动挂载)  
+```
 
 ### 1.1.8 GlusterFS卷维护
 删除集群[本文以vol_distributed为列]  
@@ -223,7 +229,28 @@ gluster volume list
 gluster volume info vol_distributed  
 
 查看集群中的卷状态:  
-gluster volume status vol_distributed  
+gluster volume status vol_distributed
+
+限制IP访问:  
+gluster volume set vol_distributed auth.allow 192.168.1.*
+
+后续增加节点时使用,扩容:    
+gluster peer probe node05  
+删除集群节点:  
+gluster peer detach node05  
+增加到卷,向卷中添加brick:  
+gluster volume add-brick vol_distributed node03:/glusterfs/distributed force  
+修复GlusterFS磁盘数据  
+比如在使用IP1的过程总宕机了，使用IP2替换，需要执行数据同步   
+gluster volume replace-brick gv0 IP1: /export/sdb1/brick IP2: /export/sdb1/brick commit -force  
+gluster volume heal gv0 full  
+
+若是副本卷，则一次添加的Bricks 数是replica 的整数倍；stripe 具有同样的要求  
+gluster volume add-brick vol_distributed replica 2 node05:/brick1 node06:/brick1 force  
+平衡卷内容:  
+volume rebalance gv0 start  
+
+
 
 #### 1.1.7.2 配额管理
 开启/关闭系统配额:  
@@ -293,24 +320,41 @@ gluster volume top VOLNAME write-perf [bs blk-size count count] [brickBRICK-NAME
 
 #### 1.1.7.7 性能优化配置选项
 默认是10% 磁盘剩余告警  
-gluster volume set arch-img cluster.min-free-disk  
+gluster volume set vol_distributed cluster.min-free-disk  
 默认是5% inodes 剩余告警  
-gluster volume set arch-img cluster.min-free-inodes   
+gluster volume set vol_distributed cluster.min-free-inodes   
 默认4，预读取的数量  
-gluster volume set img performance.read-ahead-page-count 8  
+gluster volume set vol_distributed performance.read-ahead-page-count 8  
 默认16 io 操作的最大线程  
-gluster volume set img performance.io-thread-count 16  
+gluster volume set vol_distributed performance.io-thread-count 16  
 默认42s  
-gluster volume set arch-img network.ping-timeout 10  
+gluster volume set vol_distributed network.ping-timeout 10  
 默认128M 或32MB  
-gluster volume set arch-img performance.cache-size 2GB   
+gluster volume set vol_distributed performance.cache-size 1GB   
 开启目录索引的自动愈合进程  
-gluster volume set arch-img cluster.self-heal-daemon on    
+gluster volume set vol_distributed cluster.self-heal-daemon on    
 自动愈合的检测间隔，默认为600s #3.4.2版本才有  
-gluster volume set arch-img cluster.heal-timeout 300  
+gluster volume set vol_distributed cluster.heal-timeout 300  
 默认是1M 能提高写性能单个文件后写缓冲区的大小默认1M   
-gluster volume set arch-img performance.write-behind-window-size 256MB  
+gluster volume set vol_distributed performance.write-behind-window-size 256MB  
 
 ## 1.2 ubutnu下安装
 依赖环境:  
 apt-get install fuse libdevmapper-event1.02.1 libaio1 libibverbs1 liblvm2app2.2 librdmacm1  
+
+
+## 1.3 压力测试
+### 1.3.1 dd测试
+dd if=/dev/zero of=/mnt/glusterfs/test.img bs=1024k count=1000  
+
+### 1.3.2 iozone测试
+如果你直接使用DD，不见得可以测试出真实带宽，估计是和多线程有关
+```
+wget http://www.iozone.org/src/current/iozone-3-434.src.rpm
+rpm -ivh iozone-3-434.src.rpm
+cd ~/rpmbuild/SOURCES
+
+tar -xvf iozone3_434.tar
+make linux-AMD64
+iozone -t 250 -i 0 -r 512k -s 500M -+n -w
+```
