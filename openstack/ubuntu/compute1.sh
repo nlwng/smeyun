@@ -91,3 +91,9 @@ crudini --set /etc/nova/nova.conf neutron password pass
 
 service nova-compute restart
 service neutron-linuxbridge-agent restart
+
+
+#
+volume_api_class = nova.volume.cinder.API
+vif_plugging_is_fatal = False
+vif_plugging_timeout = 0
