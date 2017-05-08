@@ -1,4 +1,23 @@
-[TOC]
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [环境准备](#环境准备)
+	- [配置网络接口](#配置网络接口)
+	- [修改主机名](#修改主机名)
+	- [配置主机名解析](#配置主机名解析)
+- [controller](#controller)
+- [net](#net)
+- [compute1](#compute1)
+- [compute2](#compute2)
+	- [配置域名解析](#配置域名解析)
+	- [设置软件源](#设置软件源)
+	- [配置NTP服务](#配置ntp服务)
+	- [OpenStack包](#openstack包)
+	- [sql数据库](#sql数据库)
+	- [NoSQL 数据库](#nosql-数据库)
+	- [消息队列](#消息队列)
+
+<!-- /TOC -->
+
 # 环境准备
 ##配置网络接口
 ``不同的节点配置不同的IP地址，如下为控制节点的配置``
@@ -15,7 +34,7 @@
 
  编辑``/etc/network/interfaces``文件包含以下内容：
 ```
-#The provider network interface
+ #The provider network interface
 auto INTERFACE_NAME
 iface INTERFACE_NAME inet manual
 up ip link set dev $IFACE up
@@ -30,31 +49,31 @@ down ip link set dev $IFACE down
 
 然后命令修改：
 ```
-# hostname controller
-# hostname net
-# hostname compute1
+hostname controller
+hostname net
+hostname compute1
 ```
 
 ##配置主机名解析
 设置节点主机名为
 编辑 /etc/hosts 文件包含以下内容：
 ```
-# controller
+#controller
 10.0.0.11       controller
 
-# net
+#net
 10.0.0.21        net
- 
-# compute1
+
+#compute1
 10.0.0.31       compute1
- 
-# compute2
+
+#compute2
 10.0.0.41       compute2
 ```
 ##配置域名解析
 修改 /etc/resolvconf/resolv.conf.d/base文件，设置合适的DNS服服务器：
 ```
-# nameserver 221.7.92.98
+nameserver 221.7.92.98
 ```
 
 ##设置软件源
@@ -62,11 +81,11 @@ down ip link set dev $IFACE down
 
 备份
 ```
-# mv /etc/apt/sources.list /etc/apt/sources.list.bak 
+mv /etc/apt/sources.list /etc/apt/sources.list.bak
 ```
 修改
 ```
-# vim /etc/apt/sources.list 
+vim /etc/apt/sources.list
 ```
 ```
 deb http://mirrors.aliyun.com/ubuntu/ trusty main restricted universe multiverse
@@ -80,14 +99,14 @@ deb-src http://mirrors.aliyun.com/ubuntu/ trusty-updates main restricted univers
 deb-src http://mirrors.aliyun.com/ubuntu/ trusty-proposed main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ trusty-backports main restricted universe multiverse
 
-deb [arch=amd64] http://192.168.2.88:1888/ubuntu trusty-updates/mitaka main 
-apt-get update 
+deb [arch=amd64] http://192.168.2.88:1888/ubuntu trusty-updates/mitaka main
+apt-get update
 apt-get install ubuntu-cloud-keyring
 ```
 
 更新列表
 ```
-# apt-get update 
+apt-get update
 ```
 
 ##配置NTP服务
@@ -98,7 +117,7 @@ apt-get install chrony
 ```
 编辑 /etc/chrony/chrony.conf 文件，按照你环境的要求，对下面的键进行添加，修改或者删除：
 ```
-server controller iburst 
+server controller iburst
 ```
 ``使用NTP服务器的主机名或者IP地址替换 controller (这里设置的控制节点)``,配置支持设置多个 server 值
 重启 NTP 服务：
@@ -123,17 +142,17 @@ chronyc sources
 启用OpenStack库
 
 ```
-# apt-get install software-properties-common
-# add-apt-repository cloud-archive:mitaka  #内网源不要执行这一句
+apt-get install software-properties-common
+add-apt-repository cloud-archive:mitaka  #内网源不要执行这一句
 ```
 
 在主机上升级包：
 ```
-# apt-get update && apt-get dist-upgrade
+apt-get update && apt-get dist-upgrade
 ```
 安装 OpenStack 客户端：
 ```
-# apt-get install python-openstackclient
+apt-get install python-openstackclient
 ```
 
 ##sql数据库
@@ -164,7 +183,7 @@ mysql_secure_installation
 
 安装MongoDB包：
 ```
-# apt-get install mongodb-server mongodb-clients python-pymongo
+apt-get install mongodb-server mongodb-clients python-pymongo
 ```
 编辑文件 /etc/mongodb.conf 并完成如下动作：
 
@@ -178,22 +197,21 @@ crudini --set /etc/mongodb.conf '' smallfiles true
 ```
 如果您修改 journaling 的配置，请停止 MongoDB 服务，删除 journal 的初始化文件，并启动服务：
 ```
-# service mongodb stop
-# rm /var/lib/mongodb/journal/prealloc.*
-# service mongodb start
+service mongodb stop
+rm /var/lib/mongodb/journal/prealloc.*
+service mongodb start
 ```
 ##消息队列
 安装在控制节点
 安装包：
 ```
-# apt-get install rabbitmq-server
+apt-get install rabbitmq-server
 ```
 添加 openstack 用户：
 ```
-# rabbitmqctl add_user openstack pass
+rabbitmqctl add_user openstack pass
 ```
 给``openstack``用户配置写和读权限：
 ```
-# rabbitmqctl set_permissions openstack ".*" ".*" ".*"
+rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 ```
-
