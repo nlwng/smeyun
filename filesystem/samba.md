@@ -20,18 +20,18 @@ vim /etc/samba/smb.conf
 ```
 [global]
 
-      workgroup = LinuxSir
-      netbios name = LinuxSir05
-      server string = Linux Samba Server TestServer
+      workgroup = smefile
+      netbios name = smefile
+      server string = smeyun Samba Server
       security = share
 
-[cloudfile]
-      path = /date/cloudfile
+[smefile]
+      path = /date/smefile
       writeable = yes
       browseable = yes
       guest ok = yes
 ```
 
 ## 启动进程
-smbd  
-nmbd  
+/usr/sbin/nmbd
+/usr/sbin/smbd
