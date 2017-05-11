@@ -1,7 +1,7 @@
 -------------------------------------------------------------
-控制节点
+锟斤拷锟狡节碉拷
 -------------------------------------------------------------
-#块存储服务（cinder）为实例提供块存储。存储的分配和消耗是由块存储驱动器，或者多后端配置的驱动器决定的。还有很多驱动程序可用：NAS/SAN，NFS，ISCSI，Ceph等。
+#锟斤拷锟芥储锟斤拷锟斤拷锟斤拷cinder锟斤拷为实锟斤拷锟结供锟斤拷锟芥储锟斤拷锟芥储锟侥凤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟缴匡拷锟芥储锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟竭讹拷锟斤拷锟斤拷锟斤拷锟矫碉拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟侥★拷锟斤拷锟叫很讹拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟矫ｏ拷NAS/SAN锟斤拷NFS锟斤拷ISCSI锟斤拷Ceph锟饺★拷
 
 mysql -uroot -ppass <<EOF
 CREATE DATABASE cinder;
@@ -15,14 +15,14 @@ source admin-openrc
 openstack user create --domain default --password-prompt cinder
 openstack role add --project service --user cinder admin
 
-#创建 cinder 和 cinderv2 服务实体：
+#锟斤拷锟斤拷 cinder 锟斤拷 cinderv2 锟斤拷锟斤拷实锟藉：
 openstack service create --name cinder \
   --description "OpenStack Block Storage" volume
 
 openstack service create --name cinderv2 \
   --description "OpenStack Block Storage" volumev2
 
-#创建块设备存储服务的 API 入口点
+#锟斤拷锟斤拷锟斤拷锟借备锟芥储锟斤拷锟斤拷锟斤拷 API 锟斤拷锟节碉拷
 openstack endpoint create --region RegionOne \
   volume public http://controller:8776/v1/%\(tenant_id\)s
 
@@ -59,12 +59,12 @@ crudini --set /etc/cinder/cinder.conf keystone_authtoken project_name service
 crudini --set /etc/cinder/cinder.conf keystone_authtoken username cinder
 crudini --set /etc/cinder/cinder.conf keystone_authtoken password pass
 
-#在 [DEFAULT 部分，配置``my_ip`` 来使用控制节点的管理接口的IP 地址。
+#锟斤拷 [DEFAULT 锟斤拷锟街ｏ拷锟斤拷锟斤拷``my_ip`` 锟斤拷使锟矫匡拷锟狡节碉拷锟侥癸拷锟斤拷锟接口碉拷IP 锟斤拷址锟斤拷
 crudini --set /etc/cinder/cinder.conf DEFAULT my_ip 192.168.31.135
 crudini --set /etc/cinder/cinder.conf oslo_concurrency lock_path /var/lib/cinder/tmp
 
 su -s /bin/sh -c "cinder-manage db sync" cinder
-#配置计算节点以使用块设备存储
+#锟斤拷锟矫硷拷锟斤拷锟节碉拷锟斤拷使锟矫匡拷锟借备锟芥储
 crudini --set /etc/nova/nova.conf cinder os_region_name RegionOne
 
 service nova-api restart
@@ -74,20 +74,20 @@ service cinder-api restart
 for i in {nova-api,cinder-scheduler,cinder-api};do service $i restart;done
 
 -------------------------------------------------------------
-cinder节点
+cinder锟节碉拷
 -------------------------------------------------------------
-#安装支持的工具包：
+#锟斤拷装支锟街的癸拷锟竭帮拷锟斤拷
 apt-get install lvm2
-#创建LVM 物理卷 /dev/sdb
+#锟斤拷锟斤拷LVM 锟斤拷锟斤拷锟斤拷 /dev/sdb
 pvcreate /dev/sdb
-#创建 LVM 卷组 cinder-volumes：
+#锟斤拷锟斤拷 LVM 锟斤拷锟斤拷 cinder-volumes锟斤拷
 vgcreate cinder-volumes /dev/sdb
 
 #vim /etc/lvm/lvm.conf
-#在``devices``部分，添加一个过滤器，只接受``/dev/sdb``设备，拒绝其他所有设备
+#锟斤拷``devices``锟斤拷锟街ｏ拷锟斤拷锟斤拷一锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷只锟斤拷锟斤拷``/dev/sdb``锟借备锟斤拷锟杰撅拷锟斤拷锟斤拷锟斤拷锟斤拷锟借备
 devices {
 filter = [ "a/sdb/", "r/.*/"]
-#如果您的存储节点在操作系统磁盘上使用了 LVM，您还必需添加相关的设备到过滤器中。例如，如果 /dev/sda 设备包含操作系统：
+#锟斤拷锟斤拷锟斤拷锟侥存储锟节碉拷锟节诧拷锟斤拷系统锟斤拷锟斤拷锟斤拷使锟斤拷锟斤拷 LVM锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟截碉拷锟借备锟斤拷锟斤拷锟斤拷锟斤拷锟叫★拷锟斤拷锟界，锟斤拷锟斤拷 /dev/sda 锟借备锟斤拷锟斤拷锟斤拷锟斤拷系统锟斤拷
 filter = [ "a/sda/", "a/sdb/", "a/sdc/","r/.*/"]
 
 apt-get install cinder-volume
@@ -104,7 +104,7 @@ crudini --set /etc/cinder/cinder.conf keystone_authtoken auth_url http://control
 crudini --set /etc/cinder/cinder.conf keystone_authtoken memcached_servers controller:11211
 crudini --set /etc/cinder/cinder.conf keystone_authtoken auth_type password
 crudini --set /etc/cinder/cinder.conf keystone_authtoken project_domain_name default
-crudini --set /etc/cinder/cinder.conf keystone_authtoken user_domain_name default 
+crudini --set /etc/cinder/cinder.conf keystone_authtoken user_domain_name default
 crudini --set /etc/cinder/cinder.conf keystone_authtoken project_name service
 crudini --set /etc/cinder/cinder.conf keystone_authtoken username cinder
 crudini --set /etc/cinder/cinder.conf keystone_authtoken password pass
@@ -117,7 +117,7 @@ crudini --set /etc/cinder/cinder.conf DEFAULT nfs_mount_point_base $state_path/m
 crudini --set /etc/cinder/cinder.conf DEFAULT nfs_shares_config /etc/cinder/nfs_shares
 crudini --set /etc/cinder/cinder.conf DEFAULT nfs_sparsed_volumes True
 
-#在``[lvm]``部分，配置LVM后端以LVM驱动结束，卷组``cinder-volumes`` ，iSCSI 协议和正确的 iSCSI服务:
+#锟斤拷``[lvm]``锟斤拷锟街ｏ拷锟斤拷锟斤拷LVM锟斤拷锟斤拷锟斤拷LVM锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷``cinder-volumes`` 锟斤拷iSCSI 协锟斤拷锟斤拷锟斤拷确锟斤拷 iSCSI锟斤拷锟斤拷:
 crudini --set /etc/cinder/cinder.conf lvm volume_driver cinder.volume.drivers.lvm.LVMVolumeDriver
 crudini --set /etc/cinder/cinder.conf lvm volume_group cinder-volumes
 crudini --set /etc/cinder/cinder.conf lvm iscsi_protocol iscsi
@@ -160,7 +160,7 @@ crudini --set /etc/cinder/cinder.conf DEFAULT enabled_backends nfs
 
 crudini --set /etc/cinder/cinder.conf lvm volume_driver cinder.volume.drivers.nfs.NfsDriver
 
-#挂载盘位置
+#锟斤拷锟斤拷锟斤拷位锟斤拷
 vim /etc/cinder/nfs_shares
 #192.168.31.139:/data/storage
 #mount -t nfs 192.168.31.139:/data/storage
@@ -171,33 +171,34 @@ python setup.py install
 mkdir -p /etc/cinder /var/log/cinder /var/lib/cinder /var/run/cider
 apt-get -qy install git git-core python-pip
 pip install tox;cp /usr/local/bin/tox /usr/bin/
-tox -egenconfig  
+tox -egenconfig
 
 
 ----------------------------------
-glusterfs ceph 云盘控制节点直接装, 集群计算，控制节点都装
+glusterfs ceph 锟斤拷锟教匡拷锟狡节碉拷直锟斤拷装, 锟斤拷群锟斤拷锟姐，锟斤拷锟狡节点都装
 ----------------------------------
 apt-get install  glusterfs-server
-service glusterfs-server start 
+service glusterfs-server start
 gluster peer status
-#将控制节点上主机加入集群，多个ip地址问题
+#锟斤拷锟斤拷锟狡节碉拷锟斤拷锟斤拷锟斤拷锟斤拷锟诫集群锟斤拷锟斤拷锟斤拷ip锟斤拷址锟斤拷锟斤拷
 gluster peer probe 192.168.31.136
-#删除集群
+gluster peer probe cinder1
+#删锟斤拷锟斤拷群
 gluster peer detach 192.168.31.136
 
-#创建目录
+#锟斤拷锟斤拷目录
 mkdir -p /data/glusterfs-node1
 mkdir -p /data/glusterfs-node2
 
-#创建卷
-gluster volume create demo replica 2 192.168.31.135:/data/glusterfs-node1 192.168.31.136:/data/glusterfs-node2 force
+#锟斤拷锟斤拷锟斤拷
+gluster volume create demo replica 2 cinder1:/node1 cinder1:/node2 cinder1:/node3 cinder1:/node4 force
 
-#启动卷
+#锟斤拷锟斤拷锟斤拷
 gluster vol start demo
-#查看分布式节点
+#锟介看锟街诧拷式锟节碉拷
 gluster vol info
 
-#使用
+#使锟斤拷
 vim /etc/cinder/cinder.conf
 crudini --set /etc/cinder/cinder.conf glusterfs volume_driver cinder.volume.drivers.glusterfs.GlusterfsDriver
 crudini --set /etc/cinder/cinder.conf glusterfs glusterfs_shares_config /etc/cider/glusterfs_shares
@@ -209,7 +210,7 @@ crudini --set /etc/cinder/cinder.conf DEFAULT enabled_backends glusterfs
 vim /etc/cider/glusterfs_shares
 192.168.33.135:/demo
 
-#安装cinder模块
+#锟斤拷装cinder模锟斤拷
 apt-get -qy install cinder-api cinder-scheduler cinder-volume
 for i in {nova-api,cinder-volume,cinder-scheduler,cinder-api};do service $i restart;done
 
@@ -227,29 +228,29 @@ NEW
 install glusterfs in all nodes
 ---------------------
 apt-get -y install glusterfs-server
-systemctl enable glusterfs-server 
+systemctl enable glusterfs-server
 
-systemctl start rpcbind 
-systemctl enable rpcbind 
+systemctl start rpcbind
+systemctl enable rpcbind
 
 Create a Directory for GlusterFS Volume on all Nodes.
 --------------------------------
-mkdir /glusterfs/replica 
+mkdir /glusterfs/replica
 
 # probe the node
-gluster peer probe node02 
+gluster peer probe node02
 # show status
-gluster peer status 
+gluster peer status
 
 # create volume
 gluster volume create vol_replica replica 2 transport tcp \
 node01:/glusterfs/replica \
-node02:/glusterfs/replica 
+node02:/glusterfs/replica
 # start volume
-gluster volume start vol_replica 
+gluster volume start vol_replica
 
 # show volume info
-gluster volume info 
+gluster volume info
 
 Storage Node
 ---------------------
@@ -262,8 +263,8 @@ vim /etc/cider/glusterfs_shares
 # create new : specify GlusterFS volumes
 192.168.31.135:/demo
 
-chmod 640 /etc/cinder/glusterfs_shares 
-chgrp cinder /etc/cinder/glusterfs_shares  
+chmod 640 /etc/cinder/glusterfs_shares
+chgrp cinder /etc/cinder/glusterfs_shares
 service  cinder-volume restart
 
 Compute Node
@@ -272,5 +273,3 @@ apt-get -y install glusterfs-client
 
 crudini --set /etc/nova/nova.conf DEFAULT volume_api_class nova.volume.cinder.API
 service nova-compute restart
-
-

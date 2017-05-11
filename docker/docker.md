@@ -23,7 +23,14 @@
 - [3 docker实例子](#3-docker实例子)
 	- [3.1 mysql in docker](#31-mysql-in-docker)
 	- [3.2 nginx in docker](#32-nginx-in-docker)
-	- [3.3](#33)
+	- [3.3 zabbix in docker](#33-zabbix-in-docker)
+- [4 docker私有仓库搭建](#4-docker私有仓库搭建)
+	- [docker镜像位置设置](#docker镜像位置设置)
+	- [registry环境搭建](#registry环境搭建)
+		- [ip方式](#ip方式)
+		- [域名方式,https](#域名方式https)
+	- [centos 客户端](#centos-客户端)
+- [docker相关错误处理](#docker相关错误处理)
 
 <!-- /TOC -->
 
@@ -194,10 +201,24 @@ tar -xf  gcc-5.2.0.tar.bz2
 yum install -y gcc gcc-c++  
 ./configure --with-http_ssl_module --with-pcre=/root/pcre-8.39 --with-zlib=/root/zlib-1.2.11 --with-openssl=/root/openssl-fips-2.0.14  
 
-## 3.3
+## 3.3 zabbix in docker
+docker run -d --name tmp -p 902:80 10.23.127.59:5000/zabbix  
+访问:http://10.23.127.53:902/zabbix/  
+默认登录信息: admin zabbix  
 
 # 4 docker私有仓库搭建
+## docker镜像位置设置
+在 Ubuntu/Debian 系统下,编辑 /etc/default/docker 文件, 添加-g 参数的设置, 如下:  
+```
+DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 /data/docker"
+```
+在 Fedora/Centos 系统下,编辑 /etc/sysconfig/docker 文件, 添加-g 参数的设置, 如下:  
+```
+other_args="-g /mnt"
+```
+
 ## registry环境搭建
+### ip方式
 默认情况下，会将仓库存放于容器内的/tmp/registry目录下  
 sudo docker pull registry  
 sudo docker run -d -p 5000:5000 registry  
@@ -213,7 +234,7 @@ mkdir -p /data/docker/tls_certs;cd /data/docker/tls_certs
 openssl req -x509 -days 3650 -nodes -newkey rsa:2048 -keyout docker_reg.key -out docker_reg.crt -subj "/C=CN/ST=BJ/L=Beijing/CN=10.23.127.59:5000"
 
 运行docker registry
-docker run -d --name docker-registry-no-proxy  --restart=always -u root -p 5000:5000 -v /data/docker/registry/:/var/lib/registry -v /data/docker/tls_certs:/certs -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/docker_reg.crt -e REGISTRY_HTTP_TLS_KEY=/certs/docker_reg.key registry:2
+docker run -d --name docker-registry-no-proxy  --restart=always -u root -p 5000:5000 -v /data/docker/registry/:/var/lib/registry -v /data/docker/tls_certs:/certs -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/docker_reg.crt -e REGISTRY_HTTP_TLS_KEY=/certs/docker_reg.key registry:2.1.1
 
 ```
 
@@ -224,6 +245,12 @@ docker run -d --name docker-registry-no-proxy  --restart=always -u root -p 5000:
 ```
 
 使用仓库:  
+vim /etc/default/docker  
+```
+DOCKER_OPTS="--insecure-registry 10.23.127.59:5000"
+service docker restart
+```
+
 ```
 1. 从docker下载一个镜像：
 docker pull hello-world
@@ -235,11 +262,54 @@ docker push 10.23.127.59:5000/hello-world
 docker pull 10.23.127.59:5000/hello-world
 ```
 
+### 域名方式,https
+添加映射host:  
+echo '10.23.127.58 hub.c.smeyun.com'>> /etc/hosts  
+
+master上生成https相关自签名证书:  
+```
+mkdir -p ~/certs
+cd ~/certs
+openssl genrsa -out hub.c.smeyun.com.key 2048  
+```
+生成域名秘钥文件:  
+```
+openssl req -newkey rsa:4096 -nodes -sha256 -keyout hub.c.smeyun.com.key -x509 -days 365 -out hub.c.smeyun.com.crt  
+```
+将证书添加到Docker的根证书中，Docker在CentOS 7中，证书存放路径是/etc/docker/certs.d/   
+
+```
+master端:
+mkdir -p /etc/docker/certs.d/hub.c.smeyun.com
+cp ~/certs/hub.c.smeyun.com.crt /etc/docker/certs.d/hub.c.smeyun.com/
+
+slave端
+mkdir -p /etc/docker/certs.d/hub.c.smeyun.com
+将hub.c.smeyun.com.crt 上传
+```
+重启docker  
+service docker restart
+
+启动私有仓库:  
+```
+mkdir -p /data/docker-image
+docker run -d -p 443:5000 --restart=always --name registry \
+-v `pwd`/certs:/certs \
+-v /opt/docker-image:/data/docker-image \
+-e STORAGE_PATH=/data/docker-image \
+-e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/hub.c.smeyun.com.crt \
+-e REGISTRY_HTTP_TLS_KEY=/certs/hub.c.smeyun.com.key \
+registry:2
+```
+
+参考:  
+https://eacdy.gitbooks.io/spring-cloud-book
+
 ## centos 客户端
 vim /etc/sysconfig/docker
 ```  
-OPTIONS='--insecure-registry 10.23.127.59:5000'    #CentOS 7系统  
-other_args='--insecure-registry 10.23.127.59:5000' #CentOS 6系统  
+OPTIONS='--insecure-registry hub.c.smeyun.com:5000'    #CentOS 7系统  
+other_args='--insecure-registry hub.c.smeyun.com:5000' #CentOS 6系统  
 ```
 
 

@@ -34,7 +34,7 @@ vim /etc/hosts
 ```
 10.0.0.51 node01
 10.0.0.52 node02
-10.0.0.53 node03
+10.0.0.53 node03sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-Gluster-3.10.repo  
 10.0.0.54 node04
 ```
 
@@ -342,10 +342,12 @@ gluster volume set vol_distributed performance.write-behind-window-size 256MB
 依赖环境:  
 apt-get install fuse libdevmapper-event1.02.1 libaio1 libibverbs1 liblvm2app2.2 librdmacm1  
 
+mount.glusterfs  node:test /data
+
 
 ## 1.3 压力测试
 ### 1.3.1 dd测试
-dd if=/dev/zero of=/mnt/glusterfs/test.img bs=1024k count=1000  
+dd if=/dev/zero of=/data/test.img bs=1024k count=1000  
 
 ### 1.3.2 iozone测试
 如果你直接使用DD，不见得可以测试出真实带宽，估计是和多线程有关
@@ -357,4 +359,107 @@ cd ~/rpmbuild/SOURCES
 tar -xvf iozone3_434.tar
 make linux-AMD64
 iozone -t 250 -i 0 -r 512k -s 500M -+n -w
+```
+#  故障处理案例
+## 案例1
+一台主机故障:   
+1. 物理故障  
+2. 同时有多块硬盘故障，造成数据丢失  
+3. 系统损坏不可修复  
+
+解决:  
+找一台完全一样的机器，至少要保证硬盘数量和大小一致，安装系统，配置和故障机同样的 IP，安装 gluster 软件，保证配置一样，在其他健康节点上执行命令 gluster peer status，查看故障服务器的 uuid  
+
+修改新加机器的 /var/lib/glusterd/glusterd.info 和 故障机器一样:  
+vim /var/lib/glusterd/glusterd.info  
+```
+UUID=6e6a84af-ac7a-44eb-85c9-50f1f46acef1
+operating-version=30712
+```
+在信任存储池中任意节点执行  
+gluster volume heal gv2 full  
+可以查看状态:  
+gluster volume heal gv2 info  
+
+## 案例2
+硬盘故障:   
+解决:  
+正常节点执行:gluster volume status 记录uuid  
+执行：getfattr -d -m ‘.*’ /brick 记录 trusted.gluster.volume-id 及 trusted.gfid
+
+```
+ 系统提示如下：
+Message from syslogd@linux-node01 at Jul 30 08:41:46 ...
+ storage-brick2[5893]: [2016-07-30 00:41:46.729896] M [MSGID: 113075] [posix-helpers.c:1844:posix_health_check_thread_proc] 0-gv2-posix: health-check failed, going down
+
+Message from syslogd@linux-node01 at Jul 30 08:42:16 ...
+ storage-brick2[5893]: [2016-07-30 00:42:16.730518] M [MSGID: 113075] [posix-helpers.c:1850:posix_health_check_thread_proc] 0-gv2-posix: still alive! -> SIGTERM
+
+  查看卷状态，mystorage1:/storage/brick2 不在线了，不过这是分布式复制卷，还可以访问另外 brick 上的数据
+[root@mystorage1 ~]# gluster volume status gv2
+Status of volume: gv2
+Gluster process                             TCP Port  RDMA Port  Online  Pid
+
+```
+
+修复过程:  
+故障mystorage1 主机的第三块硬盘,对应 sdc /storage/brick2  
+增加一块新硬盘并执行:  
+```
+mkfs.xfs -f /dev/sdc
+mkdir -p /storage/brick2
+mount -a
+df -h
+```
+配置新硬盘gluser参数:  
+```
+ 在 mystorage2 是获取 glusterfs 相关参数：
+[root@mystorage2 tmp]# getfattr -d -m '.*'  /storage/brick2
+getfattr: Removing leading '/' from absolute path names
+ file: storage/brick2
+trusted.gfid=0sAAAAAAAAAAAAAAAAAAAAAQ==
+trusted.glusterfs.dht=0sAAAAAQAAAAAAAAAAf////g==
+trusted.glusterfs.dht.commithash="3168624641"
+trusted.glusterfs.quota.dirty=0sMAA=
+trusted.glusterfs.quota.size.1=0sAAAAAATiAAAAAAAAAAAAAwAAAAAAAAAE
+trusted.glusterfs.volume-id=0sEZKGliY6THqhVVEVrykiHw==
+
+ 在 mystorage1 上执行配置 glusterfs 参数和上述一样
+
+setfattr -n trusted.gfid -v 0sAAAAAAAAAAAAAAAAAAAAAQ== /storage/brick2
+setfattr -n trusted.glusterfs.dht -v 0sAAAAAQAAAAAAAAAAf////g== /storage/brick2
+setfattr -n trusted.glusterfs.dht.commithash -v "3168624641" /storage/brick2
+setfattr -n trusted.glusterfs.quota.dirty -v 0sMAA= /storage/brick2
+setfattr -n trusted.glusterfs.quota.size.1 -v 0sAAAAAATiAAAAAAAAAAAAAwAAAAAAAAAE /storage/brick2
+setfattr -n trusted.glusterfs.volume-id -v 0sEZKGliY6THqhVVEVrykiHw== /storage/brick2
+
+[root@mystorage1 ~]# /etc/init.d/glusterd restart
+Starting glusterd:                                         [  OK  ]
+
+
+[root@mystorage1 ~]# gluster volume heal gv2 info
+Brick mystorage1:/storage/brick2
+Status: Connected
+Number of entries: 0
+
+Brick mystorage2:/storage/brick2
+/data
+Status: Connected
+Number of entries: 1		# 显示一个条目在修复，自动修复完成后会为 0
+
+Brick mystorage3:/storage/brick1
+Status: Connected
+Number of entries: 0
+
+Brick mystorage4:/storage/brick1
+Status: Connected
+Number of entries: 0
+
+ 自动修复同步完成后，查看新硬盘的数据同步过来了
+[root@mystorage1 ~]# ll /storage/brick2
+total 40012
+-rw-r--r-- 2 root root 20480000 Jul 30 02:41 20M.file
+-rw-r--r-- 2 root root 20480000 Jul 30 03:13 20M.file1
+drwxr-xr-x 2 root root       21 Jul 30 09:14 data
+
 ```
