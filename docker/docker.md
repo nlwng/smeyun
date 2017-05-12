@@ -79,22 +79,22 @@ sudo apt-get install lxc-docker
 docker run -i -t ubuntu /bin/bash
 ```
 ## 1.2 centos环境安装
-Uninstall old versions:  
-yum remove docker docker-common container-selinux docker-selinux docker-engine  
-rpm -Uvh http://ftp.riken.jp/Linux/fedora/epel/6Server/x86_64/epel-release-6-8.noarch.rpm  
-yum install -y docker-io   
+Uninstall old versions:
+yum remove docker docker-common container-selinux docker-selinux docker-engine
+rpm -Uvh http://ftp.riken.jp/Linux/fedora/epel/6Server/x86_64/epel-release-6-8.noarch.rpm
+yum install -y docker-io
 
-开机自启动与启动Docker  
-service docker start  
-chkconfig docker on  
+开机自启动与启动Docker
+service docker start
+chkconfig docker on
 
-更改配置文件  
-vim /etc/sysconfig/docker  
-other-args列更改为：other_args="--exec-driver=lxc --selinux-enabled"  
-docker search centos  
+更改配置文件
+vim /etc/sysconfig/docker
+other-args列更改为：other_args="--exec-driver=lxc --selinux-enabled"
+docker search centos
 
-需要改/etc/sysconfig/network-scripts/ifcfg-eth0  
-PEERDNS=no  
+需要改/etc/sysconfig/network-scripts/ifcfg-eth0
+PEERDNS=no
 
 ## 1.3 测试docker
 docker run hello-world
@@ -164,75 +164,107 @@ docker run -itd --name centos_aways --restart=always centos #创建一个名称c
 ```
 
 ## 2.8 镜像的获取与容器的使用
-搜索镜像  
+搜索镜像
 docker search <image> # 在docker index中搜索image
-下载镜像  
-docker pull <image>  # 从docker registry server 中下拉image  
-查看镜像  
-docker images:# 列出images  
-docker images -a # 列出所有的images（包含历史）  
-docker rmi  <image ID>:# 删除一个或多个image  
+下载镜像
+docker pull <image>  # 从docker registry server 中下拉image
+查看镜像
+docker images:# 列出images
+docker images -a # 列出所有的images（包含历史）
+docker rmi  <image ID>:# 删除一个或多个image
 
 ## 2.9 容器资源限制参数
--m 1024m --memory-swap=1024m  # 限制内存最大使用（bug：超过后进程被杀死）  
---cpuset-cpus="0,1"           # 限制容器使用CPU  
+-m 1024m --memory-swap=1024m  # 限制内存最大使用（bug：超过后进程被杀死）
+--cpuset-cpus="0,1"           # 限制容器使用CPU
 
 ## 2.10 docker容器随系统自启参数
-docker run --restart=always redis  
-	no – 默认值，如果容器挂掉不自动重启  
-	on-failure – 当容器以非 0 码退出时重启容器  
-		同时可接受一个可选的最大重启次数参数 (e.g. on-failure:5).  
-	always – 不管退出码是多少都要重启  
+docker run --restart=always redis
+	no – 默认值，如果容器挂掉不自动重启
+	on-failure – 当容器以非 0 码退出时重启容器
+		同时可接受一个可选的最大重启次数参数 (e.g. on-failure:5).
+	always – 不管退出码是多少都要重启
 
 ## 2.11 查看容器状态信息
 docker stats
 docker stats --no-stream
 
 ## 2.12 容器快照
-docker commit a1b1da01d34f hub.c.smeyun.com/jenkins  
-docker push hub.c.smeyun.com/jenkins  
+docker commit a1b1da01d34f hub.c.smeyun.com/jenkins
+docker push hub.c.smeyun.com/jenkins
 
 ## 2.13 备份
-docker save -o ~/jenkins hub.c.smeyun.com/jenkins  
+docker save -o ~/jenkins hub.c.smeyun.com/jenkins
 
 
 # 3 docker实例子
 ## 3.1 mysql in docker
-update gcc:  
-wget http://ftpmirror.gnu.org/gcc/gcc-5.2.0/gcc-5.2.0.tar.bz2  
-tar -xf  gcc-5.2.0.tar.bz2  
+update gcc:
+wget http://ftpmirror.gnu.org/gcc/gcc-5.2.0/gcc-5.2.0.tar.bz2
+tar -xf  gcc-5.2.0.tar.bz2
 
-./contrib/download_prerequisites  
+./contrib/download_prerequisites
  Linux没有网络连接（我主机和虚拟机是Host-only，不能联网，所以另外想办法），则用Windows上网下载这几个包
 
 ## 3.2 nginx in docker
-yum install -y gcc gcc-c++  
-./configure --with-http_ssl_module --with-pcre=/root/pcre-8.39 --with-zlib=/root/zlib-1.2.11 --with-openssl=/root/openssl-fips-2.0.14  
+yum install -y gcc gcc-c++
+./configure --with-http_ssl_module --with-pcre=/root/pcre-8.39 --with-zlib=/root/zlib-1.2.11 --with-openssl=/root/openssl-fips-2.0.14
 
 ## 3.3 zabbix in docker
-docker run -d --name tmp -p 902:80 hub.c.smeyun.com/zabbix  
-访问:http://10.23.127.53:902/zabbix/  
-默认登录信息: admin zabbix  
+docker run -d --name tmp -p 902:80 hub.c.smeyun.com/zabbix
+访问:http://10.23.127.53:902/zabbix/
+默认登录信息: admin zabbix
+
+
+## 3.4 gitlib in docker
+docker pull gitlab/gitlab-ce:latest
+```
+sudo docker run --detach \
+    --hostname 192.168.11.108 \
+    --publish 443:443 --publish 801:80 --publish 58422:22 \
+    --name gitlab \
+    --restart always \
+    --volume /srv/gitlab/config:/etc/gitlab \
+    --volume /srv/gitlab/logs:/var/log/gitlab \
+    --volume /srv/gitlab/data:/var/opt/gitlab \
+    gitlab/gitlab-ce:latest
+
+docker exec -it gitlab /bin/bash
+Gitlab的全局配置文件：/etc/gitlab/gitlab.rb
+初始密码设置:账号root
+```
+gitlab更新：
+```
+docker stop gitlab
+docker rm gitlab
+docker pull gitlab/gitlab-ce:latest
+然后在使用上次的配置运行Gitlab即可。不用担心数据会丢失。只要你的volume参数指定还和上次一样，Gitlab就会自动读取这些配置
+```
+
+gitlib汉化：
+```
+查看版本：cat /opt/gitlab/embedded/service/gitlab-rails/VERSION
+汉化git：https://gitlab.com/Fenlly/gitlab-ce
+```
 
 # 4 docker私有仓库搭建
 ## docker镜像位置设置
-在 Ubuntu/Debian 系统下,编辑 /etc/default/docker 文件, 添加-g 参数的设置, 如下:  
+在 Ubuntu/Debian 系统下,编辑 /etc/default/docker 文件, 添加-g 参数的设置, 如下:
 ```
 DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 /data/docker"
 ```
-在 Fedora/Centos 系统下,编辑 /etc/sysconfig/docker 文件, 添加-g 参数的设置, 如下:  
+在 Fedora/Centos 系统下,编辑 /etc/sysconfig/docker 文件, 添加-g 参数的设置, 如下:
 ```
 other_args="-g /mnt"
 ```
 
 ## registry环境搭建
 ### ip方式
-默认情况下，会将仓库存放于容器内的/tmp/registry目录下  
-sudo docker pull registry  
-sudo docker run -d -p 5000:5000 registry  
-sudo docker run -d -p 5000:5000 -v /opt/data/registry:/tmp/registry registry  
+默认情况下，会将仓库存放于容器内的/tmp/registry目录下
+sudo docker pull registry
+sudo docker run -d -p 5000:5000 registry
+sudo docker run -d -p 5000:5000 -v /opt/data/registry:/tmp/registry registry
 
-设置服务器TLS认证:  
+设置服务器TLS认证:
 ```
 一般情况下，证书只支持域名访问，要使其支持IP地址访问，需要修改配置文件openssl.cnf。在ubuntu系统下：
 sudo vim /etc/ssl/openssl.cnf  在[ v3_ca ]下加入：subjectAltName = IP:10.23.127.59
@@ -246,14 +278,14 @@ docker run -d --name docker-registry-no-proxy  --restart=always -u root -p 5000:
 
 ```
 
-设置客户端TLS认证:  
+设置客户端TLS认证:
 ```
 1. mkdir -p /etc/docker/certs.d/10.23.127.59:5000/
 2. cp docker_reg.crt /etc/docker/certs.d/10.23.127.59:5000/ca.crt
 ```
 
-使用仓库:  
-vim /etc/default/docker  
+使用仓库:
+vim /etc/default/docker
 ```
 DOCKER_OPTS="--insecure-registry 10.23.127.59:5000"
 service docker restart
@@ -271,20 +303,20 @@ docker pull 10.23.127.59:5000/hello-world
 ```
 
 ### 域名方式,https
-添加映射host:  
-echo '10.23.127.58 hub.c.smeyun.com'>> /etc/hosts  
+添加映射host:
+echo '10.23.127.58 hub.c.smeyun.com'>> /etc/hosts
 
-master上生成https相关自签名证书:  
+master上生成https相关自签名证书:
 ```
 mkdir -p ~/certs
 cd ~/certs
-openssl genrsa -out hub.c.smeyun.com.key 2048  
+openssl genrsa -out hub.c.smeyun.com.key 2048
 ```
-生成域名秘钥文件:  
+生成域名秘钥文件:
 ```
-openssl req -newkey rsa:4096 -nodes -sha256 -keyout hub.c.smeyun.com.key -x509 -days 365 -out hub.c.smeyun.com.crt  
+openssl req -newkey rsa:4096 -nodes -sha256 -keyout hub.c.smeyun.com.key -x509 -days 365 -out hub.c.smeyun.com.crt
 ```
-将证书添加到Docker的根证书中，Docker在CentOS 7中，证书存放路径是/etc/docker/certs.d/   
+将证书添加到Docker的根证书中，Docker在CentOS 7中，证书存放路径是/etc/docker/certs.d/
 
 ```
 master端:
@@ -295,10 +327,10 @@ slave端
 mkdir -p /etc/docker/certs.d/hub.c.smeyun.com
 将hub.c.smeyun.com.crt 上传
 ```
-重启docker  
+重启docker
 service docker restart
 
-启动私有仓库:  
+启动私有仓库:
 ```
 mkdir -p /data/docker-image
 docker run -d -p 443:5000 --restart=always --name registry \
@@ -310,14 +342,14 @@ docker run -d -p 443:5000 --restart=always --name registry \
 registry:2
 ```
 
-参考:  
+参考:
 https://eacdy.gitbooks.io/spring-cloud-book
 
 ## centos 客户端
 vim /etc/sysconfig/docker
-```  
-OPTIONS='--insecure-registry hub.c.smeyun.com:5000'    #CentOS 7系统  
-other_args='--insecure-registry hub.c.smeyun.com:5000' #CentOS 6系统  
+```
+OPTIONS='--insecure-registry hub.c.smeyun.com:5000'    #CentOS 7系统
+other_args='--insecure-registry hub.c.smeyun.com:5000' #CentOS 6系统
 ```
 
 
