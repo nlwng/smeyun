@@ -4,6 +4,7 @@
 	- [java](#java)
 	- [redis](#redis)
 	- [mariadb-10.1.23](#mariadb-10123)
+		- [centos7](#centos7)
 - [优化](#优化)
 	- [网络优化](#网络优化)
 	- [nginx](#nginx)
@@ -20,7 +21,8 @@
 ```
 ## redis
 ```
-make
+cnetos6: make
+cetnos7: make MALLOC=libc
 cd src
 make install PREFIX=/usr/local/redis
 
@@ -32,25 +34,18 @@ vim /usr/local/redis/etc/redis.conf
 
 
 ## mariadb-10.1.23
-升级gcc到5.2:  
-tar -jxvf gcc-5.2.0.tar.bz2  
-cd gcc-5.2.0;./contrib/download_prerequisites  
-然后解压：   
-tar -xvjf gmp-4.3.2.tar.bz2  
-tar -xjf mpfr-2.4.2.tar.bz2  
-tar -xzf mpc-0.8.1.tar.gz  
+### centos7
+安装基本软件包  
+yum install vim wget lsof gcc gcc-c++ -y  
+yum install net-tools bind-utils -y  
+yum install ncurses-devel openssl* bzip2 m4 -y  
 
-yum install -y  gcc-c++  glibc-static gcc  
-./configure --prefix=/usr/local/gcc  --enable-bootstrap  --enable-checking=release --enable-languages=c,c++ --disable-multilib   
-make;make install  
+cmake -DCMAKE_INSTALL_PREFIX=/data/mysql;make && make install  
 
-导出环境变量:  
-
-
-
-
-
-
+设置开机启动  
+cp /data/mysql/packaging/rpm-oel/mysqld.service /lib/systemd/system  
+systemctl enable mysqld.service  
+vim /etc/systemd/system/mysql.service  
 
 # 优化
 

@@ -188,6 +188,14 @@ docker run --restart=always redis
 docker stats
 docker stats --no-stream
 
+## 2.12 容器快照
+docker commit a1b1da01d34f hub.c.smeyun.com/jenkins  
+docker push hub.c.smeyun.com/jenkins  
+
+## 2.13 备份
+docker save -o ~/jenkins hub.c.smeyun.com/jenkins  
+
+
 # 3 docker实例子
 ## 3.1 mysql in docker
 update gcc:  
@@ -202,7 +210,7 @@ yum install -y gcc gcc-c++
 ./configure --with-http_ssl_module --with-pcre=/root/pcre-8.39 --with-zlib=/root/zlib-1.2.11 --with-openssl=/root/openssl-fips-2.0.14  
 
 ## 3.3 zabbix in docker
-docker run -d --name tmp -p 902:80 10.23.127.59:5000/zabbix  
+docker run -d --name tmp -p 902:80 hub.c.smeyun.com/zabbix  
 访问:http://10.23.127.53:902/zabbix/  
 默认登录信息: admin zabbix  
 
