@@ -315,11 +315,13 @@ sudo sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" >/usr/share/lightdm/lig
 sudo rm -f /usr/share/lightdm/lightdm.conf.d/50-no-guest.conf
 
 # 2 github环境配置
-sudo apt-get intsall git
+sudo apt-get install git
 
 ## 2.1 git 免密码提交
 vim .git-credentials  
 https://{username}:{password}@github.com
+
+https://github.com/nlwng/smeyun.git/
 
 git config --global credential.helper store  
 vim ~/.gitconfig 会发现多了一项   
