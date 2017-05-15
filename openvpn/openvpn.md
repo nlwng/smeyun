@@ -210,7 +210,7 @@ verb 3
 vim /etc/openvpn/auth/ldap.conf  
 ```c
 <LDAP>
-URL             ldap://gzdc.cn:389
+URL  ldap://gzdc.cn:389
 BindDN "cn=digiwin,cn=Users,dc=gzdc,dc=cn"
 Password digiwin
 Timeout 60
