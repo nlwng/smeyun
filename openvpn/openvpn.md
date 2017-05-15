@@ -136,7 +136,7 @@ sysctl -p
 
 ### 设置iptables
 openvpn防火墙nat设置:  
-```
+```c
 sysctl -w net.ipv4.ip_forward=1
 sysctl -p
 iptables -X
@@ -154,11 +154,11 @@ chkconfig openvpn on
 
 ### 配置客户端
 Configure VPN Client
-```
+```c
 client
 dev tun
 proto tcp
-remote 113.204.168.251 1194
+remote *.*.*.* 1194
 resolv-retry infinite
 nobind
 persist-key
@@ -176,7 +176,7 @@ verb 3
 ## 启动openvpn服务--tun
 ### 配置服务器
 vim /etc/openvpn/server.conf  
-```
+```c
 port 1194
 proto udp
 dev tun
@@ -208,7 +208,7 @@ status openvpn-status.log
 verb 3
 ```
 vim /etc/openvpn/auth/ldap.conf  
-```
+```c
 <LDAP>
         # LDAP server URL
         URL             ldap://gzdc.cn:389
