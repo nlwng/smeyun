@@ -210,60 +210,17 @@ verb 3
 vim /etc/openvpn/auth/ldap.conf  
 ```c
 <LDAP>
-        # LDAP server URL
-        URL             ldap://gzdc.cn:389
-  #这里也可以填IP地址，若是IP地址，下面的DNS就不用做特别限定
-
-  # Bind DN (If your LDAP server doesn't support anonymous binds)
+URL             ldap://gzdc.cn:389
 BindDN "cn=digiwin,cn=Users,dc=gzdc,dc=cn"
-
-  # Bind Password
 Password digiwin
-
-  # Network timeout (in seconds)
 Timeout 60
-
-  # Enable Start TLS
 TLSEnable no
-
-  # Follow LDAP Referrals (anonymously)
-  #FollowReferrals no
-
-  # TLS CA Certificate File
-  #TLSCACertFile /usr/local/etc/ssl/ca.pem
-
-  # TLS CA Certificate Directory
-  #TLSCACertDir /etc/ssl/certs
-
-  # Client Certificate and key
-  # If TLS client authentication is required
-  #TLSCertFile /usr/local/etc/ssl/client-cert.pem
-  #TLSKeyFile /usr/local/etc/ssl/client-key.pem
-
-  # Cipher Suite
-  # The defaults are usually fine here
-  # TLSCipherSuite ALL:!ADH:@STRENGTH
 </LDAP>
 
 <Authorization>
-  # Base DN
 BaseDN "CN=Users,DC=gzdc,DC=cn"
-  # User Search Filter
 SearchFilter "(&(sAMAccountName=%u))"
-
-  # Require Group Membership
 RequireGroup false
-
-  # Add non-group members to a PF table (disabled)
-  #PFTable ips_vpn_users
-
-  #<Group>
-  # BaseDN "ou=Groups,dc=example,dc=com"
-  # SearchFilter "(|(cn=developers)(cn=artists))"
-  # MemberAttribute uniqueMember
-  # # Add group members to a PF table (disabled)
-  # #PFTable ips_vpn_eng
-  #</Group>
 </Authorization>
 ```
 ### 设置防火墙Nat
