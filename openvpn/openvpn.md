@@ -113,7 +113,7 @@ Configure VPN Server
 
 ### 修改配置文件
 vi /etc/openvpn/server.conf
-```
+```c
 port 1194
 proto tcp
 dev tap0
