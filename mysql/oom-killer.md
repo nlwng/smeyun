@@ -25,3 +25,12 @@ swapon -s
 参考：
 http://www.vpsee.com/2013/10/how-to-configure-the-linux-oom-killer/
 http://www.weiruoyu.cn/?p=477
+tag=>type: content:>url
+flow
+st=>start: Start
+op=>operation: Your Operation
+cond=>condition: Yes or No?
+e=>end
+st->op->cond
+cond(yes)->e
+cond(no)->op

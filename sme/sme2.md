@@ -31,7 +31,15 @@ vim /usr/local/redis/etc/redis.conf
 
 /usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf
 ```
+# 防火墙处理
+systemctl stop firewalld.service  
+systemctl disable firewalld.service  
 
+yum install iptables-services  
+systemctl restart iptables.service  
+systemctl enable iptables.service  
+
+service iptables save  
 
 ## mariadb-10.1.23
 ### centos7
@@ -48,6 +56,12 @@ systemctl enable mysqld.service
 vim /etc/systemd/system/mysql.service  
 
 # 优化
+
+gluster volume create vol_file transport tcp \
+fs1:/data/vol \
+fs2:/data/vol force
+
+fs1:vol_file  /home/webapp/file/  glusterfs  defaults,_netdev 0 0
 
 ## 网络优化
 
