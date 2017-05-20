@@ -27,6 +27,7 @@ crudini --set /etc/nova/nova.conf vnc novncproxy_base_url http://controller:6080
 crudini --set /etc/nova/nova.conf glance api_servers http://controller:9292
 crudini --set /etc/nova/nova.conf oslo_concurrency lock_path  /var/lib/nova/tmp
 crudini --del /etc/nova/nova.conf DEFAULT logdir
+crudini --del /etc/nova/nova.conf cinder os_region_name RegionOne
 
 #启动实例调整大小
 crudini --set /etc/nova/nova.conf DEFAULT allow_resize_to_same_host True

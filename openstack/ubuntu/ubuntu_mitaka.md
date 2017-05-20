@@ -1,19 +1,14 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
  - [ubuntu14.04环境](#ubuntu1404环境)
-
   - [初始环境安装](#初始环境安装)
   - [控制节点](#控制节点)
-
   - [安装数据库](#安装数据库)
-
     - [安装Mysql](#安装mysql)
     - [安装mongodb](#安装mongodb)
     - [安装rabbitmq](#安装rabbitmq)
     - [安装Memcached](#安装memcached)
-
   - [安装keystone](#安装keystone)
-
     - [初始化数据库](#初始化数据库)
     - [定义初始管理令牌的值:](#定义初始管理令牌的值)
     - [初始化身份认证服务的数据库:](#初始化身份认证服务的数据库)
@@ -23,116 +18,89 @@
     - [关闭临时认证令牌机制](#关闭临时认证令牌机制)
     - [创建用户租户](#创建用户租户)
     - [创建调试文件](#创建调试文件)
-
   - [glance安装](#glance安装)
-
     - [初始化数据库账号](#初始化数据库账号)
     - [设置keystone](#设置keystone)
     - [glance](#glance)
     - [初始化数据库](#初始化数据库)
     - [测试glance](#测试glance)
-
   - [nova](#nova)
-
     - [设置数据库账号](#设置数据库账号)
     - [设置keystone](#设置keystone)
     - [安装nova](#安装nova)
     - [初始化数据库](#初始化数据库)
-
   - [horizon](#horizon)
-
     - [安装horizon](#安装horizon)
     - [去除ubuntu皮肤](#去除ubuntu皮肤)
     - [配置horizon页面](#配置horizon页面)
     - [设置django](#设置django)
-
   - [neutron](#neutron)
-
     - [设置数据库账号](#设置数据库账号)
     - [设置keystone](#设置keystone)
     - [设置网卡](#设置网卡)
     - [安装neutron](#安装neutron)
-
       - [安装ml2](#安装ml2)
       - [设置nova](#设置nova)
-
     - [初始化数据库](#初始化数据库)
-
   - [cinder](#cinder)
-
     - [创建数据库账号](#创建数据库账号)
     - [设置keystone](#设置keystone)
     - [安装cinder](#安装cinder)
     - [初始化数据](#初始化数据)
     - [测试](#测试)
-
 - [网络节点](#网络节点)
-
   - [neutron安装](#neutron安装)
   - [配置网络节点](#配置网络节点)
-
     - [neutron](#neutron)
     - [ml2](#ml2)
     - [linuxbridge,l3_agent,dhcp,metadata](#linuxbridgel3agentdhcpmetadata)
     - [重启服务](#重启服务)
-
 - [计算节点](#计算节点)
-
   - [安装nava-computer](#安装nava-computer)
   - [安装网络服务](#安装网络服务)
-
 - [cinder存储节点](#cinder存储节点)
-
   - [安装cinder](#安装cinder)
   - [安装网络](#安装网络)
-
     - [ml2](#ml2)
     - [nova](#nova)
-
   - [配置存储](#配置存储)
-
     - [glusterfs](#glusterfs)
-
       - [安装](#安装)
       - [添加节点](#添加节点)
-
     - [ceph](#ceph)
 
 <!-- /TOC -->
 
  # ubuntu14.04环境
-
 # 初始环境安装
-
 apt-get -qy install crudini chrony
 
-控制节点:<br>
-cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime<br>
-echo "server time.windows.com iburst" >> /etc/chrony/chrony.conf<br>
+控制节点:
+cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+echo "server time.windows.com iburst" >> /etc/chrony/chrony.conf
 /etc/init.d/chrony restart
 
-启用OpenStack库:<br>
-apt-get -qy install software-properties-common<br>
+启用OpenStack库:
+```
+apt-get -qy install software-properties-common
 add-apt-repository cloud-archive:mitaka
+```
 
-内网源使用:<br>
+内网源使用:
+```
 echo "deb [arch=amd64] <http://192.168.2.88:1888/ubuntu> trusty-updates/mitaka main" >> /etc/apt/sources.list
-
-apt-get update<br>
-apt-get install ubuntu-cloud-keyring<br>
 apt-get update
+apt-get install ubuntu-cloud-keyring
+apt-get update
+```
 
-安装 OpenStack 客户端:<br>
+安装 OpenStack 客户端:
 apt-get -qy install python-openstackclient
 
 # 控制节点
-
 ## 安装数据库
-
 ### 安装Mysql
-
 apt-get -qy install mariadb-server python-pymysql
-
 vim /etc/mysql/conf.d/openstack.cnf
 
 ```config
@@ -144,8 +112,7 @@ max_connections = 4096
 collation-server = utf8_general_ci
 character-set-server = utf8
 ```
-
-/etc/init.d/mysql restart<br>
+/etc/init.d/mysql restart
 mysql_secure_installation
 
 ### 安装mongodb
@@ -170,8 +137,8 @@ rabbitmqctl set_permissions openstack "._" "._" ".*"
 apt-get install memcached python-memcache
 
 ```
-vim /etc/memcached.conf   
--l 192.168.1.11   
+vim /etc/memcached.conf
+-l 192.168.1.11
 /etc/init.d/memcached restart
 ```
 
@@ -217,23 +184,23 @@ export OS_IDENTITY_API_VERSION=3
 ### 创建keystone认证
 
 ```shell
-Create the service entity and API endpoints:   
-openstack service create --name keystone --description "OpenStack Identity" identity  
-openstack endpoint create --region RegionOne identity public http://controller:5000/v3  
-openstack endpoint create --region RegionOne identity internal http://controller:5000/v3  
-openstack endpoint create --region RegionOne identity admin http://controller:35357/v3  
+Create the service entity and API endpoints:
+openstack service create --name keystone --description "OpenStack Identity" identity
+openstack endpoint create --region RegionOne identity public http://controller:5000/v3
+openstack endpoint create --region RegionOne identity internal http://controller:5000/v3
+openstack endpoint create --region RegionOne identity admin http://controller:35357/v3
 
-Create a domain, projects, users, and roles:  
-openstack domain create --description "Default Domain" default  
-openstack project create --domain default --description "Admin Project" admin  
-openstack user create --domain default --password-prompt admin  
-openstack role create admin  
-openstack role add --project admin --user admin admin  
+Create a domain, projects, users, and roles:
+openstack domain create --description "Default Domain" default
+openstack project create --domain default --description "Admin Project" admin
+openstack user create --domain default --password-prompt admin
+openstack role create admin
+openstack role add --project admin --user admin admin
 
-openstack project create --domain default --description "Service Project" service  
-openstack project create --domain default --description "Demo Project" demo  
-openstack user create --domain default --password-prompt demo  
-openstack role create user  
+openstack project create --domain default --description "Service Project" service
+openstack project create --domain default --description "Demo Project" demo
+openstack user create --domain default --password-prompt demo
+openstack role create user
 openstack role add --project demo --user demo user
 ```
 
@@ -252,9 +219,9 @@ unset OS_TOKEN OS_URL
 作为 admin 用户，请求认证令牌:
 openstack --os-auth-url http://controller:35357/v3 \
   --os-project-domain-name default --os-user-domain-name default \
-  --os-project-name admin --os-username admin token issue  
+  --os-project-name admin --os-username admin token issue
 
-作为``demo`` 用户，请求认证令牌:  
+作为``demo`` 用户，请求认证令牌:
 openstack --os-auth-url http://controller:5000/v3 \
   --os-project-domain-name default --os-user-domain-name default \
   --os-project-name demo --os-username demo token issue
@@ -534,6 +501,31 @@ OPENSTACK_NEUTRON_NETWORK = {
 
 TIME_ZONE = "Asia/Shanghai"
 ```
+### 页面优化
+openstack 的 dashboard 使用了google 字体， 导致网站访问速度慢：
+1.删除google字体
+2.使用local字体替代
+3.使用360字体替换
+字体使用代码在css中，以ubuntu为例:
+vim /usr/share/openstack-dashboard/static/dashboard/css/7ac7b118466e.css
+```css
+@font-face {
+  font-family: ‘Ubuntu‘;
+  font-style: normal;
+  font-weight: 300;
+  src: url(‘http://themes.googleusercontent.com/static/fonts/ubuntu/v5/e7URzK__gdJcp1hLJYAEag.woff‘) format(‘woff‘); }
+```
+
+vim /usr/share/openstack-dashboard-ubuntu-theme/static/ubuntu/css/ubuntu.scss
+```css
+@font-face {
+  font-family: ‘Ubuntu‘;
+  font-style: normal;
+  font-weight: 300;
+  src: local(‘Ubuntu‘),url(‘http://themes.googleusercontent.com/static/fonts/ubuntu/v5/e7URzK__gdJcp1hLJYAEag.woff‘) format(‘woff‘);
+}
+```
+
 
 ## neutron
 
@@ -822,6 +814,7 @@ crudini --set /etc/nova/nova.conf vnc novncproxy_base_url http://controller:6080
 crudini --set /etc/nova/nova.conf glance api_servers http://controller:9292
 crudini --set /etc/nova/nova.conf oslo_concurrency lock_path  /var/lib/nova/tmp
 crudini --del /etc/nova/nova.conf DEFAULT logdir
+crudini --del /etc/nova/nova.conf cinder os_region_name RegionOne
  #启动实例调整大小
 crudini --set /etc/nova/nova.conf DEFAULT allow_resize_to_same_host True
 crudini --set /etc/nova/nova.conf DEFAULT scheduler_default_filters AllHostsFilter
@@ -875,19 +868,24 @@ service neutron-linuxbridge-agent restart
 apt-get -y install cinder-volume python-mysqldb
 
 ```shell
-crudini --set /etc/cinder/cinder.conf DEFAULT my_ip 192.168.1.31
-crudini --set /etc/cinder/cinder.conf DEFAULT state_path /var/lib/cinder
-crudini --set /etc/cinder/cinder.conf DEFAULT rootwrap_config  /etc/cinder/rootwrap.conf
+crudini --set /etc/cinder/cinder.conf DEFAULT rootwrap_config /etc/cinder/rootwrap.conf
 crudini --set /etc/cinder/cinder.conf DEFAULT api_paste_confg  /etc/cinder/api-paste.ini
-crudini --set /etc/cinder/cinder.conf DEFAULT enable_v1_api  True
-crudini --set /etc/cinder/cinder.conf DEFAULT enable_v2_api  True
-crudini --set /etc/cinder/cinder.conf DEFAULT osapi_volume_listen  0.0.0.0
-crudini --set /etc/cinder/cinder.conf DEFAULT osapi_volume_listen_port  8776
-crudini --set /etc/cinder/cinder.conf DEFAULT auth_strategy  keystone
-crudini --set /etc/cinder/cinder.conf DEFAULT rpc_backend  rabbit
-crudini --set /etc/cinder/cinder.conf DEFAULT glance_api_servers  http://10.0.0.30:9292
-crudini --set /etc/cinder/cinder.conf DEFAULT scheduler_driver  cinder.scheduler.filter_scheduler.FilterScheduler
+crudini --set /etc/cinder/cinder.conf DEFAULT iscsi_helper tgtadm
+crudini --set /etc/cinder/cinder.conf DEFAULT volume_name_template volume-%s
+crudini --set /etc/cinder/cinder.conf DEFAULT volume_group cinder-volumes
+crudini --set /etc/cinder/cinder.conf DEFAULT verbose True
+crudini --set /etc/cinder/cinder.conf DEFAULT auth_strategy keystone
+crudini --set /etc/cinder/cinder.conf DEFAULT state_path /var/lib/cinder
+crudini --set /etc/cinder/cinder.conf DEFAULT lock_path /var/lock/cinder
+crudini --set /etc/cinder/cinder.conf DEFAULT volumes_dir /var/lib/cinder/volumes
+crudini --set /etc/cinder/cinder.conf DEFAULT rpc_backend rabbit
+crudini --set /etc/cinder/cinder.conf DEFAULT my_ip 192.168.1.31
+crudini --set /etc/cinder/cinder.conf DEFAULT enabled_backends glusterfs
+crudini --set /etc/cinder/cinder.conf DEFAULT glance_api_servers http://controller:9292
 crudini --set /etc/cinder/cinder.conf database connection mysql+pymysql://cinder:pass@controller/cinder
+crudini --set /etc/cinder/cinder.conf oslo_messaging_rabbit rabbit_host controller
+crudini --set /etc/cinder/cinder.conf oslo_messaging_rabbit rabbit_userid openstack
+crudini --set /etc/cinder/cinder.conf oslo_messaging_rabbit rabbit_password pass
 crudini --set /etc/cinder/cinder.conf keystone_authtoken auth_uri http://controller:5000
 crudini --set /etc/cinder/cinder.conf keystone_authtoken auth_url http://controller:35357
 crudini --set /etc/cinder/cinder.conf keystone_authtoken memcached_servers controller:11211
@@ -897,15 +895,15 @@ crudini --set /etc/cinder/cinder.conf keystone_authtoken user_domain_name defaul
 crudini --set /etc/cinder/cinder.conf keystone_authtoken project_name service
 crudini --set /etc/cinder/cinder.conf keystone_authtoken username cinder
 crudini --set /etc/cinder/cinder.conf keystone_authtoken password pass
-crudini --set /etc/cinder/cinder.conf oslo_concurrency lock_path "\$state_path/tmp"
-crudini --set /etc/cinder/cinder.conf oslo_messaging_rabbit rabbit_host controller
-crudini --set /etc/cinder/cinder.conf oslo_messaging_rabbit rabbit_port 5672
-crudini --set /etc/cinder/cinder.conf oslo_messaging_rabbit rabbit_userid openstack
-crudini --set /etc/cinder/cinder.conf oslo_messaging_rabbit rabbit_password pass
+crudini --set /etc/cinder/cinder.conf oslo_concurrency lock_path /var/lib/cinder/tmp
+crudini --set /etc/cinder/cinder.conf glusterfs volume_driver cinder.volume.drivers.glusterfs.GlusterfsDriver
+crudini --set /etc/cinder/cinder.conf glusterfs glusterfs_shares_config /etc/cinder/glusterfs_shares
+crudini --set /etc/cinder/cinder.conf glusterfs glusterfs_mount_point_base /mnt
 ```
 
 chmod 640 /etc/cinder/cinder.conf<br>
 chgrp cinder /etc/cinder/cinder.conf<br>
+chown -R cinder.cinder /mnt/
 systemctl restart cinder-volume
 
 ## 安装网络
