@@ -501,31 +501,6 @@ OPENSTACK_NEUTRON_NETWORK = {
 
 TIME_ZONE = "Asia/Shanghai"
 ```
-### 页面优化
-openstack 的 dashboard 使用了google 字体， 导致网站访问速度慢：
-1.删除google字体
-2.使用local字体替代
-3.使用360字体替换
-字体使用代码在css中，以ubuntu为例:
-vim /usr/share/openstack-dashboard/static/dashboard/css/7ac7b118466e.css
-```css
-@font-face {
-  font-family: ‘Ubuntu‘;
-  font-style: normal;
-  font-weight: 300;
-  src: url(‘http://themes.googleusercontent.com/static/fonts/ubuntu/v5/e7URzK__gdJcp1hLJYAEag.woff‘) format(‘woff‘); }
-```
-
-vim /usr/share/openstack-dashboard-ubuntu-theme/static/ubuntu/css/ubuntu.scss
-```css
-@font-face {
-  font-family: ‘Ubuntu‘;
-  font-style: normal;
-  font-weight: 300;
-  src: local(‘Ubuntu‘),url(‘http://themes.googleusercontent.com/static/fonts/ubuntu/v5/e7URzK__gdJcp1hLJYAEag.woff‘) format(‘woff‘);
-}
-```
-
 
 ## neutron
 
