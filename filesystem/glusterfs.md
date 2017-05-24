@@ -464,6 +464,7 @@ df -h
 配置新硬盘gluser参数:
 
 ```
+
  在 mystorage2 是获取 glusterfs 相关参数：
 [root@mystorage2 tmp]# getfattr -d -m '.*'  /storage/brick2
 getfattr: Removing leading '/' from absolute path names

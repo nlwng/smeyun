@@ -28,22 +28,22 @@ yum -qy install crudini
 
 #ntp
 yum -qy install chrony
-echo  "server NTP_SERVER iburst" >> /etc/chrony.conf 
-echo  "allow 192.168.246.0/24" >> /etc/chrony.conf 
+echo  "server NTP_SERVER iburst" >> /etc/chrony.conf
+echo  "allow 192.168.246.0/24" >> /etc/chrony.conf
 systemctl enable chronyd.service
 systemctl start chronyd.service
 
-#ÑéÖ¤ntp
+#ï¿½ï¿½Ö¤ntp
 chronyc sources
 
 #yum -qy install centos-release-openstack-mitaka
-#¸üĞÂÏµÍ³
+#ï¿½ï¿½ï¿½ï¿½ÏµÍ³
 yum install https://rdoproject.org/repos/rdo-release.rpm
 yum -y upgrade
 
-#°²×°OpenStack¿Í»§¶Ë
+#ï¿½ï¿½×°OpenStackï¿½Í»ï¿½ï¿½ï¿½
 yum -qy install python-openstackclient
-#RHELºÍCentOSÄ¬ÈÏÆôÓÃSELinux¡£°²×°OpenStack SELinuxÈí¼ş°ü×Ô¶¯¹ÜÀíOpenStack·şÎñ°²È«Õş²ß£º
+#RHELï¿½ï¿½CentOSÄ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½SELinuxï¿½ï¿½ï¿½ï¿½×°OpenStack SELinuxï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½OpenStackï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ß£ï¿½
 yum -qy install openstack-selinux
 
 
@@ -85,7 +85,7 @@ rabbitmqctl add_user openstack pass
 #rabbitmqctl set_user_tags openstack administrator
 #rabbitmqctl change_password openstack pass
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
-²é¿´ÓÃ»§£º
+ï¿½é¿´ï¿½Ã»ï¿½ï¿½ï¿½
 # rabbitmqctl list_users
 
 #memcached  install
@@ -172,10 +172,10 @@ openstack user create --domain default --password-prompt demo
 openstack role create user
 openstack role add --project demo --user demo user
 
-Edit the /etc/keystone/keystone-paste.ini file and remove admin_token_auth from the [pipeline:public_api], 
+Edit the /etc/keystone/keystone-paste.ini file and remove admin_token_auth from the [pipeline:public_api],
 [pipeline:admin_api], and [pipeline:api_v3] sections.
 
-#Verify operation 
+#Verify operation
 unset OS_TOKEN OS_URL
 
 openstack --os-auth-url http://controller:35357/v3 \
@@ -247,7 +247,7 @@ crudini --set /etc/glance/glance-registry.conf keystone_authtoken user_domain_na
 crudini --set /etc/glance/glance-registry.conf keystone_authtoken project_name service
 crudini --set /etc/glance/glance-registry.conf keystone_authtoken username glance
 crudini --set /etc/glance/glance-registry.conf keystone_authtoken password pass
-crudini --set /etc/glance/glance-registry.conf paste_deploy flavor keystone 
+crudini --set /etc/glance/glance-registry.conf paste_deploy flavor keystone
 
 su -s /bin/sh -c "glance-manage db_sync" glance
 systemctl enable openstack-glance-api.service openstack-glance-registry.service
@@ -313,7 +313,7 @@ systemctl start openstack-nova-api.service openstack-nova-consoleauth.service op
 yum -qy install openstack-dashboard
 
 vim /etc/openstack-dashboard/local_settings
-"OPENSTACK_HOST = "controller"" 
+"OPENSTACK_HOST = "controller""
 ALLOWED_HOSTS = ['*', ]
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
@@ -325,18 +325,18 @@ CACHES = {
 }
 
 OPENSTACK_KEYSTONE_URL = "http://%s:5000/v3" % OPENSTACK_HOST
-#ÆôÓÃ¶ÔÓòµÄÖ§³Ö
+#ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½
 OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = True
 OPENSTACK_API_VERSIONS = {
     "identity": 3,
     "image": 2,
     "volume": 2,
 }
-#Í¨¹ıÒÇ±íÅÌ´´½¨ÓÃ»§Ê±µÄÄ¬ÈÏÓòÅäÖÃÎª default :
+#Í¨ï¿½ï¿½ï¿½Ç±ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ê±ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª default :
 OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = "default"
 OPENSTACK_KEYSTONE_DEFAULT_ROLE = "user"
 
-#Èç¹ûÄúÑ¡ÔñÍøÂç²ÎÊı1£¬½ûÓÃÖ§³Ö3²ãÍøÂç·şÎñ£º
+#ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 OPENSTACK_NEUTRON_NETWORK = {
     ...
     'enable_router': False,
@@ -354,7 +354,7 @@ systemctl restart httpd.service memcached.service
 
 
 #cindor
-#ÅäÖÃ¿ØÖÆ½Úµã¿éÉè±¸´æ´¢
+#ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½Æ½Úµï¿½ï¿½ï¿½ï¿½è±¸ï¿½æ´¢
 mysql -u root -p
 CREATE DATABASE cinder;
 GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'localhost' IDENTIFIED BY 'pass';
@@ -364,7 +364,7 @@ source admin-openrc
 openstack user create --domain default --password-prompt cinder
 openstack role add --project service --user cinder admin
 
-#´´½¨ cinder ºÍ cinderv2 ·şÎñÊµÌå£º
+#ï¿½ï¿½ï¿½ï¿½ cinder ï¿½ï¿½ cinderv2 ï¿½ï¿½ï¿½ï¿½Êµï¿½å£º
 openstack service create --name cinder --description "OpenStack Block Storage" volume
 openstack service create --name cinderv2 --description "OpenStack Block Storage" volumev2
 
@@ -399,11 +399,80 @@ crudini --set /etc/cinder/cinder.conf oslo_concurrency lock_path /var/lib/cinder
 su -s /bin/sh -c "cinder-manage db sync" cinder
 
 #cindor
-#ÅäÖÃ¼ÆËã½ÚµãÒÔÊ¹ÓÃ¿éÉè±¸´æ´¢
+#ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½Ê¹ï¿½Ã¿ï¿½ï¿½è±¸ï¿½æ´¢
 crudini --set /etc/nova/nova.conf cinder os_region_name RegionOne
 
-#ÖØÆô¼ÆËãAPI ·şÎñ£º
+#ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½API ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 systemctl restart openstack-nova-api.service
 systemctl enable openstack-cinder-api.service openstack-cinder-scheduler.service
 systemctl start openstack-cinder-api.service openstack-cinder-scheduler.service
 
+# virshä½¿ç”¨qemu+tcpè®¿é—®è¿œç¨‹libvirtd
+```
+å› ä¸ºsshçš„ä¸èƒ½è®¿é—® æ‰€ä»¥ä½¿ç”¨tcpè¿›è¡Œå¯¹è¿œç¨‹libvirtdè¿›è¡Œè¿æ¥è®¿é—®ï¼Œä¾‹å¦‚
+
+virsh -c qemu+tcp://example.com/system
+
+ä¿®æ”¹æ–‡ä»¶vim /etc/sysconfig/libvirtdï¼Œç”¨æ¥å¯ç”¨tcpçš„ç«¯å£
+
+1
+2
+3
+LIBVIRTD_CONFIG=/etc/libvirt/libvirtd.conf
+
+LIBVIRTD_ARGS="--listen"
+ä¿®æ”¹æ–‡ä»¶vim /etc/libvirt/libvirtd.conf
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+listen_tls = 0
+
+listen_tcp = 1
+
+tcp_port = "16509"
+
+listen_addr = "0.0.0.0"
+
+auth_tcp = "none"
+è¿è¡Œ libvirtd
+
+1
+service libvirtd restart
+å¦‚æœæ²¡èµ·æ•ˆæœ(æˆ‘çš„å°±æ²¡æœ‰ç”Ÿæ•ˆ :( )ï¼Œé‚£ä¹ˆä½¿ç”¨å‘½ä»¤è¡Œ:
+
+1
+libvirtd --daemon --listen --config /etc/libvirt/libvirtd.conf
+æŸ¥çœ‹è¿è¡Œè¿›ç¨‹
+
+1
+2
+[root@ddd run]# ps aux | grep libvirtd
+root 16563 1.5 0.1 925880 7056 ? Sl 16:01 0:28 libvirtd -d -l --config /etc/libvirt/libvirtd.conf
+æŸ¥çœ‹ç«¯å£
+
+1
+2
+[root@ddd run]# netstat -apn | grep tcp
+tcp        0      0 0.0.0.0:16509           0.0.0.0:*               LISTEN      13971/libvirtd
+åœ¨source hostè¿æ¥dest hostè¿œç¨‹libvirtdæŸ¥çœ‹ä¿¡æ¯
+
+1
+2
+3
+4
+5
+6
+virsh -c qemu+tcp://211.87.***.97/system
+
+Welcome to virsh, the virtualization interactive terminal.
+
+Type: 'help' for help with commands
+'quit' to quit
+æˆåŠŸä½¿ç”¨tcpå»è®¿é—®libvirtdã€‚
