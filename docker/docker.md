@@ -40,7 +40,7 @@
 # docker实践
 # 1 安装docker
 ## 1.1 ubuntu环境安装
-```
+```shell
 apt-get update
 apt-get install -y --no-install-recommends \
     linux-image-extra-$(uname -r) \
@@ -83,10 +83,11 @@ docker run -i -t ubuntu /bin/bash
 ```
 ## 1.2 centos环境安装
 Uninstall old versions:
+```code
 yum remove docker docker-common container-selinux docker-selinux docker-engine
 rpm -Uvh http://ftp.riken.jp/Linux/fedora/epel/6Server/x86_64/epel-release-6-8.noarch.rpm
 yum install -y docker-io
-
+```
 开机自启动与启动Docker
 service docker start
 chkconfig docker on
@@ -344,6 +345,31 @@ docker run -d -p 443:5000 --restart=always --name registry \
 -e REGISTRY_HTTP_TLS_KEY=/certs/hub.c.smeyun.com.key \
 registry:2
 ```
+#### 域名加账号密码方式
+安装http加密工具：
+yum install httpd-tools
+
+添加账号：
+```
+cd ~
+mkdir auth
+htpasswd -Bbn testuser testpassword > auth/htpasswd
+```
+
+```
+docker run -d -p 443:5000 --restart=always --name registry2 \
+  -v /opt/docker-image:/var/lib/registry \
+  -v `pwd`/certs:/certs \
+  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/hub.c.smeyun.com.crt \
+  -e REGISTRY_HTTP_TLS_KEY=/certs/hub.c.smeyun.com.key \
+  -v `pwd`/auth:/auth \
+  -e "REGISTRY_AUTH=htpasswd" \
+  -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \
+  -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
+  registry:2
+```
+登录认证：
+docker login hub.c.smeyun.com
 
 参考:
 https://eacdy.gitbooks.io/spring-cloud-book
