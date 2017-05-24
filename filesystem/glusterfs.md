@@ -55,7 +55,7 @@ vim /etc/hosts
 ```
 10.0.0.51 node01
 10.0.0.52 node02
-10.0.0.53 node03sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-Gluster-3.10.repo  
+10.0.0.53 node03sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-Gluster-3.10.repo
 10.0.0.54 node04
 ```
 
@@ -223,7 +223,7 @@ yum -y install glusterfs glusterfs-fuse
 配置好hosts以后直接配置挂载:
 
 ```
-mount -t glusterfs node01:/strip-replica /data   
+mount -t glusterfs node01:/strip-replica /data
 echo "172.28.26.102:/img /mnt/ glusterfs defaults,_netdev 0 0" >> /etc/fstab (开机自动挂载)
 ```
 
@@ -366,7 +366,7 @@ gluster volume set demo performance.io-thread-count 32
 gluster volume set demo performance.write-behind on
 
 默认是1M 能提高写性能单个文件后写缓冲区的大小默认1M:<br>
-gluster volume set demo performance.write-behind-window-size 256MB
+gluster volume set demo performance.write-behind-window-size 512MB
 
 gluster volume set demo network.ping-timeout 10 默认42s
 
