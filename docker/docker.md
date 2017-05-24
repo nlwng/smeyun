@@ -32,6 +32,7 @@
 	- [registry环境搭建](#registry环境搭建)
 		- [ip方式](#ip方式)
 		- [域名方式,https](#域名方式https)
+			- [域名加账号密码方式](#域名加账号密码方式)
 	- [centos 客户端](#centos-客户端)
 - [docker相关错误处理](#docker相关错误处理)
 
