@@ -90,14 +90,6 @@ docker run -i -t ubuntu /bin/bash
 ```
 ## 1.2 centos环境安装
 Uninstall old versions:  
-yum remove docker docker-common container-selinux docker-selinux docker-engine  
-rpm -Uvh http://ftp.riken.jp/Linux/fedora/epel/6Server/x86_64/epel-release-6-8.noarch.rpm   
-yum install -y docker-io   
-
-开机自启动与启动Docker    
-service docker start   
-chkconfig docker on   
-
 ```code
 yum remove docker docker-common container-selinux docker-selinux docker-engine
 rpm -Uvh http://ftp.riken.jp/Linux/fedora/epel/6Server/x86_64/epel-release-6-8.noarch.rpm
