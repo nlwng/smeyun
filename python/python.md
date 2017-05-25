@@ -164,7 +164,7 @@ print(OnlyStr("a000 aa-b"))
 ```
 ## 截取字符串
 ```python
-str = ’0123456789′
+str = '0123456789'
 print str[0:3] #截取第一位到第三位的字符
 print str[:] #截取字符串的全部字符
 print str[6:] #截取第七个字符到结尾
