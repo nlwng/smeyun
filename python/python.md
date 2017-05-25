@@ -3,7 +3,7 @@
 - [文件处理](#文件处理)
 	- [读写文件](#读写文件)
 	- [读一行内容:](#读一行内容)
-	- [readlines()的读取为列表：](#readlines的读取为列表)
+	- [readlines()的读取为列表](#readlines的读取为列表)
 	- [writelines()这个方法](#writelines这个方法)
 - [字符串处理](#字符串处理)
 	- [去空格及特殊符号](#去空格及特殊符号)
@@ -40,7 +40,7 @@ f = open('blogCblog.txt')  #首先先创建一个文件对象
 fr = f.readline()  #用readline()方法读取文件的一行内容
 print fr  #打印所读取到的内容
 ```
-## readlines()的读取为列表：
+## readlines()的读取为列表
 ```python
 f = open('blogCblog.txt')  #首先先创建一个文件对象
 fr = f.readlines()  #用readlines()方法读取文件
