@@ -314,6 +314,8 @@ sudo sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" >/usr/share/lightdm/lig
 开启guest:
 sudo rm -f /usr/share/lightdm/lightdm.conf.d/50-no-guest.conf
 
+# VYM
+
 # 2 github环境配置
 sudo apt-get install git
 

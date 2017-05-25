@@ -78,26 +78,32 @@ sh -c "echo deb http://get.docker.io/ubuntu docker main\
 sudo apt-get update
 sudo apt-get install lxc-docker
 
+systemctl unmask docker.service
+systemctl unmask docker.socket
+systemctl start docker.service
+
+sudo service docker start
+
 下载ubuntu镜像并启动一个镜像来验证安装是否正常。
 docker run -i -t ubuntu /bin/bash
 ```
 ## 1.2 centos环境安装
 Uninstall old versions:
-yum remove docker docker-common container-selinux docker-selinux docker-engine
-rpm -Uvh http://ftp.riken.jp/Linux/fedora/epel/6Server/x86_64/epel-release-6-8.noarch.rpm
-yum install -y docker-io
+yum remove docker docker-common container-selinux docker-selinux docker-engine  
+rpm -Uvh http://ftp.riken.jp/Linux/fedora/epel/6Server/x86_64/epel-release-6-8.noarch.rpm   
+yum install -y docker-io   
 
-开机自启动与启动Docker
-service docker start
-chkconfig docker on
+开机自启动与启动Docker   
+service docker start   
+chkconfig docker on   
 
 更改配置文件
-vim /etc/sysconfig/docker
-other-args列更改为：other_args="--exec-driver=lxc --selinux-enabled"
-docker search centos
+vim /etc/sysconfig/docker  
+other-args列更改为：other_args="--exec-driver=lxc --selinux-enabled"  
+docker search centos   
 
-需要改/etc/sysconfig/network-scripts/ifcfg-eth0
-PEERDNS=no
+需要改/etc/sysconfig/network-scripts/ifcfg-eth0  
+PEERDNS=no  
 
 ## 1.3 测试docker
 docker run hello-world
@@ -357,5 +363,9 @@ other_args='--insecure-registry hub.c.smeyun.com:5000' #CentOS 6系统
 
 
 # docker相关错误处理
-问题1:docker: relocation error: docker: symbol dm_task_get_info_with_deferred_remove, version Base not defined in file libdevmapper.so.1.02 with link time reference
-解决方案:yum upgrade device-mapper-libs
+tips1:docker: relocation error: docker: symbol dm_task_get_info_with_deferred_remove, version Base not defined in file libdevmapper.so.1.02 with link time reference  
+解决方案:yum upgrade device-mapper-libs  
+
+tips2:ubuntu16.10
+Get http:///var/run/docker.sock/v1.19/containers/json: dial unix /var/run/docker.sock: no such file or directory. Are you trying to connect to a TLS-enabled daemon without TLS?   
+解决方案:
