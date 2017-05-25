@@ -1,27 +1,4 @@
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-- [字符串处理](#字符串处理)
-	- [去空格及特殊符号](#去空格及特殊符号)
-	- [复制字符串](#复制字符串)
-	- [连接字符串](#连接字符串)
-	- [查找字符](#查找字符)
-	- [比较字符串](#比较字符串)
-	- [扫描字符串是否包含指定的字符](#扫描字符串是否包含指定的字符)
-	- [字符串长度](#字符串长度)
-	- [将字符串中的大小写转换](#将字符串中的大小写转换)
-	- [追加指定长度的字符串](#追加指定长度的字符串)
-	- [字符串指定长度比较](#字符串指定长度比较)
-	- [复制指定长度的字符](#复制指定长度的字符)
-	- [将字符串前n个字符替换为指定的字符](#将字符串前n个字符替换为指定的字符)
-	- [扫描字符串](#扫描字符串)
-	- [翻转字符串](#翻转字符串)
-	- [查找字符串](#查找字符串)
-	- [分割字符串](#分割字符串)
-	- [连接字符串](#连接字符串)
-	- [只显示字母与数字](#只显示字母与数字)
-	- [截取字符串](#截取字符串)
-
-<!-- /TOC -->
 
 # 字符串处理
 ## 去空格及特殊符号
@@ -36,14 +13,16 @@ print sStr2
 ```
 ## 连接字符串
 
-```strcat(sStr1,sStr2)
+```c
+strcat(sStr1,sStr2)
 sStr1 = 'strcat'
 sStr2 = 'append'
 sStr1 += sStr2
-print sStr1```
+print sStr1
+```
 
 ## 查找字符
-```
+```python
 strchr(sStr1,sStr2)
  < 0 为未找到
 sStr1 = 'strchr'
@@ -52,14 +31,14 @@ nPos = sStr1.index(sStr2)
 print nPos
 ```
 ## 比较字符串
-```
+```python
 strcmp(sStr1,sStr2)
 sStr1 = 'strchr'
 sStr2 = 'strch'
 print cmp(sStr1,sStr2)
 ```
 ## 扫描字符串是否包含指定的字符
-```
+```python
 strspn(sStr1,sStr2)
 sStr1 = '12345678'
 sStr2 = '456'
@@ -67,13 +46,13 @@ sStr2 = '456'
 print len(sStr1 and sStr2)
 ```
 ## 字符串长度
-```
+```python
 strlen(sStr1)
 sStr1 = 'strlen'
 print len(sStr1)
 ```
 ## 将字符串中的大小写转换
-```
+```python
 strlwr(sStr1)
 sStr1 = 'JCstrlwr'
 sStr1 = sStr1.upper()
@@ -81,7 +60,7 @@ sStr1 = sStr1.upper()
 print sStr1
 ```
 ## 追加指定长度的字符串
-```code
+```python
 strncat(sStr1,sStr2,n)
 sStr1 = '12345'
 sStr2 = 'abcdef'
@@ -90,7 +69,7 @@ sStr1 += sStr2[0:n]
 print sStr1
 ```
 ## 字符串指定长度比较
-```
+```python
 strncmp(sStr1,sStr2,n)
 sStr1 = '12345'
 sStr2 = '123bc'
@@ -98,7 +77,7 @@ n = 3
 print cmp(sStr1[0:n],sStr2[0:n])
 ```
 ## 复制指定长度的字符
-```
+```python
 strncpy(sStr1,sStr2,n)
 sStr1 = ''
 sStr2 = '12345'
@@ -107,7 +86,7 @@ sStr1 = sStr2[0:n]
 print sStr1
 ```
 ## 将字符串前n个字符替换为指定的字符
-```
+```python
 strnset(sStr1,ch,n)
 sStr1 = '12345'
 ch = 'r'
@@ -116,7 +95,7 @@ sStr1 = n * ch + sStr1[3:]
 print sStr1
 ```
 ## 扫描字符串
-```
+```python
 strpbrk(sStr1,sStr2)
 sStr1 = 'cekjgdklab'
 sStr2 = 'gka'
@@ -128,7 +107,7 @@ for c in sStr1:
 print nPos
 ```
 ## 翻转字符串
-```
+```python
 strrev(sStr1)
 sStr1 = 'abcdefg'
 sStr1 = sStr1[::-1]
@@ -136,14 +115,14 @@ print sStr1
 ```
 
 ## 查找字符串
-```
+```python
 strstr(sStr1,sStr2)
 sStr1 = 'abcdefg'
 sStr2 = 'cde'
 print sStr1.find(sStr2)
 ```
 ## 分割字符串
-```
+```python
 strtok(sStr1,sStr2)
 sStr1 = 'ab,cde,fgh,ijk'
 sStr2 = ','
@@ -155,7 +134,8 @@ print(s.split(','))
 ```
 ##  连接字符串
 
-```delimiter = ','
+```python
+delimiter = ','
 mylist = ['Brazil', 'Russia', 'India', 'China']
 print delimiter.join(mylist)
 PHP 中 addslashes 的实现
@@ -166,11 +146,13 @@ def addslashes(s):
 
 s = "John 'Johny' Doe (a.k.a. \"Super Joe\")\\\0"
 print s
-print addslashes(s)```
+print addslashes(s)
+```
 
 ## 只显示字母与数字
 
-```def OnlyCharNum(s,oth=''):
+```python
+def OnlyCharNum(s,oth=''):
     s2 = s.lower();
     fomart = 'abcdefghijklmnopqrstuvwxyz0123456789'
     for c in s2:
@@ -181,7 +163,8 @@ print addslashes(s)```
 print(OnlyStr("a000 aa-b"))
 ```
 ## 截取字符串
-```str = ’0123456789′
+```python
+str = ’0123456789′
 print str[0:3] #截取第一位到第三位的字符
 print str[:] #截取字符串的全部字符
 print str[6:] #截取第七个字符到结尾
