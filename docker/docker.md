@@ -89,25 +89,23 @@ sudo service docker start
 docker run -i -t ubuntu /bin/bash
 ```
 ## 1.2 centos环境安装
-Uninstall old versions:
-<<<<<<< HEAD
+Uninstall old versions:  
 yum remove docker docker-common container-selinux docker-selinux docker-engine  
 rpm -Uvh http://ftp.riken.jp/Linux/fedora/epel/6Server/x86_64/epel-release-6-8.noarch.rpm   
 yum install -y docker-io   
 
-开机自启动与启动Docker   
+开机自启动与启动Docker    
 service docker start   
 chkconfig docker on   
-=======
+
 ```code
 yum remove docker docker-common container-selinux docker-selinux docker-engine
 rpm -Uvh http://ftp.riken.jp/Linux/fedora/epel/6Server/x86_64/epel-release-6-8.noarch.rpm
 yum install -y docker-io
 ```
-开机自启动与启动Docker
-service docker start
-chkconfig docker on
->>>>>>> 6ee18ada93687e1c82faedf72768f9413f1e1b4a
+开机自启动与启动Docker  
+service docker start  
+chkconfig docker on  
 
 更改配置文件
 vim /etc/sysconfig/docker  
