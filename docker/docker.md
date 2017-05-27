@@ -111,9 +111,9 @@ PEERDNS=no
 docker run hello-world
 
 ## 1.4 Upgrade Docker
-https://apt.dockerproject.org/repo/pool/main/d/docker-engine/
-dpkg -i /path/to/package.deb
-docker run hello-world
+https://apt.dockerproject.org/repo/pool/main/d/docker-engine/  
+dpkg -i /path/to/package.deb  
+docker run hello-world  
 
 ## 1.5 卸载Docker
 apt-get purge docker-engine
