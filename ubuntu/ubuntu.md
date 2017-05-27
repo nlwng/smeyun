@@ -349,6 +349,13 @@ git push origin master
 cd ../
 ```
 
+## swap空间设置
+```
+dd if=/dev/zero of=/mnt/swapadd bs=10240 count=524288
+mkswap /mnt/swapadd
+swapon /mnt/swapadd
+echo "/mnt/swapadd swap swap defaults 0 0" >> /etc/fstab
+```
 
 # ubuntu错误集合
 ## apt更新报错  

@@ -1,4 +1,14 @@
 #安装软件包
+mysql -uroot -ppass <<EOF
+CREATE DATABASE nova_api;
+CREATE DATABASE nova;
+GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'localhost' IDENTIFIED BY 'pass';
+GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%' IDENTIFIED BY 'pass';
+GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY 'pass';
+GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY 'pass';
+FLUSH PRIVILEGES;
+EOF
+
 apt-get install nova-api nova-conductor nova-consoleauth \
   nova-novncproxy nova-scheduler -y
 
@@ -20,11 +30,11 @@ crudini --set /etc/nova/nova.conf keystone_authtoken user_domain_name default
 crudini --set /etc/nova/nova.conf keystone_authtoken project_name service
 crudini --set /etc/nova/nova.conf keystone_authtoken username nova
 crudini --set /etc/nova/nova.conf keystone_authtoken password pass
-crudini --set /etc/nova/nova.conf DEFAULT my_ip 192.168.1.11
+crudini --set /etc/nova/nova.conf DEFAULT my_ip 10.0.0.11
 crudini --set /etc/nova/nova.conf DEFAULT use_neutron True
 crudini --set /etc/nova/nova.conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
-crudini --set /etc/nova/nova.conf vnc vncserver_listen 192.168.1.11
-crudini --set /etc/nova/nova.conf vnc vncserver_proxyclient_address 192.168.1.11
+crudini --set /etc/nova/nova.conf vnc vncserver_listen 10.0.0.11
+crudini --set /etc/nova/nova.conf vnc vncserver_proxyclient_address 10.0.0.11
 crudini --set /etc/nova/nova.conf glance api_servers http://controller:9292
 crudini --set /etc/nova/nova.conf oslo_concurrency lock_path /var/lib/nova/tmp
 crudini --del /etc/nova/nova.conf DEFAULT logdir

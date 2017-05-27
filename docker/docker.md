@@ -208,7 +208,7 @@ docker save -o ~/jenkins hub.c.smeyun.com/jenkins
 
 
 # 3 docker实例子
-## 3.1 mysql in docker
+## 3.1 mysql
 update gcc:
 wget http://ftpmirror.gnu.org/gcc/gcc-5.2.0/gcc-5.2.0.tar.bz2
 tar -xf  gcc-5.2.0.tar.bz2
@@ -216,17 +216,17 @@ tar -xf  gcc-5.2.0.tar.bz2
 ./contrib/download_prerequisites
  Linux没有网络连接（我主机和虚拟机是Host-only，不能联网，所以另外想办法），则用Windows上网下载这几个包
 
-## 3.2 nginx in docker
+## 3.2 nginx
 yum install -y gcc gcc-c++
 ./configure --with-http_ssl_module --with-pcre=/root/pcre-8.39 --with-zlib=/root/zlib-1.2.11 --with-openssl=/root/openssl-fips-2.0.14
 
-## 3.3 zabbix in docker
+## 3.3 zabbix
 docker run -d --name tmp -p 902:80 hub.c.smeyun.com/zabbix
 访问:http://10.23.127.53:902/zabbix/
 默认登录信息: admin zabbix
 
 
-## 3.4 gitlib in docker
+## 3.4 gitlib
 docker pull gitlab/gitlab-ce:latest
 ```
 sudo docker run --detach \
@@ -257,6 +257,11 @@ gitlib汉化：
 汉化git：https://gitlab.com/Fenlly/gitlab-ce
 ```
 
+## 3.5 jenkins
+```
+docker run -p 8080:8080 -p 50000:50000 jenkins
+```
+参考文档:https://c.163.com/hub#/m/repository/?repoId=3093
 # 4 docker私有仓库搭建
 ## docker镜像位置设置
 在 Ubuntu/Debian 系统下,编辑 /etc/default/docker 文件, 添加-g 参数的设置, 如下:

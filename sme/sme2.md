@@ -21,7 +21,13 @@
 
 ## java
 
-````
+```
+export JAVA_HOME=/usr/local/java/jdk
+export JRE_HOME=/usr/local/java/jdk/jre
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$PATH
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$PATH
 ```
 
 ## redis

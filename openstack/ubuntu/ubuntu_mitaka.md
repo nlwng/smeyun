@@ -130,7 +130,7 @@ rm /var/lib/mongodb/journal/prealloc.*<br>
 
 apt-get -qy install rabbitmq-server<br>
 rabbitmqctl add_user openstack pass<br>
-rabbitmqctl set_permissions openstack "._" "._" ".*"
+rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 
 ### 安装Memcached
 
