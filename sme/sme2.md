@@ -22,8 +22,8 @@
 ## java
 
 ```
-export JAVA_HOME=/usr/local/java/jdk
-export JRE_HOME=/usr/local/java/jdk/jre
+export JAVA_HOME=/usr/local/java/
+export JRE_HOME=/usr/local/java/jre
 export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JRE_HOME/lib:$CLASSPATH
 export PATH=$JAVA_HOME/bin:$PATH
 export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JRE_HOME/lib:$CLASSPATH
@@ -68,6 +68,12 @@ cp /data/mysql/packaging/rpm-oel/mysqld.service /lib/systemd/system<br>
 systemctl enable mysqld.service<br>
 vim /etc/systemd/system/mysql.service
 
+
+yum install libaio
+useradd mysql;chown -R mysql:mysql /data/mysql
+cp /data/mysql/support-files/mysql.server /etc/rc.d/init.d/mysql
+/data/mysql/scripts/mysql_install_db --user=mysql --basedir=/data/mysql --datadir=/data/mysql/data
+ln -sf /data/mysql5.6.27/bin/mysql* /usr/sbin/
 # 优化
 
 gluster volume create vol_file transport tcp \ fs1:/data/vol \ fs2:/data/vol force

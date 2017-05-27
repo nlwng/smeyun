@@ -23,10 +23,11 @@
 	- [2.12 容器快照](#212-容器快照)
 	- [2.13 备份](#213-备份)
 - [3 docker实例子](#3-docker实例子)
-	- [3.1 mysql in docker](#31-mysql-in-docker)
-	- [3.2 nginx in docker](#32-nginx-in-docker)
-	- [3.3 zabbix in docker](#33-zabbix-in-docker)
-	- [3.4 gitlib in docker](#34-gitlib-in-docker)
+	- [3.1 mysql](#31-mysql)
+	- [3.2 nginx](#32-nginx)
+	- [3.3 zabbix](#33-zabbix)
+	- [3.4 gitlib](#34-gitlib)
+	- [3.5 jenkins](#35-jenkins)
 - [4 docker私有仓库搭建](#4-docker私有仓库搭建)
 	- [docker镜像位置设置](#docker镜像位置设置)
 	- [registry环境搭建](#registry环境搭建)
@@ -34,6 +35,9 @@
 		- [域名方式,https](#域名方式https)
 			- [域名加账号密码方式](#域名加账号密码方式)
 	- [centos 客户端](#centos-客户端)
+- [Dockerfile](#dockerfile)
+	- [dockerfile 参数解析](#dockerfile-参数解析)
+	- [使用dockerfile](#使用dockerfile)
 - [docker相关错误处理](#docker相关错误处理)
 
 <!-- /TOC -->
@@ -206,7 +210,6 @@ docker push hub.c.smeyun.com/jenkins
 ## 2.13 备份
 docker save -o ~/jenkins hub.c.smeyun.com/jenkins
 
-
 # 3 docker实例子
 ## 3.1 mysql
 update gcc:
@@ -262,6 +265,7 @@ gitlib汉化：
 docker run -p 8080:8080 -p 50000:50000 jenkins
 ```
 参考文档:https://c.163.com/hub#/m/repository/?repoId=3093
+
 # 4 docker私有仓库搭建
 ## docker镜像位置设置
 在 Ubuntu/Debian 系统下,编辑 /etc/default/docker 文件, 添加-g 参数的设置, 如下:
@@ -393,6 +397,64 @@ OPTIONS='--insecure-registry hub.c.smeyun.com:5000'    #CentOS 7系统
 other_args='--insecure-registry hub.c.smeyun.com:5000' #CentOS 6系统
 ```
 
+# Dockerfile
+## dockerfile 参数解析
+```
+ #RUN 镜像构建容时被调用
+ RUN yum install wget
+
+ #ADD 源 目标从源系统的文件系统上复制文件到目标容器的文件系统
+ ADD /root/docker/java.gz /usr/local/
+
+ #CMD 镜像构建容器后被调用
+
+ #FROM指令 Dockerfile的第一条，目的是设置基础镜像来源，可以是远程仓库也可以是本地
+ FROM hub.c.smeyun.com/centos:7
+
+ #COPY指令 同样可以将本地文件拷贝到镜像内,本地数据
+ COPY /root/docker/java.tar.gz /usr/local/java.tar.gz
+
+ #ENTRYPOINT 配置一个容器使之可执行化
+
+ #ENV 设置环境变量
+
+ #EXPOSE 用来指定端口，使容器内的应用可以通过端口和外界交互
+ EXPOSE 8080
+
+ #USER 设置运行容器的UID
+ USER 751
+
+ #VOLUME 容器访问宿主机上的目录
+ VOLUME ["/root/docker"]
+
+ #WORKDIR 设置CMD指明的命令的运行目录
+ WORKDIR ~/
+
+```
+## 使用dockerfile
+```
+vim Dockerfile
+
+ #设置基础镜像
+ FROM hub.c.smeyun.com/centos:7
+ #定义作者
+ MAINTAINER wangyunhua nlwng49@gmail.com
+
+ VOLUME ["/root/docker"]
+
+ #设置命令下载文件
+ RUN tar zxvf /root/docker/java.tar.gz -C /usr/local/
+
+ #设置端口
+ EXPOSE 8080
+ CMD ["--port 8080"]
+ ENTRYPOINT /home/webapp/tomcat/bin/tomcat
+
+ docker build -t smeyun .
+ docker run -i -t smeyun
+
+
+```
 
 # docker相关错误处理
 tips1:docker: relocation error: docker: symbol dm_task_get_info_with_deferred_remove, version Base not defined in file libdevmapper.so.1.02 with link time reference  
