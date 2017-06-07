@@ -354,7 +354,7 @@ gluster volume quota models enable
 gluster volume quota models limit-usage / 80GB
 
 设置 cache 4GB,默认128M 或32MB<br>
-gluster volume set demo performance.cache-size 4GB
+gluster volume set demo performance.cache-size 2GB
 
 开启 异步后台操作<br>
 gluster volume set demo performance.flush-behind on

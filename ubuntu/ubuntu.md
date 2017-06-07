@@ -10,7 +10,7 @@
 	- [1.7 安装unrar](#17-安装unrar)
 	- [1.8 关闭自动更新](#18-关闭自动更新)
 	- [1.9 输入法出现2个图标](#19-输入法出现2个图标)
-	- [1.10 安装mac皮肤](#110-安装mac皮肤)
+	- [1.10 安装mac皮肤和dock](#110-安装mac皮肤和dock)
 	- [1.11 系统备份](#111-系统备份)
 	- [1.12 来源不信任](#112-来源不信任)
 	- [1.13 vim调优](#113-vim调优)
@@ -25,9 +25,8 @@
 - [2 github环境配置](#2-github环境配置)
 	- [2.1 git 免密码提交](#21-git-免密码提交)
 	- [2.2 git自动提交脚本](#22-git自动提交脚本)
+	- [swap空间设置](#swap空间设置)
 - [ubuntu错误集合](#ubuntu错误集合)
-	- [apt更新报错](#apt更新报错)
-	- [ubuntu16 每次休眠之后进入窗口两侧都有一块白色的区域](#ubuntu16-每次休眠之后进入窗口两侧都有一块白色的区域)
 
 <!-- /TOC -->
 
@@ -314,23 +313,46 @@ sudo sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" >/usr/share/lightdm/lig
 开启guest:
 sudo rm -f /usr/share/lightdm/lightdm.conf.d/50-no-guest.conf
 
-# VYM
+## 1.22 vmware
+1.搭建openstack环境时候无法设置vmware8 为混杂模式,注意每次开机会被重置成root用户.
+```
+chgrp neildev /dev/vmnet*
+chmod a+rw /dev/vmnet*
+
+```
+## 安装mail
+```s
+sudo add-apt-repository ppa:geary-team/releases
+sudo apt-get update
+
+sudo aptitude install geary  
+```
+
+## 设置boot grub 时间
+```s
+sudo vim /etc/default/grub
+注释掉：GRUB_HIDDEN_TIMEOUT
+修改：GRUB_HIDDEN_TIMEOUT= 3
+
+sudo update-grub
+```
 
 # 2 github环境配置
 sudo apt-get install git
 
 ## 2.1 git 免密码提交
+```s
 vim .git-credentials  
 https://{username}:{password}@github.com
-
 https://github.com/nlwng/smeyun.git/
-
 git config --global credential.helper store  
+
 vim ~/.gitconfig 会发现多了一项   
 [credential]
 helper = store
+```
 
-```conf
+```s
 [user]
 	name = {username}@gmail.com
 	email = {username}@gmail.com
@@ -340,7 +362,7 @@ helper = store
 
 ## 2.2 git自动提交脚本
 config 为配置文件将文件拷贝到用户目录
-```shell
+```s
 times=`date "+%Y%m%d_%H:%M:%S"`
 cd ./mytest
 git add .
@@ -350,7 +372,7 @@ cd ../
 ```
 
 ## swap空间设置
-```
+```s
 dd if=/dev/zero of=/mnt/swapadd bs=10240 count=524288
 mkswap /mnt/swapadd
 swapon /mnt/swapadd
@@ -358,13 +380,12 @@ echo "/mnt/swapadd swap swap defaults 0 0" >> /etc/fstab
 ```
 
 # ubuntu错误集合
-## apt更新报错  
-W: Failed to fetch    http://mirrors.sohu.com/ubuntu/dists/precise/universe/i18n/Index  No Hash entry in Release file     /var/lib/apt/lists/partial/mirrors.sohu.com_ubuntu_dists_precise_universe_i18n_Index
+1.apt更新报错   
+W: Failed to fetch    http://mirrors.sohu.com/ubuntu/dists/precise/universe/i18n/Index  No Hash entry in Release file     /var/lib/apt/lists/partial/mirrors.sohu.com_ubuntu_dists_precise_universe_i18n_Index  
+将/var/lib/apt/lists/partial/下的所有文件删除  
 
-将/var/lib/apt/lists/partial/下的所有文件删除
-
-## ubuntu16 每次休眠之后进入窗口两侧都有一块白色的区域  
-在英伟达 375 和 378 版本的驱动上会有这个白边的问题， 在最新的 381 版本上已经修复  
+2.ubuntu16 每次休眠之后进入窗口两侧都有一块白色的区域    
+在英伟达 375 和 378 版本的驱动上会有这个白边的问题， 在最新的 381 版本上已经修复   
 
 最好的办法就是更新驱动为 381 或者降驱动版本降为 340.  
 升级为 381方法是命令行终端下（Ctrl-Shift-T呼出）输入如下命令， 然后重启电脑  

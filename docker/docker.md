@@ -453,6 +453,18 @@ vim Dockerfile
  docker build -t smeyun .
  docker run -i -t smeyun
 
+RUN echo "webapp:sme123" | chpasswd  
+RUN echo "root:urwelcome" | chpasswd  
+RUN echo "webapp   ALL=(ALL)       ALL" >> /etc/sudoers
+
+RUN mkdir /var/run/sshd  
+RUN /etc/init.d/mysql start
+EXPOSE 22
+EXPOSE 9095
+EXPOSE 3306
+ CMD ["/usr/sbin/sshd", "-D"]  
+
+docker run -d -it -p 58422:22 -p 9095:9095 -p 3308:3306 hub.c.smeyun.com/smedev:1
 
 ```
 

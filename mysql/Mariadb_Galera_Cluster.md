@@ -1,8 +1,11 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
- - [Mariadb Galera Cluster](#mariadb-galera-cluster)
-
-  - [特性](#特性)
+	- [特性](#特性)
+- [sharding-jdbc](#sharding-jdbc)
+- [mysql proxy](#mysql-proxy)
+- [DRBD](#drbd)
+- [binlog](#binlog)
+- [xtrabackup](#xtrabackup)
 
 <!-- /TOC -->
 
@@ -29,3 +32,24 @@
 # mysql proxy
 
 # DRBD
+
+# binlog
+
+开启binlog
+```
+show variables like 'log_bin';
+show binary logs;
+
+[mysqld]
+log-bin=mysql-bin
+expire_logs_days = 30
+```
+手动清理binglog
+```
+PURGE MASTER LOGS BEFORE DATE_SUB(CURRENT_DATE, INTERVAL 10 DAY);   //删除10天前的MySQL binlog
+show master logs;
+PURGE MASTER LOGS TO 'MySQL-bin.010';  //清除MySQL-bin.010日志
+PURGE MASTER LOGS BEFORE '2008-06-22 13:00:00';   //清除2008-06-22 13:00:00前binlog日志
+PURGE MASTER LOGS BEFORE DATE_SUB( NOW( ), INTERVAL 3 DAY);  //清除3天前binlog日志BEFORE
+```
+# xtrabackup

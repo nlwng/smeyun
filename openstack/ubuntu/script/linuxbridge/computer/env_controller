@@ -1,0 +1,10 @@
+#预定义变量
+export controller_ip="10.0.0.11"
+export net_ip="10.0.0.21"
+export compute1_ip="10.0.0.31"
+export dns="221.7.92.98"
+export gateway="10.0.0.2"
+export sql_user="root"
+export passwd="pass"
+export token="21865dcc8bea315b2487"
+echo $controller_ip

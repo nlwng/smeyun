@@ -649,7 +649,7 @@ apt-get -y install cinder-api cinder-scheduler python-cinderclient
 # apt-get -qy cinder-volume
 
 ```shell
-crudini --set /etc/cinder/cinder.conf DEFAULT my_ip 192.168.1.41
+crudini --set /etc/cinder/cinder.conf DEFAULT my_ip 192.168.1.11
 crudini --set /etc/cinder/cinder.conf DEFAULT state_path /var/lib/cinder
 crudini --set /etc/cinder/cinder.conf DEFAULT rootwrap_config  /etc/cinder/rootwrap.conf
 crudini --set /etc/cinder/cinder.conf DEFAULT api_paste_confg  /etc/cinder/api-paste.ini
@@ -679,9 +679,9 @@ crudini --set /etc/cinder/cinder.conf oslo_messaging_rabbit rabbit_password pass
 
 ## 初始化数据
 
-chmod 640 /etc/cinder/cinder.conf<br>
-chgrp cinder /etc/cinder/cinder.conf<br>
-su -s /bin/sh -c "cinder-manage db sync" cinder<br>
+chmod 640 /etc/cinder/cinder.conf  
+chgrp cinder /etc/cinder/cinder.conf  
+su -s /bin/sh -c "cinder-manage db sync" cinder  
 for i in {nova-api,cinder-scheduler,cinder-api};do service $i restart;done
 
 ## 测试
@@ -876,10 +876,10 @@ crudini --set /etc/cinder/cinder.conf glusterfs glusterfs_shares_config /etc/cin
 crudini --set /etc/cinder/cinder.conf glusterfs glusterfs_mount_point_base /mnt
 ```
 
-chmod 640 /etc/cinder/cinder.conf<br>
-chgrp cinder /etc/cinder/cinder.conf<br>
-chown -R cinder.cinder /mnt/
-systemctl restart cinder-volume
+chmod 640 /etc/cinder/cinder.conf  
+chgrp cinder /etc/cinder/cinder.conf   
+chown -R cinder.cinder /mnt/  
+service cinder-volume restart  
 
 ## 安装网络
 
@@ -936,18 +936,19 @@ service neutron-linuxbridge-agent restart
 
 #### 安装
 
-apt-get install glusterfs-server service glusterfs-server start
+apt-get install glusterfs-server  
+service glusterfs-server start
 
 #### 添加节点
-
-添加节点IP:<br>
-gluster peer probe cinder2 设置节点目录:<br>
-mkdir -p /node1 设置节点集群:<br>
-gluster volume create demo replica 2 cinder1:/node1 cinder2:/node1 cinder3:/node1 cinder4:/node1 force<br>
-启动卷:<br>
-gluster vol start demo<br>
-配置驱动:<br>
-vim /etc/cinder/cinder.conf
+```
+添加节点IP
+gluster peer probe cinder2 设置节点目录:
+mkdir -p /node1 设置节点集群:
+gluster volume create demo replica 2 cinder1:/node1 cinder1:/node2 cinder1:/node3 cinder1:/node4 force   
+启动卷:   
+gluster vol start demo
+```
+配置驱动:vim /etc/cinder/cinder.conf
 
 ```shell
 crudini --set /etc/cinder/cinder.conf glusterfs volume_driver cinder.volume.drivers.glusterfs.GlusterfsDriver
@@ -958,14 +959,17 @@ crudini --set /etc/cinder/cinder.conf DEFAULT enabled_backends glusterfs
 ```
 
 配置卷自动挂载:<br>
-vim /etc/cider/glusterfs_shares 192.168.1.31:/demo
+vim /etc/cider/glusterfs_shares
+```
+cinder1:/demo
 
-chmod 640 /etc/cinder/glusterfs_shares<br>
-chgrp cinder /etc/cinder/glusterfs_shares<br>
+chmod 640 /etc/cinder/glusterfs_shares
+chgrp cinder /etc/cinder/glusterfs_shares
 service cinder-volume restart
-
-计算节点配置:<br>
-crudini --set /etc/nova/nova.conf DEFAULT volume_api_class nova.volume.cinder.API service nova-compute restart
+```
+计算节点配置:
+crudini --set /etc/nova/nova.conf DEFAULT volume_api_class nova.volume.cinder.API  
+service nova-compute restart
 
 ### ceph
 

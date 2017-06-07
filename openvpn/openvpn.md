@@ -125,11 +125,16 @@ dh keys/dh2048.pem
 server-bridge 192.168.0.30 255.255.255.0 192.168.0.150 192.168.0.199
 keepalive 10 120
 comp-lzo
+#通过keepalive检测超时后，重新启动vpn，不重新读取keys,保留第一次使用的keys
 persist-key
+#通过keepalive检测超时后,重新启动vpn,一直保持tun或tap设备是linkup的，否则网络连接会先linkdown然后linkup
 persist-tun
 log /var/log/openvpn.log
 log-append /var/log/openvpn.log
 verb 3
+script-security 3
+#允许多个客户端使用同一个证书连接服务端
+duplicate-cn
 ```
 ### 修改网络转发协议
 echo 1 > /proc/sys/net/ipv4/ip_forward  
@@ -157,7 +162,7 @@ chkconfig openvpn on
 Configure VPN Client
 ```c
 client
-dev tun
+dev tap
 proto tcp
 remote *.*.*.* 1194
 resolv-retry infinite
@@ -207,6 +212,8 @@ log openvpn.log
 status openvpn-status.log
  #日志级别
 verb 3
+#脚本安全
+script-security 3
 ```
 vim /etc/openvpn/auth/ldap.conf  
 ```c
