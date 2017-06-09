@@ -315,11 +315,17 @@ sudo rm -f /usr/share/lightdm/lightdm.conf.d/50-no-guest.conf
 
 ## 1.22 vmware
 1.搭建openstack环境时候无法设置vmware8 为混杂模式,注意每次开机会被重置成root用户.
-```
+```s
 chgrp neildev /dev/vmnet*
 chmod a+rw /dev/vmnet*
 
+重置网络:
+sudo modprobe vmmon
+sudo modprobe vmci
+sudo vmware-networks --stop
+sudo vmware-networks --start
 ```
+
 ## 安装mail
 ```s
 sudo add-apt-repository ppa:geary-team/releases
@@ -336,9 +342,15 @@ sudo vim /etc/default/grub
 
 sudo update-grub
 ```
+## 安装qq
+sudo gdebi
+sudo apt-get clean && sudo apt-get update && sudo apt-get upgrade
+sudo apt-get install software-center
 
 # 2 github环境配置
 sudo apt-get install git
+
+
 
 ## 2.1 git 免密码提交
 ```s

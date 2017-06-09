@@ -646,8 +646,6 @@ openstack endpoint create --region RegionOne volumev2 admin http://controller:87
 
 apt-get -y install cinder-api cinder-scheduler python-cinderclient
 
-# apt-get -qy cinder-volume
-
 ```shell
 crudini --set /etc/cinder/cinder.conf DEFAULT my_ip 192.168.1.11
 crudini --set /etc/cinder/cinder.conf DEFAULT state_path /var/lib/cinder
