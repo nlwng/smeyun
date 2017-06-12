@@ -358,13 +358,15 @@ sudo apt-get install git
 vim .git-credentials  
 https://{username}:{password}@github.com
 https://github.com/nlwng/smeyun.git/
+
 git config --global credential.helper store  
 
 vim ~/.gitconfig 会发现多了一项   
 [credential]
 helper = store
 ```
-
+git config --global user.email "nlwng49@gmail.com"   
+git config --global user.name "nlwng49@gmail.com"   
 ```s
 [user]
 	name = {username}@gmail.com
