@@ -242,7 +242,8 @@ sudo apt-get install python-dev
 sudo pip install mysql-python   
 
 ## 1.17 优化terminator
-修改配置文件  
+修改配置文件   
+sudo apt-get -y install terminator  
 ```
 [global_config]
   enabled_plugins = CustomCommandsMenu, TestPlugin, ActivityWatch, TerminalShot, MavenPluginURLHandler
