@@ -344,14 +344,89 @@ sudo vim /etc/default/grub
 sudo update-grub
 ```
 ## 安装qq
-sudo gdebi
-sudo apt-get clean && sudo apt-get update && sudo apt-get upgrade
-sudo apt-get install software-center
+1 安装wine[在系统初始阶段]
+```s
+sudo  dpkg  --add-architecture i386
+wget -nc https://dl.winehq.org/wine-builds/Release.key
+sudo apt-key add Release.key
+sudo apt-add-repository https://dl.winehq.org/wine-builds/ubuntu/
+
+sudo apt-get update
+sudo apt-get install --install-recommends winehq-stable
+
+winecfg：
+新增库函数：
+*ntoskrnl.exe，*riched20，*txplatform.exe
+
+*ntoskrnl.exe disable
+*txplatform.exe disable
+```
+2 安装qq
+```s
+安装：
+wine QQ8.9.2.exe
+启动：
+wine c:/Program\ Files\ \(x86\)/Tencent/QQ/Bin/QQ.exe
+
+中文字体设置：
+复制字体simsun.ttc，到/usr/share/fonts/windows/
+
+创建wine路径：
+cd ~/.wine/drive_c/windows/fonts
+ln -s /usr/share/fonts/windows/simsun.ttc simsun.ttc
+ln -s /usr/share/fonts/windows/simsun.ttc simfang.ttc
+
+修改 ~/.wine/system.reg：
+将其中的：
+"LogPixels"=dword:00000060
+改为：
+"LogPixels"=dword:00000070
+
+"MS Shell Dlg"="Tahoma"
+"MS Shell Dlg 2″="Tahoma"
+改为：
+"MS Shell Dlg"="SimSun"
+"MS Shell Dlg 2″="SimSun"
+
+修改 ~/.wine/drive_c/windows/win.ini,增加：
+[Desktop]
+menufontsize=13
+messagefontsize=13
+statusfontsize=13
+IconTitleSize=13
+
+zh.reg [regedit zh.reg]:
+REGEDIT4
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows
+NT\CurrentVersion\FontSubstitutes]
+"Arial"="simsun"
+"Arial CE,238"="simsun"
+"Arial CYR,204"="simsun"
+"Arial Greek,161"="simsun"
+"Arial TUR,162"="simsun"
+"Courier New"="simsun"
+"Courier New CE,238"="simsun"
+"Courier New CYR,204"="simsun"
+"Courier New Greek,161"="simsun"
+"Courier New TUR,162"="simsun"
+"FixedSys"="simsun"
+"Helv"="simsun"
+"Helvetica"="simsun"
+"MS Sans Serif"="simsun"
+"MS Shell Dlg"="simsun"
+"MS Shell Dlg 2"="simsun"
+"System"="simsun"
+"Tahoma"="simsun"
+"Times"="simsun"
+"Times New Roman CE,238"="simsun"
+"Times New Roman CYR,204"="simsun"
+"Times New Roman Greek,161"="simsun"
+"Times New Roman TUR,162"="simsun"
+"Tms Rmn"="simsun"
+```
 
 # 2 github环境配置
 sudo apt-get install git
-
-
 
 ## 2.1 git 免密码提交
 ```s
@@ -367,6 +442,7 @@ helper = store
 ```
 git config --global user.email "nlwng49@gmail.com"   
 git config --global user.name "nlwng49@gmail.com"   
+
 ```s
 [user]
 	name = {username}@gmail.com
