@@ -303,8 +303,9 @@ sudo rm -f /usr/share/lightdm/lightdm.conf.d/50-no-guest.conf
 ## 1.22 vmware
 1.搭建openstack环境时候无法设置vmware8 为混杂模式,注意每次开机会被重置成root用户.
 ```s
-chgrp neildev /dev/vmnet*
-chmod a+rw /dev/vmnet*
+sudo chgrp neildev /dev/vmnet*
+sudo chmod a+rw /dev/vmnet*
+vmware &
 
 重置网络:
 sudo modprobe vmmon
@@ -342,11 +343,17 @@ sudo apt-get install --install-recommends winehq-stable
 
 winecfg：
 新增库函数：
-*ntoskrnl.exe，*riched20，*txplatform.exe
+*ntoskrnl.exe，*riched20，*txplatform.exe *riched32
 
 *ntoskrnl.exe disable
 *txplatform.exe disable
 ```
+export WINEARCH=win32
+1 rm -r ~/.wine
+2 WINEARCH=win32 WINEPREFIX=~/.wine winecfg
+mkdir -p temp;git clone https://github.com/hillwoodroc/winetricks-zh.git
+ln -sf /home/neildev/temp/winetricks-zh/winetricks-zh /usr/bin/
+
 2 安装qq
 ```s
 安装：
