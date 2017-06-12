@@ -44,27 +44,13 @@ sudo apt-get install sublime-text
 sublime 左侧目录与背景同步插件 SyncedSidebarBg
 
 ## 1.3 ubuntu优化
-
-sudo apt-get remove unity-webapps-common  
-sudo apt-get remove libreoffice-common  
-sudo apt-get remove thunderbird totem rhythmbox empathy brasero simple-scan   gnome-mahjongg aisleriot gnome-mines cheese transmission-common gnome-orca   webbrowser-app gnome-sudoku  landscape-client-ui-install
-
-sudo apt-get remove thunderbird（邮箱）  
-sudo apt-get remove  totem （视频播放器）  
-sudo apt-get remove rhythmbox（音乐播放器）  
-sudo apt-get remove empathy  
-sudo apt-get remove brasero  
-sudo apt-get remove simple-scan  
-sudo apt-get remove gnome-mahjongg  
-sudo apt-get remove aisleriot  
-sudo apt-get remove gnome-mines  
-sudo apt-get remove transmission-common  
-sudo apt-get remove gnome-orca  
-sudo apt-get remove webbrowser-app  
-sudo apt-get remove gnome-sudoku  
-sudo apt-get remove onboard deja-dup  
-sudo apt-get install vim git  
-
+```s
+sudo apt-get -y remove unity-webapps-common  
+sudo apt-get -y remove libreoffice-common  
+sudo apt-get -y remove thunderbird totem rhythmbox empathy brasero simple-scan gnome-mahjongg aisleriot gnome-mines cheese transmission-common gnome-orca   webbrowser-app gnome-sudoku  landscape-client-ui-install
+sudo apt-get -y remove thunderbird totem rhythmbox empathy brasero simple-scan aisleriot gnome-mines transmission-common gnome-orca webbrowser-app gnome-sudoku  onboard deja-dup    
+sudo apt-get -y install vim git  
+```
 美化工具  
 sudo apt-get install unity-tweak-tool  
 
