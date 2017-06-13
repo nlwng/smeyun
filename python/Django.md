@@ -267,7 +267,7 @@ url(r'^post/(?P<pk>\d+)/$', post_detail, name='post_detail'),
 在表单里添加{％csrf_token％}
 ```py
 <form action="/books/contact/" method="post">
-                {% csrf_token %}      <--------------------------------------新加入的                  
+                {% csrf_token %}      新加入               
                 <p>Subject: <input type="text" name="subject"></p>
                 <p>Your e-mail: (optional): <input type="text" name="email"></p>
                 <p>Message: <textarea name="message" rows="10" cols="50"></textarea></p>
