@@ -348,10 +348,8 @@ sudo apt-get -y install --install-recommends winehq-stable
 将目录初始化为32位：
 ```s
 export WINEARCH=win32
-1 rm -r ~/.wine
-2 WINEARCH=win32 WINEPREFIX=~/.wine winecfg
-mkdir -p temp;git clone https://github.com/hillwoodroc/winetricks-zh.git
-sudo ln -sf /home/neildev/temp/winetricks-zh/winetricks-zh /usr/bin/
+rm -r ~/.wine
+WINEARCH=win32 WINEPREFIX=~/.wine winecfg
 
 命令行运行： winecfg
 在winecfg函数栏目，新增库函数：
@@ -369,17 +367,20 @@ winetricks mfc42
 2 安装qq
 ```s
 安装：[建议安装tm]
-wine tm2016.exe
+wine tim2016.exe
 启动：
 wine c:/Program\ Files\ \(x86\)/Tencent/TIM/Bin/TIM.exe
 
 中文字体设置：
-创建wine路径：
+字体下载：
+http://pan.baidu.com/s/1qYnZvjA
 cp simsun.ttc /home/neildev/.wine/drive_c/windows/Fonts/
 ln -sf /home/neildev/.wine/drive_c/windows/Fonts/simsun.ttc simfang.ttc
+```
 
 以下步骤可以不执行：
-修改 ~/.wine/system.reg：
+```s
+修改 ~/.wine/system.reg
 将其中的：
 "LogPixels"=dword:00000060
 改为：
@@ -427,7 +428,11 @@ NT\CurrentVersion\FontSubstitutes]
 "Times New Roman TUR,162"="simsun"
 "Tms Rmn"="simsun"
 ```
-
+通过winetricks 安装
+```
+mkdir -p temp;git clone https://github.com/hillwoodroc/winetricks-zh.git
+sudo ln -sf /home/neildev/temp/winetricks-zh/winetricks-zh /usr/bin/
+```
 # 2 github环境配置
 sudo apt-get install git
 
