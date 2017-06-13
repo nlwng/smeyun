@@ -100,3 +100,9 @@ zebra stripes |   are neat    |    $1
 
 # 3 windowns
 需要安装python git node
+
+language-plantuml、 plantuml-preview
+```
+<script src="raphael-min.js"></script>
+ Bob -> Alice : hello
+```
