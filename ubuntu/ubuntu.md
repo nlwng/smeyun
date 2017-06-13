@@ -22,6 +22,10 @@
 	- [1.19 屏幕边缘鼠标粘滞](#119-屏幕边缘鼠标粘滞)
 	- [1.20 安装compiz](#120-安装compiz)
 	- [1.21 禁止guest账号登录](#121-禁止guest账号登录)
+	- [1.22 vmware](#122-vmware)
+	- [1.23 安装mail](#123-安装mail)
+	- [1.24 设置boot grub 时间](#124-设置boot-grub-时间)
+	- [1.25 安装qq](#125-安装qq)
 - [2 github环境配置](#2-github环境配置)
 	- [2.1 git 免密码提交](#21-git-免密码提交)
 	- [2.2 git自动提交脚本](#22-git自动提交脚本)
@@ -314,7 +318,7 @@ sudo vmware-networks --stop
 sudo vmware-networks --start
 ```
 
-## 安装mail
+## 1.23 安装mail
 ```s
 sudo add-apt-repository ppa:geary-team/releases
 sudo apt-get update
@@ -322,7 +326,7 @@ sudo apt-get update
 sudo apt-get -y install geary  
 ```
 
-## 设置boot grub 时间
+## 1.24 设置boot grub 时间
 ```s
 sudo vim /etc/default/grub
 注释掉：GRUB_HIDDEN_TIMEOUT
@@ -330,7 +334,7 @@ sudo vim /etc/default/grub
 
 sudo update-grub
 ```
-## 安装qq
+## 1.25 安装qq
 1 安装wine[在系统初始阶段]
 ```s
 sudo  dpkg  --add-architecture i386
