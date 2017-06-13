@@ -378,7 +378,7 @@ cp simsun.ttc /home/neildev/.wine/drive_c/windows/Fonts/
 ln -sf /home/neildev/.wine/drive_c/windows/Fonts/simsun.ttc simfang.ttc
 ```
 
-以下步骤可以不执行：
+3.以下步骤可以不执行：
 ```s
 修改 ~/.wine/system.reg
 将其中的：
@@ -428,7 +428,7 @@ NT\CurrentVersion\FontSubstitutes]
 "Times New Roman TUR,162"="simsun"
 "Tms Rmn"="simsun"
 ```
-通过winetricks 安装
+4.通过winetricks 安装
 ```
 mkdir -p temp;git clone https://github.com/hillwoodroc/winetricks-zh.git
 sudo ln -sf /home/neildev/temp/winetricks-zh/winetricks-zh /usr/bin/
