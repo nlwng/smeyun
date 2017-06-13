@@ -379,7 +379,6 @@ cp simsun.ttc /home/neildev/.wine/drive_c/windows/Fonts/
 ln -sf /home/neildev/.wine/drive_c/windows/Fonts/simsun.ttc simfang.ttc
 
 以下步骤可以不执行：
-
 修改 ~/.wine/system.reg：
 将其中的：
 "LogPixels"=dword:00000060
