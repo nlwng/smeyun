@@ -345,7 +345,7 @@ sudo apt-add-repository https://dl.winehq.org/wine-builds/ubuntu/
 sudo apt-get update
 sudo apt-get -y install --install-recommends winehq-stable
 ```
-将目录初始化为32位：
+2.将目录初始化为32位：
 ```s
 export WINEARCH=win32
 rm -r ~/.wine
@@ -364,7 +364,7 @@ sudo apt-get -y install winetricks
 winetricks mfc42
 ```
 
-2 安装qq
+3.安装qq
 ```s
 安装：[建议安装tm]
 wine tim2016.exe
@@ -378,7 +378,7 @@ cp simsun.ttc /home/neildev/.wine/drive_c/windows/Fonts/
 ln -sf /home/neildev/.wine/drive_c/windows/Fonts/simsun.ttc simfang.ttc
 ```
 
-3.以下步骤可以不执行：
+4.以下步骤可以不执行：
 ```s
 修改 ~/.wine/system.reg
 将其中的：
@@ -428,7 +428,7 @@ NT\CurrentVersion\FontSubstitutes]
 "Times New Roman TUR,162"="simsun"
 "Tms Rmn"="simsun"
 ```
-4.通过winetricks 安装
+5.通过winetricks 安装
 ```
 mkdir -p temp;git clone https://github.com/hillwoodroc/winetricks-zh.git
 sudo ln -sf /home/neildev/temp/winetricks-zh/winetricks-zh /usr/bin/
