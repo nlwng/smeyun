@@ -154,7 +154,7 @@ http://python.usyiyi.cn/django/ref/models/fields.html#common-model-field-options
 null    如果为True，Django 将用NULL 来在数据库中存储空值。 默认值是 False.
 blank   如果为True，该字段允许不填。默认为False。
 choices 由二项元组构成的一个可迭代对象（例如，列表或元组），用来给字段提供选择项。 如果设置了choices,
-默认的表单将是一个选择框而不是标准的文本框，而且这个选择框的选项就是choices 中的选项。
+        默认的表单将是一个选择框而不是标准的文本框，而且这个选择框的选项就是choices 中的选项。
 ```
 ```py
 class Person(models.Model):
@@ -170,8 +170,8 @@ default  字段的默认值。可以是一个值或者可调用对象。如果�
 help_text 表单部件额外显示的帮助内容。即使字段不在表单中使用，它对生成文档也很有用。
 
 primary_key 如果为True，那么这个字段就是模型的主键。
-如果你没有指定任何一个字段的primary_key=True，Django 就会自动添加一个IntegerField 字段做为主键，
-所以除非你想覆盖默认的主键行为，否则没必要设置任何一个字段的primary_key=True。详见自增主键字段。
+            如果你没有指定任何一个字段的primary_key=True，Django 就会自动添加一个IntegerField 字段做为主键，
+            所以除非你想覆盖默认的主键行为，否则没必要设置任何一个字段的primary_key=True。详见自增主键字段。
 
 unique  如果该值设置为 True, 这个数据字段的值在整张表中必须是唯一的
 ```
