@@ -21,6 +21,10 @@ tcpdump: test1.log: Permission denied
 apt-get install apparmor-utils
 sudo aa-complain /usr/sbin/tcpdump  
 
+截取gre数据包  
+tcpdump |grep -i "gre"  
+
+
 ## 抓包
 tcpdump -i eth0 -nn 'host 192.168.2.249' -w check.cap
 tcpdump -i eth0 -nn 'host 192.168.2.246' -w check.cap
@@ -75,3 +79,7 @@ fping –asg 10.10.10.0/24
 进行断网攻击  
 sudo arpspoof -i enp4s0 -t 192.168.2.252 192.168.2.254  
 ettercap -Tq -i enp4s0  
+
+# ifstat
+流量监控;  
+sudo atp-get install ifstat
