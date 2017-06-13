@@ -319,7 +319,7 @@ sudo vmware-networks --start
 sudo add-apt-repository ppa:geary-team/releases
 sudo apt-get update
 
-sudo aptitude install geary  
+sudo apt-get -y install geary  
 ```
 
 ## 设置boot grub 时间
@@ -339,35 +339,42 @@ sudo apt-key add Release.key
 sudo apt-add-repository https://dl.winehq.org/wine-builds/ubuntu/
 
 sudo apt-get update
-sudo apt-get install --install-recommends winehq-stable
-
-winecfg：
-新增库函数：
-*ntoskrnl.exe，*riched20，*txplatform.exe *riched32
-
-*ntoskrnl.exe disable
-*txplatform.exe disable
+sudo apt-get -y install --install-recommends winehq-stable
 ```
+将目录初始化为32位：
+```s
 export WINEARCH=win32
 1 rm -r ~/.wine
 2 WINEARCH=win32 WINEPREFIX=~/.wine winecfg
 mkdir -p temp;git clone https://github.com/hillwoodroc/winetricks-zh.git
-ln -sf /home/neildev/temp/winetricks-zh/winetricks-zh /usr/bin/
+sudo ln -sf /home/neildev/temp/winetricks-zh/winetricks-zh /usr/bin/
+
+命令行运行： winecfg
+在winecfg函数栏目，新增库函数：
+*ntoskrnl.exe，*riched20，*txplatform.exe *riched32
+
+设置下列函数为disable：
+*ntoskrnl.exe disable
+*txplatform.exe disable
+
+安装vc支持：
+sudo apt-get -y install winetricks
+winetricks mfc42
+```
 
 2 安装qq
 ```s
-安装：
-wine QQ8.9.2.exe
+安装：[建议安装tm]
+wine tm2016.exe
 启动：
-wine c:/Program\ Files\ \(x86\)/Tencent/QQ/Bin/QQ.exe
+wine c:/Program\ Files\ \(x86\)/Tencent/TIM/Bin/TIM.exe
 
 中文字体设置：
-复制字体simsun.ttc，到/usr/share/fonts/windows/
-
 创建wine路径：
-cd ~/.wine/drive_c/windows/fonts
-ln -s /usr/share/fonts/windows/simsun.ttc simsun.ttc
-ln -s /usr/share/fonts/windows/simsun.ttc simfang.ttc
+cp simsun.ttc /home/neildev/.wine/drive_c/windows/Fonts/
+ln -sf /home/neildev/.wine/drive_c/windows/Fonts/simsun.ttc simfang.ttc
+
+以下步骤可以不执行：
 
 修改 ~/.wine/system.reg：
 将其中的：
