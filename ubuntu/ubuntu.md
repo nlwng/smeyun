@@ -29,7 +29,7 @@
 - [2 github环境配置](#2-github环境配置)
 	- [2.1 git 免密码提交](#21-git-免密码提交)
 	- [2.2 git自动提交脚本](#22-git自动提交脚本)
-	- [swap空间设置](#swap空间设置)
+- [swap空间设置](#swap空间设置)
 - [ubuntu错误集合](#ubuntu错误集合)
 
 <!-- /TOC -->
@@ -42,112 +42,112 @@ monaco-font install
 curl -kL https://raw.github.com/cstrap/monaco-font/master/install-font-ubuntu.sh | bash
 ```
 ## 1.2 sublime相关插件安装
-sudo add-apt-repository ppa:webupd8team/sublime-text-3    
-sudo apt-get update    
-sudo apt-get install sublime-text  
+sudo add-apt-repository ppa:webupd8team/sublime-text-3
+sudo apt-get update
+sudo apt-get install sublime-text
 sublime 左侧目录与背景同步插件 SyncedSidebarBg
 
 ## 1.3 ubuntu优化
 ```s
-sudo apt-get -y remove unity-webapps-common  
-sudo apt-get -y remove libreoffice-common  
+sudo apt-get -y remove unity-webapps-common
+sudo apt-get -y remove libreoffice-common
 sudo apt-get -y remove thunderbird totem rhythmbox empathy brasero simple-scan gnome-mahjongg aisleriot gnome-mines cheese transmission-common gnome-orca   webbrowser-app gnome-sudoku  landscape-client-ui-install
-sudo apt-get -y remove thunderbird totem rhythmbox empathy brasero simple-scan aisleriot gnome-mines transmission-common gnome-orca webbrowser-app gnome-sudoku  onboard deja-dup    
-sudo apt-get -y install vim git  
+sudo apt-get -y remove thunderbird totem rhythmbox empathy brasero simple-scan aisleriot gnome-mines transmission-common gnome-orca webbrowser-app gnome-sudoku  onboard deja-dup
+sudo apt-get -y install vim git
 ```
-美化工具  
-sudo apt-get install unity-tweak-tool  
+美化工具
+sudo apt-get install unity-tweak-tool
 
 ## 1.4 安装经典菜单指示器
-sudo add-apt-repository ppa:diesch/testing  
-sudo apt-get update  
-sudo apt-get install classicmenu-indicator  
+sudo add-apt-repository ppa:diesch/testing
+sudo apt-get update
+sudo apt-get install classicmenu-indicator
 
 
 ## 1.5 安装系统指示器SysPeek
-sudo add-apt-repository ppa:nilarimogard/webupd8    
-sudo apt-get update    
+sudo add-apt-repository ppa:nilarimogard/webupd8
+sudo apt-get update
 sudo apt-get install syspeek
 
 ## 1.6 nav工具是在终端界面看日志的神器
-sudo apt-get install lnav  
+sudo apt-get install lnav
 
 ## 1.7 安装unrar
-sudo apt-get install unrar  
+sudo apt-get install unrar
 
 
 ## 1.8 关闭自动更新
-vi /etc/apt/apt.conf.d/50unattended-upgrades  
-vi /etc/apt/apt.conf.d/10periodic  
-vi /etc/apt/apt.conf.d/20auto-upgrades  
-sudo apt-get install pidgin  
-sudo apt-get install pidgin-plugin-pack  
+vi /etc/apt/apt.conf.d/50unattended-upgrades
+vi /etc/apt/apt.conf.d/10periodic
+vi /etc/apt/apt.conf.d/20auto-upgrades
+sudo apt-get install pidgin
+sudo apt-get install pidgin-plugin-pack
 
 
 ## 1.9 输入法出现2个图标
-sudo dpkg -l|grep qimpanel  
-sudo dpkg -P 上面查出来的结果  
+sudo dpkg -l|grep qimpanel
+sudo dpkg -P 上面查出来的结果
 
 
 ## 1.10 安装mac皮肤和dock
-sudo add-apt-repository ppa:noobslab/macbuntu  
-sudo apt-get install  macbuntu-os-ithemes-lts-v7  
-sudo apt-get install  macbuntu-os-icons-lts-v7  
-sudo apt-get install macbuntu-os-plank-theme-lts-v7  
-sudo apt-get install unity-tweak-tool  
-unity-tweak-tool 中设皮肤、图标  
-点击左上角的dash菜单搜索“plank”，并打开  
-sudo apt-get install gnome-tweak-tool  
+sudo add-apt-repository ppa:noobslab/macbuntu
+sudo apt-get install  macbuntu-os-ithemes-lts-v7
+sudo apt-get install  macbuntu-os-icons-lts-v7
+sudo apt-get install macbuntu-os-plank-theme-lts-v7
+sudo apt-get install unity-tweak-tool
+unity-tweak-tool 中设皮肤、图标
+点击左上角的dash菜单搜索“plank”，并打开
+sudo apt-get install gnome-tweak-tool
 
-安装 Slingscold（替代Launchpad）   
-sudo add-apt-repository ppa:noobslab/macbuntu  
-sudo apt-get update  
-sudo apt-get install slingscold  
+安装 Slingscold（替代Launchpad）
+sudo add-apt-repository ppa:noobslab/macbuntu
+sudo apt-get update
+sudo apt-get install slingscold
 
-安装Albert Spotlight (替代 Mac Spotlight)  
-sudo add-apt-repository ppa:noobslab/macbuntu  
-sudo apt-get update  
-sudo apt-get install albert  
+安装Albert Spotlight (替代 Mac Spotlight)
+sudo add-apt-repository ppa:noobslab/macbuntu
+sudo apt-get update
+sudo apt-get install albert
 
-启动自运行，需要创建以下链接:  
-sudo ln -s /usr/share/applications/plank.desktop /etc/xdg/autostart/  
+启动自运行，需要创建以下链接:
+sudo ln -s /usr/share/applications/plank.desktop /etc/xdg/autostart/
 
-配置 Mac 字体:  
-安装字体命令:  
-wget -O mac-fonts.zip http://drive.noobslab.com/data/Mac/macfonts.zip  
-sudo unzip mac-fonts.zip -d /usr/share/fonts; rm mac-fonts.zip  
-sudo fc-cache -f -v  
-使用 Unity-Tweak-Tool, Gnome-Tweak-Tool 或 Ubuntu Tweak 软件更换字体.  
+配置 Mac 字体:
+安装字体命令:
+wget -O mac-fonts.zip http://drive.noobslab.com/data/Mac/macfonts.zip
+sudo unzip mac-fonts.zip -d /usr/share/fonts; rm mac-fonts.zip
+sudo fc-cache -f -v
+使用 Unity-Tweak-Tool, Gnome-Tweak-Tool 或 Ubuntu Tweak 软件更换字体.
 
-修改启动界面:  
-sudo add-apt-repository ppa:noobslab/themes  
-sudo apt-get update  
-sudo apt-get install macbuntu-os-bscreen-lts-v7   
-如果你喜欢 MBuntu 启动界面，你想恢复到 Ubuntu ，使用命令:  
-sudo apt-get autoremove macbuntu-os-bscreen-lts-v7  
+修改启动界面:
+sudo add-apt-repository ppa:noobslab/themes
+sudo apt-get update
+sudo apt-get install macbuntu-os-bscreen-lts-v7
+如果你喜欢 MBuntu 启动界面，你想恢复到 Ubuntu ，使用命令:
+sudo apt-get autoremove macbuntu-os-bscreen-lts-v7
 
-docky:  
-sudo add-apt-repository ppa:docky-core/ppa   
-sudo apt-get update  
-sudo apt-get install docky  
+docky:
+sudo add-apt-repository ppa:docky-core/ppa
+sudo apt-get update
+sudo apt-get install docky
 
 ## 1.11 系统备份
-sudo add-apt-repository ppa:nemh/systemback  
-sudo apt-get update  
-sudo apt-get install systemback  
+sudo add-apt-repository ppa:nemh/systemback
+sudo apt-get update
+sudo apt-get install systemback
 
-## 1.12 来源不信任  
-apt-get install ubuntu-cloud-keyring  
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192  
-gpg -a --export 16126D3A3E5C1192 | sudo apt-key add -  
+## 1.12 来源不信任
+apt-get install ubuntu-cloud-keyring
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192
+gpg -a --export 16126D3A3E5C1192 | sudo apt-key add -
 
 ## 1.13 vim调优
-install vundle 在.vimrc中跟踪和管理插件  
+install vundle 在.vimrc中跟踪和管理插件
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 vim /etc/vim/vimrc
 ```
-set nocompatible " 关闭 vi 兼容模式  
+set nocompatible " 关闭 vi 兼容模式
 syntax on " 自动语法高亮
 colorscheme molokai " 设定配色方案
 set number " 显示行号
@@ -190,50 +190,50 @@ nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
 ```
 
 ## 1.14 安装vnc
-install vnc  
-apt-get install x11vnc  
+install vnc
+apt-get install x11vnc
 
-set passwd  
-x11vnc -storepasswd  
+set passwd
+x11vnc -storepasswd
 
-start server  
+start server
 x11vnc -auth guess -once -loop -noxdamage -repeat -rfbauth /root/.vnc/passwd -rfbport 5900 -shared
 
-设置开机启动  
-vim /lib/systemd/system/x11vnc.service  
+设置开机启动
+vim /lib/systemd/system/x11vnc.service
 ```shell
-[Unit]  
-Description=Start x11vnc at startup.   
-After=multi-user.  
+[Unit]
+Description=Start x11vnc at startup.
+After=multi-user.
 
-[Service]  
-Type=simple   
+[Service]
+Type=simple
 ExecStart=/usr/bin/x11vnc -auth guess -once -loop -noxdamage -repeat -rfbauth /root/.vnc/passwd -rfbport 5900 -shared
 
-[Install]  
-WantedBy=multi-user.target  
+[Install]
+WantedBy=multi-user.target
 ```
-sudo systemctl daemon-reload  
-sudo systemctl enable x11vnc.service  
+sudo systemctl daemon-reload
+sudo systemctl enable x11vnc.service
 
 ## 1.15 安装zsh
-sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"  
-主题  
-ZSH_THEME="wedisagree"   
+sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+主题
+ZSH_THEME="wedisagree"
 http://ohmyz.sh/
 
 
 ## 1.16 python相关
-安装mysql依赖  
-环境ubuntu desktop 16.04  
-sudo apt-get install python-pip   
-sudo apt-get install libmysqlclient-dev   
-sudo apt-get install python-dev  
-sudo pip install mysql-python   
+安装mysql依赖
+环境ubuntu desktop 16.04
+sudo apt-get install python-pip
+sudo apt-get install libmysqlclient-dev
+sudo apt-get install python-dev
+sudo pip install mysql-python
 
 ## 1.17 优化terminator
-修改配置文件   
-sudo apt-get -y install terminator  
+修改配置文件
+sudo apt-get -y install terminator
 ```
 [global_config]
   enabled_plugins = CustomCommandsMenu, TestPlugin, ActivityWatch, TerminalShot, MavenPluginURLHandler
@@ -267,20 +267,20 @@ sudo apt-get -y install terminator
 
 
 ## 1.18 python相关
-环境ubuntu desktop 16.04  
-sudo apt-get install python-pip  
-sudo apt-get install libmysqlclient-dev   
-sudo apt-get install python-dev  
-sudo pip install mysql-python  
+环境ubuntu desktop 16.04
+sudo apt-get install python-pip
+sudo apt-get install libmysqlclient-dev
+sudo apt-get install python-dev
+sudo pip install mysql-python
 
 ## 1.19 屏幕边缘鼠标粘滞
 Displays --> sticky edges关闭
 
 ## 1.20 安装compiz
-sudo apt-get install compiz-plugins  
-sudo apt-get install compizconfig-settings-manager   
+sudo apt-get install compiz-plugins
+sudo apt-get install compizconfig-settings-manager
 
-打开compiz自行配置  
+打开compiz自行配置
 destop --> expo
 					desktop cube
 					rotate cube
@@ -294,11 +294,11 @@ effects --> anmations
 					trailfocus
 					wizard
 快捷键
-ctrl+alt+拖动  
-Shift Switcher  
+ctrl+alt+拖动
+Shift Switcher
 
 ## 1.21 禁止guest账号登录
-禁止guest:  
+禁止guest:
 sudo sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" >/usr/share/lightdm/lightdm.conf.d/50-no-guest.conf'
 
 开启guest:
@@ -323,7 +323,7 @@ sudo vmware-networks --start
 sudo add-apt-repository ppa:geary-team/releases
 sudo apt-get update
 
-sudo apt-get -y install geary  
+sudo apt-get -y install geary
 ```
 
 ## 1.24 设置boot grub 时间
@@ -366,10 +366,10 @@ winetricks mfc42
 
 3.安装qq
 ```s
-安装：[建议安装tm]
-wine tim2016.exe
+安装：[建议安装tim]
+wine TIM1.1.5.exe
 启动：
-wine c:/Program\ Files\ \(x86\)/Tencent/TIM/Bin/TIM.exe
+wine .wine/drive_c/Program\ Files/Tencent/TIM/Bin/TIM.exe
 
 中文字体设置：
 字体下载：
@@ -438,18 +438,18 @@ sudo apt-get install git
 
 ## 2.1 git 免密码提交
 ```s
-vim .git-credentials  
+vim .git-credentials
 https://{username}:{password}@github.com
 https://github.com/nlwng/smeyun.git/
 
-git config --global credential.helper store  
+git config --global credential.helper store
 
-vim ~/.gitconfig 会发现多了一项   
+vim ~/.gitconfig 会发现多了一项
 [credential]
 helper = store
 ```
-git config --global user.email "nlwng49@gmail.com"   
-git config --global user.name "nlwng49@gmail.com"   
+git config --global user.email "nlwng49@gmail.com"
+git config --global user.name "nlwng49@gmail.com"
 
 ```s
 [user]
@@ -470,7 +470,7 @@ git push origin master
 cd ../
 ```
 
-## swap空间设置
+# swap空间设置
 ```s
 dd if=/dev/zero of=/mnt/swapadd bs=10240 count=524288
 mkswap /mnt/swapadd
@@ -479,20 +479,20 @@ echo "/mnt/swapadd swap swap defaults 0 0" >> /etc/fstab
 ```
 
 # ubuntu错误集合
-1.apt更新报错   
-W: Failed to fetch    http://mirrors.sohu.com/ubuntu/dists/precise/universe/i18n/Index  No Hash entry in Release file     /var/lib/apt/lists/partial/mirrors.sohu.com_ubuntu_dists_precise_universe_i18n_Index  
-将/var/lib/apt/lists/partial/下的所有文件删除  
+1.apt更新报错
+W: Failed to fetch    http://mirrors.sohu.com/ubuntu/dists/precise/universe/i18n/Index  No Hash entry in Release file     /var/lib/apt/lists/partial/mirrors.sohu.com_ubuntu_dists_precise_universe_i18n_Index
+将/var/lib/apt/lists/partial/下的所有文件删除
 
-2.ubuntu16 每次休眠之后进入窗口两侧都有一块白色的区域    
-在英伟达 375 和 378 版本的驱动上会有这个白边的问题， 在最新的 381 版本上已经修复   
+2.ubuntu16 每次休眠之后进入窗口两侧都有一块白色的区域
+在英伟达 375 和 378 版本的驱动上会有这个白边的问题， 在最新的 381 版本上已经修复
 
-最好的办法就是更新驱动为 381 或者降驱动版本降为 340.  
-升级为 381方法是命令行终端下（Ctrl-Shift-T呼出）输入如下命令， 然后重启电脑  
-sudo add-apt-repository ppa:graphics-drivers/ppa  
+最好的办法就是更新驱动为 381 或者降驱动版本降为 340.
+升级为 381方法是命令行终端下（Ctrl-Shift-T呼出）输入如下命令， 然后重启电脑
+sudo add-apt-repository ppa:graphics-drivers/ppa
 
-sudo apt update  
-sudo apt purge nvidia*  
-sudo apt install nvidia-381  
+sudo apt update
+sudo apt purge nvidia*
+sudo apt install nvidia-381
 
-临时的解决办法就是在命令行终端下（Ctrl-Shift-T呼出）输入如下命令：   
-compiz --replace  
+临时的解决办法就是在命令行终端下（Ctrl-Shift-T呼出）输入如下命令：
+compiz --replace
