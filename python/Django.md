@@ -1,7 +1,7 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [django基础命令](#django基础命令)
-- [python 中django admin 认证](#python-中django-admin-认证)
+- [django admin](#django-admin)
 - [数据模型](#数据模型)
 - [HttpRequest](#httprequest)
 - [视图views,Url参数：](#视图viewsurl参数)
@@ -53,7 +53,7 @@ python manage.py sqlmigrate polls 0001
 检查模型是否存在问题  
 python manage.py check
 
-# python 中django admin 认证
+# django admin
 
 INSTALLED_APPS:
 ```p
