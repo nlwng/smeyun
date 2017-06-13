@@ -27,7 +27,8 @@
 npm install -g npm
 
 ### 1.1.1 nodejs nmp 安装
-ln -s /usr/bin/nodejs /usr/local/bin/node sudo apt-get install nmp
+ln -s /usr/bin/nodejs /usr/local/bin/node  
+sudo apt-get install nmp
 
 ## 1.2 安装atom需要插件
 位置:/home/neildev/.atom/packages`
@@ -96,3 +97,6 @@ Tables        |      Are      |  Cool
 col 3 is      | right-aligned | $1600
 col 2 is      |   centered    |   $12
 zebra stripes |   are neat    |    $1
+
+# 3 windowns
+需要安装python git node
