@@ -234,7 +234,7 @@ sudo pip install mysql-python
 ## 1.17 优化terminator
 修改配置文件
 sudo apt-get -y install terminator
-```
+```s
 [global_config]
   enabled_plugins = CustomCommandsMenu, TestPlugin, ActivityWatch, TerminalShot, MavenPluginURLHandler
 [keybindings]
@@ -438,18 +438,14 @@ sudo apt-get install git
 
 ## 2.1 git 免密码提交
 ```s
-vim .git-credentials
-https://{username}:{password}@github.com
-https://github.com/nlwng/smeyun.git/
-
 git config --global credential.helper store
 
 vim ~/.gitconfig 会发现多了一项
 [credential]
 helper = store
 ```
-git config --global user.email "nlwng49@gmail.com"
-git config --global user.name "nlwng49@gmail.com"
+git config --global user.email "nlwng49@gmail.com"  
+git config --global user.name "nlwng49@gmail.com"  
 
 ```s
 [user]
