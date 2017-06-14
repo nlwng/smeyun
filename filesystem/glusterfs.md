@@ -1,46 +1,56 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
- - [GlusterFS](#glusterfs)
-
-  - [1 安装](#1-安装)
-  - [1.1 centos6.8环境下安装使用](#11-centos68环境下安装使用)
-
-    - [1.1.1 安装GlusterFS](#111-安装glusterfs)
-    - [1.1.2 分布式配置](#112-分布式配置)
-    - [1.1.3 复制卷配置](#113-复制卷配置)
-    - [1.1.4 磁盘条带化配置](#114-磁盘条带化配置)
-    - [1.1.5 分布式+复制](#115-分布式复制)
-    - [1.1.6 磁条化+复制](#116-磁条化复制)
-    - [1.1.7 配置GlusterFS客户端硬盘](#117-配置glusterfs客户端硬盘)
-    - [1.1.8 GlusterFS卷维护](#118-glusterfs卷维护)
-
-      - [1.1.7.1 删除节点和卷](#1171-删除节点和卷)
-      - [1.1.7.2 配额管理](#1172-配额管理)
-      - [1.1.7.3 地域复制](#1173-地域复制)
-      - [1.1.7.4 平衡卷](#1174-平衡卷)
-      - [1.1.7.5 I/O 信息查看](#1175-io-信息查看)
-      - [1.1.7.6 top监控](#1176-top监控)
-      - [1.1.7.7 性能优化配置选项](#1177-性能优化配置选项)
-
-  - [1.2 ubutnu下安装](#12-ubutnu下安装)
-
-  - [1.3 压力测试](#13-压力测试)
-
-    - [1.3.1 dd测试](#131-dd测试)
-    - [1.3.2 iozone测试](#132-iozone测试)
-
+- [GlusterFS原理](#glusterfs原理)
+	- [1 安装](#1-安装)
+	- [1.1 安装使用](#11-安装使用)
+		- [1.1.1 安装GlusterFS](#111-安装glusterfs)
+			- [centos](#centos)
+		- [1.1.2 分布式配置](#112-分布式配置)
+		- [1.1.3 复制卷配置](#113-复制卷配置)
+		- [1.1.4 磁盘条带化配置](#114-磁盘条带化配置)
+		- [1.1.5 分布式+复制](#115-分布式复制)
+		- [1.1.6 磁条化+复制](#116-磁条化复制)
+		- [1.1.7 配置GlusterFS客户端硬盘](#117-配置glusterfs客户端硬盘)
+		- [1.1.8 GlusterFS卷维护](#118-glusterfs卷维护)
+			- [1.1.7.1 删除节点和卷](#1171-删除节点和卷)
+			- [1.1.7.2 配额管理](#1172-配额管理)
+			- [1.1.7.3 地域复制](#1173-地域复制)
+			- [1.1.7.4 平衡卷](#1174-平衡卷)
+			- [1.1.7.5 I/O 信息查看](#1175-io-信息查看)
+			- [1.1.7.6 top监控](#1176-top监控)
+			- [1.1.7.7 性能优化配置选项](#1177-性能优化配置选项)
+	- [1.2 ubutnu下安装](#12-ubutnu下安装)
+	- [1.3 压力测试](#13-压力测试)
+		- [1.3.1 dd测试](#131-dd测试)
+		- [1.3.2 iozone测试](#132-iozone测试)
 - [故障处理案例](#故障处理案例)
-
-  - [案例1](#案例1)
-  - [案例2](#案例2)
+	- [案例1](#案例1)
+	- [案例2](#案例2)
 
 <!-- /TOC -->
 
- # GlusterFS
+# GlusterFS原理
+算法：
+```s
+GlusterFS使用弹性哈希算法代替传统分布式文件系统中的集中或分布式元数据服务  
+```
+架构：
+```s
+GlusterFS集群采用全对等式架构，每个节点在集群中的地位是完全对等的，集群配置信息和卷配置信息在所有节点之间实时同步。
+```
+优缺点：
+```s
+这种架构的优点是，每个节点都拥有整个集群的配置信息，具有高度的独立自治性，信息可以本地查询。但同时带来的问题的，一旦配置信息发生变化，
+信息需要实时同步到其他所有节点，保证配置信息一致性，否则GlusterFS就无法正常工作。在集群规模较大时，不同节点并发修改配置时，
+这个问题表现尤为突出。因为这个配置信息同步模型是网状的，大规模集群不仅信息同步效率差，而且出现数据不一致的概率会增加。
+大规模集群管理应该是采用集中式管理更好，不仅管理简单，效率也高。
+```
 
-GlusterFS适合存储大文件，小文件性能较差 官方下载网站:<br>
+
 <https://download.gluster.org/pub/gluster/><br>
-<https://buildlogs.centos.org/centos/6/storage/x86_64/gluster-3.10/>
+https://buildlogs.centos.org/centos/6/storage/x86_64/gluster-3.10/  
+
+
 
 ## 1 安装
 
@@ -55,8 +65,10 @@ vim /etc/hosts
 ```
 10.0.0.51 node01
 10.0.0.52 node02
-10.0.0.53 node03sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-Gluster-3.10.repo
+10.0.0.53 node03
 10.0.0.54 node04
+
+sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-Gluster-3.10.repo
 ```
 
 yum -y install xfsprogs wget fuse fuse-libs<br>
@@ -66,13 +78,11 @@ glusterfs-server:<br>
 <https://buildlogs.centos.org/centos/6/storage/x86_64/gluster-3.10/glusterfs-server-3.10.1-1.el6.x86_64.rpm><br>
 glusterfs-client:<br>
 <https://buildlogs.centos.org/centos/6/storage/x86_64/gluster-3.10/glusterfs-client-xlators-3.10.1-1.el6.x86_64.rpm><br>
-glusterfs-common
+glusterfs-common  
 
-glusterfs-dbg
-
-sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-Gluster-3.10.repo
-
-yum clean all;yum makecache yum --enablerepo=centos-gluster310,epel -y install glusterfs-server
+glusterfs-dbg   
+sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-Gluster-3.10.repo  
+yum clean all;yum makecache yum --enablerepo=centos-gluster310,epel -y install glusterfs-server  
 
 /etc/rc.d/init.d/glusterd start<br>
 chkconfig glusterd on gluster peer status
@@ -124,9 +134,12 @@ gluster volume info
 
 ### 1.1.4 磁盘条带化配置
 
-Stripe相当于RAID0，即分片存储，文件被划分成固定长度的数据分片以Round-Robin轮转方式存储在所有存储节点。Stripe所有存储节点组成完整的名字空间，查找文件时需要询问所有节点，这点非常低效。读写数据时，Stripe涉及全部分片存储节点，操作可以在多个节点之间并发执行，性能非常高。Stripe通常与AFR组合使用，构成RAID10/RAID01，同时获得高性能和高可用性，当然存储利用率会低于50%。
+Stripe相当于RAID0，即分片存储，文件被划分成固定长度的数据分片以Round-Robin轮转方式存储在所有存储节点  
+Stripe所有存储节点组成完整的名字空间，查找文件时需要询问所有节点，这点非常低效。读写数据时，  
+Stripe涉及全部分片存储节点，操作可以在多个节点之间并发执行，性能非常高。Stripe通常与AFR组合使用，  
+构成RAID10/RAID01，同时获得高性能和高可用性，当然存储利用率会低于50%。  
 
-创建目录:<br>
+创建目录:  
 mkdir /glusterfs/striped<br>
 配置节点:<br>
 gluster peer probe node02<br>

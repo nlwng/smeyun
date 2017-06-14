@@ -116,7 +116,7 @@ character-set-server = utf8
 mysql_secure_installation
 
 ### 安装mongodb
-
+```
 apt-get -qy install mongodb-server mongodb-clients python-pymongo
 
 crudini --set /etc/mongodb.conf '' bind_ip 192.168.1.11<br>
@@ -125,13 +125,13 @@ crudini --set /etc/mongodb.conf '' smallfiles true
 /etc/init.d/mongodb stop<br>
 rm /var/lib/mongodb/journal/prealloc.*<br>
 /etc/init.d/mongodb start
-
+```
 ### 安装rabbitmq
-
+```
 apt-get -qy install rabbitmq-server<br>
 rabbitmqctl add_user openstack pass<br>
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
-
+```
 ### 安装Memcached
 
 apt-get install memcached python-memcache
