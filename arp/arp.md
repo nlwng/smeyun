@@ -2,6 +2,7 @@
 
 - [tcpdump](#tcpdump)
 	- [抓包](#抓包)
+- [ovs-vsctl](#ovs-vsctl)
 - [nmap](#nmap)
 	- [扫描](#扫描)
 - [arpping](#arpping)
@@ -10,9 +11,9 @@
 - [wireshark](#wireshark)
 - [fping](#fping)
 - [arpspoof](#arpspoof)
+- [ifstat](#ifstat)
 
 <!-- /TOC -->
-
 
 # tcpdump
 check complain mode   
@@ -24,7 +25,6 @@ sudo aa-complain /usr/sbin/tcpdump
 截取gre数据包  
 tcpdump |grep -i "gre"  
 
-
 ## 抓包
 tcpdump -i eth0 -nn 'host 192.168.2.249' -w check.cap
 tcpdump -i eth0 -nn 'host 192.168.2.246' -w check.cap
@@ -34,6 +34,21 @@ tcpdump host 192.168.2.1 -w check.cap
 tcpdump -i eth0 ether src or dst 34:97:f6:99:a1:ed -w check.cap   
 
 sudo tcpdump -n -r arp_check222.cap|awk -F '[,]+' '{print $2}'|sort|uniq -c|sort -n  
+
+# ovs-vsctl
+查看 open vswitch 的网络状态:ovs-vsctl show  
+查看网桥 br-tun 的接口状况：ovs-ofctl show br-tun  
+查看网桥 br-tun 的流表：ovs-ofctl dump-flows br-tun   
+添加网桥：#ovs-vsctl add-br br0  
+将物理网卡挂接到网桥：#ovs-vsctl add-port br0 eth0   
+
+列出 open vswitch 中的所有网桥：#ovs-vsctl list-br  
+判断网桥是否存在：#ovs-vsctl br-exists br0  
+列出网桥中的所有端口：#ovs-vsctl list-ports br0  
+列出所有挂接到网卡的网桥：#ovs-vsctl port-to-br eth0  
+删除网桥上已经挂接的网口：#vs-vsctl del-port br0 eth0  
+删除网桥：#ovs-vsctl del-br br0  
+
 
 # nmap
 ## 扫描
