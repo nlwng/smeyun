@@ -213,8 +213,8 @@ ExecStart=/usr/bin/x11vnc -auth guess -once -loop -noxdamage -repeat -rfbauth /r
 [Install]
 WantedBy=multi-user.target
 ```
-sudo systemctl daemon-reload
-sudo systemctl enable x11vnc.service
+sudo systemctl daemon-reload   
+sudo systemctl enable x11vnc.service   
 
 ## 1.15 安装zsh
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
