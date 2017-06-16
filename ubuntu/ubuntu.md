@@ -217,19 +217,19 @@ sudo systemctl daemon-reload
 sudo systemctl enable x11vnc.service   
 
 ## 1.15 安装zsh
-sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-主题
-ZSH_THEME="wedisagree"
-http://ohmyz.sh/
+sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"  
+主题  
+ZSH_THEME="wedisagree"   
+http://ohmyz.sh/  
 
 
 ## 1.16 python相关
-安装mysql依赖
-环境ubuntu desktop 16.04
-sudo apt-get install python-pip
-sudo apt-get install libmysqlclient-dev
-sudo apt-get install python-dev
-sudo pip install mysql-python
+安装mysql依赖  
+环境ubuntu desktop 16.04   
+sudo apt-get install python-pip   
+sudo apt-get install libmysqlclient-dev   
+sudo apt-get install python-dev  
+sudo pip install mysql-python  
 
 ## 1.17 优化terminator
 修改配置文件
@@ -266,17 +266,10 @@ sudo apt-get -y install terminator
 ```
 
 
-## 1.18 python相关
-环境ubuntu desktop 16.04
-sudo apt-get install python-pip
-sudo apt-get install libmysqlclient-dev
-sudo apt-get install python-dev
-sudo pip install mysql-python
-
-## 1.19 屏幕边缘鼠标粘滞
+## 1.18 屏幕边缘鼠标粘滞
 Displays --> sticky edges关闭
 
-## 1.20 安装compiz
+## 1.19 安装compiz
 sudo apt-get install compiz-plugins
 sudo apt-get install compizconfig-settings-manager
 
@@ -297,14 +290,14 @@ effects --> anmations
 ctrl+alt+拖动
 Shift Switcher
 
-## 1.21 禁止guest账号登录
+## 1.20 禁止guest账号登录
 禁止guest:
 sudo sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" >/usr/share/lightdm/lightdm.conf.d/50-no-guest.conf'
 
 开启guest:
 sudo rm -f /usr/share/lightdm/lightdm.conf.d/50-no-guest.conf
 
-## 1.22 vmware
+## 1.21 vmware
 1.搭建openstack环境时候无法设置vmware8 为混杂模式,注意每次开机会被重置成root用户.
 ```s
 sudo chgrp neildev /dev/vmnet*
@@ -318,7 +311,7 @@ sudo vmware-networks --stop
 sudo vmware-networks --start
 ```
 
-## 1.23 安装mail
+## 1.22 安装mail
 ```s
 sudo add-apt-repository ppa:geary-team/releases
 sudo apt-get update
@@ -326,7 +319,7 @@ sudo apt-get update
 sudo apt-get -y install geary
 ```
 
-## 1.24 设置boot grub 时间
+## 1.23 设置boot grub 时间
 ```s
 sudo vim /etc/default/grub
 注释掉：GRUB_HIDDEN_TIMEOUT
@@ -334,7 +327,7 @@ sudo vim /etc/default/grub
 
 sudo update-grub
 ```
-## 1.25 安装qq
+## 1.24 安装qq
 1 安装wine[在系统初始阶段]
 ```s
 sudo  dpkg  --add-architecture i386
