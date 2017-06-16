@@ -291,11 +291,11 @@ ctrl+alt+拖动
 Shift Switcher
 
 ## 1.20 禁止guest账号登录
-禁止guest:
-sudo sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" >/usr/share/lightdm/lightdm.conf.d/50-no-guest.conf'
+禁止guest:   
+sudo sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" >/usr/share/lightdm/lightdm.conf.d/50-no-guest.conf'   
 
-开启guest:
-sudo rm -f /usr/share/lightdm/lightdm.conf.d/50-no-guest.conf
+开启guest:  
+sudo rm -f /usr/share/lightdm/lightdm.conf.d/50-no-guest.conf   
 
 ## 1.21 vmware
 1.搭建openstack环境时候无法设置vmware8 为混杂模式,注意每次开机会被重置成root用户.
