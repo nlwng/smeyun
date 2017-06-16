@@ -53,3 +53,19 @@ PURGE MASTER LOGS BEFORE '2008-06-22 13:00:00';   //清除2008-06-22 13:00:00前
 PURGE MASTER LOGS BEFORE DATE_SUB( NOW( ), INTERVAL 3 DAY);  //清除3天前binlog日志BEFORE
 ```
 # xtrabackup
+
+# MariaDB性能优化
+最简单、最方便的MariaDB性能优化技巧，就是使用mysqltuner工具。mysqltuner其实是一个脚本   
+它可以扫描数据库服务器，并提出性能和稳定性方面的改进建议    
+要安装mysqltuner：  
+```s
+https://pan.baidu.com/s/1dFjCnM5
+tar zxvf major-MySQLTuner-perl-0de0df3.tar.gz
+然后进入mysqltuner的解压目录：
+cd major-MySQLTuner-perl-0de0df3
+
+运行mysqltuner：
+./mysqltuner.pl
+
+参考网页：http://blog.csdn.net/chszs/article/details/51627370
+```
