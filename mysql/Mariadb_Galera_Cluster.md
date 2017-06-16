@@ -1,15 +1,16 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
+- [Mariadb Galera Cluster](#mariadb-galera-cluster)
 	- [特性](#特性)
 - [sharding-jdbc](#sharding-jdbc)
 - [mysql proxy](#mysql-proxy)
 - [DRBD](#drbd)
 - [binlog](#binlog)
 - [xtrabackup](#xtrabackup)
+- [MariaDB性能优化](#mariadb性能优化)
 
 <!-- /TOC -->
-
- # Mariadb Galera Cluster
+# Mariadb Galera Cluster
 
 ## 特性
 
