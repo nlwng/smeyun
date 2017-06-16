@@ -190,17 +190,17 @@ nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
 ```
 
 ## 1.14 安装vnc
-install vnc
-apt-get install x11vnc
+install vnc  
+apt-get install x11vnc  
 
-set passwd
-x11vnc -storepasswd
+set passwd  
+x11vnc -storepasswd  
 
-start server
-x11vnc -auth guess -once -loop -noxdamage -repeat -rfbauth /root/.vnc/passwd -rfbport 5900 -shared
+start server  
+x11vnc -auth guess -once -loop -noxdamage -repeat -rfbauth /root/.vnc/passwd -rfbport 5900 -shared  
 
-设置开机启动
-vim /lib/systemd/system/x11vnc.service
+设置开机启动  
+vim /lib/systemd/system/x11vnc.service  
 ```shell
 [Unit]
 Description=Start x11vnc at startup.
