@@ -426,6 +426,11 @@ NT\CurrentVersion\FontSubstitutes]
 mkdir -p temp;git clone https://github.com/hillwoodroc/winetricks-zh.git
 sudo ln -sf /home/neildev/temp/winetricks-zh/winetricks-zh /usr/bin/
 ```
+
+## 1.25 dos文件转unix
+sudo apt-get install -y dos2unix  
+使用方法：dos2unix filename
+
 # 2 github环境配置
 sudo apt-get install git
 

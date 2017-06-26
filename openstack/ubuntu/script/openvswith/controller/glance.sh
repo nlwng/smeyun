@@ -1,5 +1,4 @@
 #------------------------------------------------------------------
-
 #创建 keystone 数据库、对keystone数据库授予恰当的权限：
 
 mysql -u$sql_user -p$passwd <<EOF
@@ -35,7 +34,6 @@ openstack endpoint create --region RegionOne image internal http://controller:92
 openstack endpoint create --region RegionOne image admin http://controller:9292
 
 #------------------------------------------------------------------
-
 #安装软件包
 apt-get install glance -y
 #配置文件
@@ -72,11 +70,10 @@ su -s /bin/sh -c "glance-manage db_sync" glance
 service glance-registry restart
 service glance-api restart
 
-
 #安装工具
 apt-get install axel -y
 #下载镜像包
-axel http://10.0.0.1:1888/cirros-0.3.4-x86_64-disk.img
+axel http://192.168.253.1/file/cirros-0.3.4-x86_64-disk.img
 #将镜像载入
 openstack image create "cirros" \
   --file cirros-0.3.4-x86_64-disk.img \

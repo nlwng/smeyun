@@ -96,8 +96,6 @@ crudini --set /etc/nova/nova.conf neutron password pass
 crudini --set /etc/nova/nova.conf neutron service_metadata_proxy True
 crudini --set /etc/nova/nova.conf neutron metadata_proxy_shared_secret pass
 
-
-
 #同步数据库
 su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf \
   --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron

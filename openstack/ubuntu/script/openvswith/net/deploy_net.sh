@@ -12,12 +12,10 @@ deb-src http://mirrors.aliyun.com/ubuntu/ trusty-security main restricted univer
 deb-src http://mirrors.aliyun.com/ubuntu/ trusty-updates main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ trusty-proposed main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ trusty-backports main restricted universe multiverse
-deb [arch=amd64] http://192.168.2.88:1888/ubuntu trusty-updates/mitaka main">/etc/apt/sources.list
+deb [arch=amd64] http://192.168.253.1/file/ubuntu trusty-updates/mitaka main">/etc/apt/sources.list
 
-apt-get update
-
+#apt-get update
 apt-get install ubuntu-cloud-keyring crudini lrzsz -y  #此处软件园解决，安装基本依赖工具
-
 apt-get update
 
 #------------------------------------------------------------------

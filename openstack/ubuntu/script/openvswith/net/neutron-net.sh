@@ -4,9 +4,7 @@ sed -i s/"#net.ipv4.conf.default.rp_filter=1"/"net.ipv4.conf.default.rp_filter=0
 sed -i s/"#net.ipv4.conf.all.rp_filter=1"/"net.ipv4.conf.all.rp_filter=0"/g /etc/sysctl.conf
 sysctl -p
 
-
-
-  #安装软件包
+#安装软件包
 apt-get install neutron-server neutron-plugin-ml2 neutron-plugin-openvswitch-agent neutron-l3-agent neutron-dhcp-agent neutron-metadata-agent -y
 
 #-----------------------------------------------------------------------------------------------------------
@@ -23,8 +21,6 @@ crudini --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
 crudini --set /etc/neutron/neutron.conf oslo_messaging_rabbit rabbit_host controller
 crudini --set /etc/neutron/neutron.conf oslo_messaging_rabbit rabbit_userid openstack
 crudini --set /etc/neutron/neutron.conf oslo_messaging_rabbit rabbit_password pass
-
-
 
 crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_uri http://controller:5000
 crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_url http://controller:35357
@@ -62,8 +58,8 @@ crudini --set /etc/neutron/plugins/ml2/openvswitch_agent.ini securitygroup enabl
 #--------------------------------------------------------------------------------------------------------
 
 crudini --set /etc/neutron/l3_agent.ini DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
-crudini --set /etc/neutron/l3_agent.ini DEFAULT external_network_bridge 
-crudini --set /etc/neutron/l3_agent.ini DEFAULT verbose True 
+crudini --set /etc/neutron/l3_agent.ini DEFAULT external_network_bridge
+crudini --set /etc/neutron/l3_agent.ini DEFAULT verbose True
 
 #--------------------------------------------------------------------------------------------------------
 
