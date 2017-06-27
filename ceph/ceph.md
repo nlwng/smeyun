@@ -5,7 +5,7 @@ ubuntu install ceph
 #install release key
 wget -q -O- 'http://mirrors.163.com/ceph/keys/release.asc' | sudo apt-key add -
 
-#添加Ceph软件包源，用Ceph稳定版（如 cuttlefish 、 dumpling 、 emperor 、 firefly 等等）替换掉 {ceph-stable-release} 
+#添加Ceph软件包源，用Ceph稳定版（如 cuttlefish 、 dumpling 、 emperor 、 firefly 等等）替换掉 {ceph-stable-release}
 echo deb http://mirrors.163.com/ceph/debian-luminous/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
 
 #更新你的仓库，并安装 ceph-deploy ：
@@ -44,10 +44,8 @@ Host node3
    Hostname node3
    User {username}
 
-#open firewall 
+#open firewall
 #若使用 iptables ，要开放 Ceph Monitors 使用的 6789 端口和 OSD 使用的 6800:7300 端口范围，命令如下
 
 sudo iptables -A INPUT -i {iface} -p tcp -s {ip-address}/{netmask} --dport 6789 -j ACCEPT
 /sbin/service iptables save
-
-

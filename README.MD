@@ -24,3 +24,8 @@ https://github.com/nlwng/smeyun/tree/master/filesystem
 
 ubuntu:
 https://github.com/nlwng/smeyun/tree/master/ubuntu
+
+
+https://atom.io/packages/insert-img
+http://www.itwendao.com/article/detail/334265.html
+http://m.blog.csdn.net/qq_31915279/article/details/61824114
