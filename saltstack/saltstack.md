@@ -25,8 +25,8 @@
 
 # 1 环境部署
 ```
-yum -y install https://repo.saltstack.com/yum/redhat/salt-repo-2016.11-1.el6.noarch.rpm
-yum -y install https://repo.saltstack.com/yum/redhat/salt-repo-2016.11-1.el7.noarch.rpm
+yum -y install https://repo.saltstack.com/yum/redhat/salt-repo-2016.11-2.el6.noarch.rpm
+yum -y install https://repo.saltstack.com/yum/redhat/salt-repo-2016.11-2.el7.noarch.rpm
 yum clean expire-cache
 ```
 
