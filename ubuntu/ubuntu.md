@@ -300,7 +300,7 @@ sudo rm -f /usr/share/lightdm/lightdm.conf.d/50-no-guest.conf
 ## 1.21 vmware
 1.搭建openstack环境时候无法设置vmware8 为混杂模式,注意每次开机会被重置成root用户.
 ```s
-sudo chgrp neildev /dev/vmnet*
+sudo chgrp dev /dev/vmnet*
 sudo chmod a+rw /dev/vmnet*
 vmware &
 
@@ -430,6 +430,74 @@ sudo ln -sf /home/neildev/temp/winetricks-zh/winetricks-zh /usr/bin/
 ## 1.25 dos文件转unix
 sudo apt-get install -y dos2unix  
 使用方法：dos2unix filename
+
+## 1.26 设置终端使用代理
+设置apt-get使用代理：
+```s
+proxy:
+Acquire::http::proxy "http://127.0.0.1:8000/";
+Acquire::ftp::proxy "ftp://127.0.0.1:8000/";
+Acquire::https::proxy "https://127.0.0.1:8000/";
+
+cmd:
+apt-get install vim -c proxy
+```
+
+tsocks
+```s
+apt-get install tsocks
+vim /etc/tsocks.conf
+
+local = 192.168.1.0/255.255.255.0  #local表示本地的网络，也就是不使用socks代理的网络  
+local = 127.0.0.0/255.0.0.0  
+server = 127.0.0.1   #socks服务器的IP  
+server_type = 5   #socks服务版本  
+server_port = 7000  ＃socks服务使用的端口
+
+ssh proxy:
+ssh -qTfnN -D 7000 root@40.90.1.1
+
+cmd:
+tsocks apt-get  elasticsearch
+```
+
+## 1.27 设置网卡使用vlan
+Linux下连接trunk端口
+```s
+查看网卡是否支持vlan：
+sudo modprobe 8021q
+lsmod | grep 8021
+
+ubuntu:
+apt-get install vlan
+redhat / centos
+yum install vconfig
+
+将为eth0启用vlan100 access:
+vconfig add eth0 100
+
+为对应的vlan100配置虚网卡
+ubuntu:vi /etc/network/interfaces
+auto vlan100
+iface vlan100 inet dhcp
+mtu 1500
+vlan-raw_device eth0 #绑定到eth0
+
+redhat/centos:
+首先是配置系统支持vlan
+echo "VLAN=yes" >>  /etc/sysconfig/network
+
+直接复制了/etc/sysconfig/network-scripts/ifcfg-eth0 为 ifcfg-eth0.100
+DEVICE=eth0.100
+TYPE=Ethernet
+ONBOOT=yes
+NM_CONTROLLED=yes
+BOOTPROTO=dhcp
+
+查看vlan映射关系：
+cat /proc/net/vlan/config
+
+```
 
 # 2 github环境配置
 sudo apt-get install git
