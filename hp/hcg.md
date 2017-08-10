@@ -454,6 +454,48 @@ the name of the compute node where the PCI interface is available, click the Int
 and finally click the Edit Interface button associated with the interface you want to configure.
 Fill in the window as illustrated below:
 
+falt:
+直接映射到物理网络
+vlan:
+支持多租户网络使用VLAN id
+VLAN Transparent:
+允许VLAN标记的包被封装在一个VXLAN段中没有删除或修改客户VLAN标记。
+
+HCG 4.0还支持在同一物理接口上使用多个网络类型 VLAN接口。
+您可以选择多个复选框，但唯一有效的多个选择是除了数据之外的数据在与管理或基础设施网络连接的接口上的mgmt或infra。
+infra:
+将接口附加到基础设施网络。当将一个计算或存储节点添加到HCG 4.0时，接口必须附加到节点前的基础设施网络可以解锁。
+您可以编辑基础设施接口来添加数据网络和提供者网络。这个允许在接口上进行基础设施和数据传输。
+data:
+将接口附加到提供者网络。
+您可以通过编辑的方式向管理或基础设施接口添加数据接口接口和选择数据除了mgmt或红外。
+oam:
+将接口连接到OAM网络。 OAM网络被控制器节点用于管理员远程访问。它不是适用于计算或存储节点。
+mgmt:
+将接口连接到内部管理网络。当将一个计算或存储节点添加到HCG 4.0时，
+用于PXE启动的接口是自动分配到内部管理网络。在这个设置中接口，mgmt已经被选中。对于其他接口，不使用此选项。
+pci-passthrough
+提供与物理接口硬件和附件提供者的直接连接来自虚拟机的网络。单个VM可以直接访问物理接口。
+pci-sriov
+提供与物理接口硬件的虚拟单元的直接连接，以及附加的提供者网络，从虚拟机。多个虚拟机可以直接访问和共享相同的物理接口
+
+
+Interface Type:
+(只有当网络类型设置为mgmt,oam,data，或infra)的类型接口(以太网，聚合以太网，或VLAN)。
+Aggregated Ethernet - Mode
+(只有当接口类型设置为聚合以太网时才显示) 链路聚合。
+Aggregated Ethernet - Tx Policy
+(只在聚合的以太网模式设置为平衡或802.3ad)时才显示传输链路聚合的策略。
+Provider Network:
+(只有当网络类型设置为数据时，pci-passthrough，或pci-sriov) 可用的provider networks。要将接口附加到提供者网络，请选择提供者网络。
+IPv4 Addressing Mode:
+(只有当网络类型设置为data时才显示)分配IP地址的方法用于VXLAN网络的接口。有关VXLAN网络的更多信息，见Helion OpenStack载体级4.0系统管理:使用VXLANs。
+Virtual Functions
+(只有当网络类型设置为pci - sriov)时，虚拟接口的数量才会出现使用
+
+note:
+1.不能使用VLAN数据接口附加到VLAN提供程序网络。
+
 
 
 

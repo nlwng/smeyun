@@ -3,6 +3,7 @@
 - [设置yum代理](#设置yum代理)
 - [vnc](#vnc)
 - [关闭firewall](#关闭firewall)
+- [安装Virtualbox](#安装virtualbox)
 
 <!-- /TOC -->
 
@@ -43,4 +44,22 @@ sudo systemctl restart firewalld.service
 systemctl stop firewalld.service #停止firewall
 systemctl disable firewalld.service #禁止firewall开机启动
 firewall-cmd --state #查看默认防火墙状态（关闭后显示notrunning，开启后显示running）
+```
+# 安装Virtualbox
+```
+yum install kernel-devel
+yum install gcc make
+
+vim /etc/yum.repos.d/CentOS7-Base.repo
+[virtualbox]
+name=Oracle Linux / RHEL / CentOS-$releasever / $basearch - VirtualBox
+baseurl=http://download.virtualbox.org/virtualbox/rpm/el/$releasever/$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://www.virtualbox.org/download/oracle_vbox.asc
+
+yum update
+sudo yum install VirtualBox-5.1
+/sbin/rcvboxdrv setup
 ```
