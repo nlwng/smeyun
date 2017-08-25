@@ -33,10 +33,13 @@ PIDFile=/root/.vnc/%H%i.pid
 systemctl daemon-reload
 sudo vncpasswd
 sudo systemctl enable vncserver@:1.service
-sudo systemctl start vncserver@:1.service
+vncserver :1
 
 sudo firewall-cmd --permanent --add-service vnc-server
 sudo systemctl restart firewalld.service
+
+note:
+1号端口一直启动不了:cd /tmp/.X11-unix;rm -rf *
 ```
 
 # 关闭firewall
@@ -63,3 +66,14 @@ yum update
 sudo yum install VirtualBox-5.1
 /sbin/rcvboxdrv setup
 ```
+
+# 关闭防火墙
+```
+停止firewalld服务  
+systemctl stop firewalld  
+禁用firewalld服务  
+systemctl mask firewalld  
+```
+
+# 删libreoffice
+yum erase libreoffice\*
