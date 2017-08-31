@@ -39,3 +39,9 @@ neutron router-interface-add demo-router demo-subnet
 #将外部网络加入路由
 neutron router-gateway-set demo-router ext-net
 #-----------------------------------------------------------------------------------------------------------------
+note：
+1.手动添加网络在添加外部网络时物理网络要填external，不能使用默认default，网络类型看是flat,vlan vxlan根据需要设置
+供应商网络
+网络类型： flat
+物理网络： external
+2.设置路由主要创建时候直接指定外部网络，在添加内部网络就ok。
