@@ -6,16 +6,18 @@ auto lo
 iface lo inet loopback
 
 # The primary network interface
-auto eth0
-iface eth0 inet static
+auto eth1
+iface eth1 inet static
 address $controller_ip
 netmask 255.255.255.0
-gateway $gateway
+#gateway $gateway
 
-auto eth1
-iface eth1 inet manual
-up ip link set dev \$IFACE up
-down ip link set dev \$IFACE down
+auto eth0
+#iface eth0 inet manual
+iface eth0 inet dhcp
+#up ip link set dev \$IFACE up
+#down ip link set dev \$IFACE down
+
 ">/etc/network/interfaces
 
 #------------------------------------------------------------------
@@ -30,8 +32,6 @@ echo "
 127.0.0.1       localhost
 # controller
 $controller_ip      controller
-# net
-$net_ip        		net
 # compute1
 $compute1_ip        compute1
 $compute2_ip        compute2
