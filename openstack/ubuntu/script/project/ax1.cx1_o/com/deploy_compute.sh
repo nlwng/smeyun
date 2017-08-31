@@ -32,7 +32,6 @@ service chrony restart
 
 #OpenStack包
 apt-get install software-properties-common -y
-#apt-get update && apt-get dist-upgrade
 apt-get install python-openstackclient -y
 
 

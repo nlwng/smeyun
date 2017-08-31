@@ -8,7 +8,7 @@ iface lo inet loopback
 # The primary network interface
 auto eth1
 iface eth1 inet static
-address $net_ip
+address $compute1_ip
 netmask 255.255.255.0
 #gateway $gateway
 
@@ -23,7 +23,7 @@ iface eth0 inet dhcp
 #------------------------------------------------------------------
 
 #修改主机名
-echo "net">/etc/hostname
+echo "compute1">/etc/hostname
 
 #------------------------------------------------------------------
 
@@ -32,6 +32,8 @@ echo "
 127.0.0.1       localhost
 # controller
 $controller_ip      controller
+# net
+$net_ip        		net
 # compute1
 $compute1_ip        compute1
 $compute2_ip        compute2
