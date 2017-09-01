@@ -17,6 +17,9 @@
 					- [web install](#web-install)
 					- [system host-update](#system-host-update)
 					- [system host-add](#system-host-add)
+			- [computer-0](#computer-0)
+		- [网络设置](#网络设置)
+		- [随笔](#随笔)
 
 <!-- /TOC -->
 
@@ -510,6 +513,10 @@ Balanced XOR
 提供聚合带宽和错误宽容。实现了动态链接根据IEEE 802.3ad聚合(LACP) 规范。您可以使用此修改传输策略 xmit-hash-policy选项。
 为了支持PXE引导汇总管理界面，远端交换机端口必须配置为被动LACP模式。 这是必需的，因为BIOS在主机上不支持LACP，不能建立一个LAG组，因此可以使用
 只有其中一个聚合接口PXE启动。 如果远端交换机配置为使用活动的LACP，它可以建立一个LAG组并使用任一接口，可能导致引导期间的通信故障处理。
+Layer 2
+源和目的地的哈希MAC地址。
+
+
 ```
 
 
@@ -668,5 +675,7 @@ cinder snapshot-force-delete snapshot-id [snapshot-id]
 
 网络:
 system host-port-list compute-0
+
+
 
 ```

@@ -4,6 +4,8 @@
 - [vnc](#vnc)
 - [关闭firewall](#关闭firewall)
 - [安装Virtualbox](#安装virtualbox)
+- [关闭防火墙](#关闭防火墙)
+- [删libreoffice](#删libreoffice)
 
 <!-- /TOC -->
 
@@ -77,3 +79,25 @@ systemctl mask firewalld
 
 # 删libreoffice
 yum erase libreoffice\*
+
+# rc.local 不启动
+```
+[Unit]
+Description=/etc/rc.d/rc.local Compatibility
+ConditionFileIsExecutable=/etc/rc.d/rc.local
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/etc/rc.d/rc.local start
+TimeoutSec=0
+RemainAfterExit=yes
+SysVStartPriority=99
+
+[Install]
+WantedBy=multi-user.target
+
+#systemctl enable rc-local.service
+#systemctl --system daemon-reload
+#systemctl start rc-local.service
+```
