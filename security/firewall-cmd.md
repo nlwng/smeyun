@@ -19,8 +19,17 @@
 		- [2.2.7 家庭](#227-家庭)
 		- [2.2.8 内部](#228-内部)
 		- [2.2.9 受信任的](#229-受信任的)
-- [3 firwall cli](#3-firwall-cli)
-- [4 firewall example](#4-firewall-example)
+	- [2.3 区域使用](#23-区域使用)
+		- [2.3.1 配置增加区域](#231-配置增加区域)
+		- [2.3.2 为网络连接设置或者修改区域](#232-为网络连接设置或者修改区域)
+		- [2.3.3 NetworkManager 控制的网络连接](#233-networkmanager-控制的网络连接)
+		- [2.3.4 由脚本控制的网络](#234-由脚本控制的网络)
+		- [2.3.5 使用firewalld](#235-使用firewalld)
+			- [2.3.5.1 firewall-cmd](#2351-firewall-cmd)
+				- [2.3.5.1.1 处理运行时区域](#23511-处理运行时区域)
+				- [2.3.5.1.2 处理永久区域](#23512-处理永久区域)
+				- [2.3.5.1.3 直接选项](#23513-直接选项)
+- [firewalld 特性](#firewalld-特性)
 
 <!-- /TOC -->
 # 1 firwall介绍
@@ -52,6 +61,7 @@ systemctl start ip6tables.service
 私有网络地址可以被映射到公开的IP地址。这是一次正规的地址转换
 ### 2.1.5 端口转发
 端口可以映射到另一个端口以及/或者其他主机
+
 ## 2.2 可用区域
 由firewalld 提供的区域按照从不信任到信任的顺序排序
 ### 2.2.1 丢弃
@@ -74,99 +84,162 @@ systemctl start ip6tables.service
 ### 2.2.9 受信任的
 允许所有网络连接
 
+## 2.3 区域使用
+### 2.3.1 配置增加区域
+firewalld 配置工具来配置或者增加区域，以及修改配置  
+工具有例如 firewall-config 这样的图形界面工具，firewall-cmd 这样的命令行工具，以及D-BUS接口
 
-
-
-
-# 3 firwall cli
+### 2.3.2 为网络连接设置或者修改区域
 ```
-firewall-cmd --reload
-firewall-cmd --add-service=http
-显示状态：
-firewall-cmd --state
-查看所有打开的端口：
-firewall-cmd --zone=public --list-ports
-查看区域信息:  
-firewall-cmd --get-active-zones
-firewall-cmd --zone=public --add-port=80/tcp --permanent （--permanent永久生效，没有此参数重启后失效）
-查看:
-firewall-cmd --zone= public --query-port=80/tcp
-删除:
-#firewall-cmd --zone= public --remove-port=80/tcp --permanent
-添加某接口至某信任等级，譬如添加 eth0 至 public，再永久生效
-#firewall-cmd --zone=public --add-interface=eth0 --permanent
-设置 public 为默认的信任级别
-firewall-cmd --set-default-zone=public
-列出 dmz 级别的被允许的进入端口
-firewall-cmd --zome=dmz --list-ports
+区域设置以 ZONE= 选项 存储在网络连接的ifcfg文件中。如果这个选项缺失或者为空，firewalld 将使用配置的默认区域。
+如果这个连接受到 NetworkManager 控制，你也可以使用 nm-connection-editor 来修改区域。
 ```
-# 4 firewall example
+### 2.3.3 NetworkManager 控制的网络连接
 ```
-firewall-cmd --zone=public --query-service=nginx
-firewall-cmd --permanent --zone=public --add-port=8080-8081/tcp
-
-允许某范围的 udp 端口至 public 级别，并永久生效
-firewall-cmd --zome=public --add-port=5060-5059/udp --permanent
-
-添加 smtp 服务至 work zone
-firewall-cmd --zone=work --add-service=smtp
-firewall-cmd --zone=work --remove-service=smtp
-
-配置 ip 地址伪装
-firewall-cmd --zone=external --query-masquerade
-firewall-cmd --zone=external --add-masquerade
-firewall-cmd --zone=external --remove-masquerade
-
-端口转发
-firewall-cmd --zone=external --add-masquerade
-转发 22 端口数据至另一 ip 的 2055 端口上
-firewall-cmd --zone=external --add-forward-port=port=22:proto=tcp:toport=2055:toaddr=192.168.1.100
-然后转发 tcp 22 端口至 3753
-firewall-cmd --zone=external --add-forward-port=port=22:proto=tcp:toport=3753
-转发 22 端口数据至另一个 ip 的相同端口上
-firewall-cmd --zone=external --add-forward-port=port=22:proto=tcp:toaddr=192.168.1.100
-
-永久開放 ftp 服務:
-# firewall-cmd --add-service=ftp --permanent
-永久關閉:
-# firewall-cmd --remove-service=ftp --permanent
-查看状态：
-#firewall-cmd --list-all
-在FirewallD 的服務名稱:
-#firewall-cmd --get-service
-自行加入要開放的 Port:
-# firewall-cmd --add-port=3128/tcp
-允许某个IP短访问3306：
-#firewall-cmd --permanent --zone=public --add-rich-rule 'rule family=“ipv4” source address=“192.168.0.4/24” port port protocal=“tcp” port=“3306” accept'
-
-firewall-cmd --permanent --add-rich-rule 'rule family=ipv4 source address=172.16.26.0/24 protocol=tcp accept'
-查看当前区域：
-firewall-cmd --get-default-zone
-
-把Firewalld防火墙服务中eno16777728网卡的默认区域修改为external，重启后再生效：
-[root@linuxprobe ~]# firewall-cmd --permanent --zone=external --change-interface=eno16777728
-success
-[root@linuxprobe ~]# firewall-cmd --get-zone-of-interface=eno16777728
-public
-[root@linuxprobe ~]# firewall-cmd --permanent --get-zone-of-interface=eno16777728
-external
-
-把Firewalld防火墙服务的当前默认zone区域设置为public：
-[root@linuxprobe ~]# firewall-cmd --set-default-zone=public
-success
-[root@linuxprobe ~]# firewall-cmd --get-default-zone
-public
-
-启动/关闭Firewalld防火墙服务的应急状况模式，阻断一切网络连接
-[root@linuxprobe ~]# firewall-cmd --panic-on
-success
-[root@linuxprobe ~]# firewall-cmd --panic-off
-success
-
-在Firewalld防火墙服务中配置一条富规则，拒绝所有来自于192.168.10.0/24网段的用户访问本机ssh服务（22端口）：
-[root@linuxprobe ~]# firewall-cmd --permanent --zone=public --add-rich-rule="rule family="ipv4" source address="192.168.10.0/24" service name="ssh" reject"
-success
-[root@linuxprobe ~]# firewall-cmd --reload
-success
-
+当 firewalld 由 systemd 或者 init 脚本启动或者重启后，firewalld 将通知 NetworkManager 把网络连接增加到区域。
 ```
+### 2.3.4 由脚本控制的网络
+```
+对于由网络脚本控制的连接有一条限制：没有守护进程通知 firewalld 将连接增加到区域。
+这项工作仅在 ifcfg-post 脚本进行。因此，此后对网络连接的重命名将不能被应用到firewalld。同样，
+在连接活动时重启 firewalld 将导致与其失去关联。现在有意修复此情况。最简单的是将全部未配置连接加入默认区域。
+```
+### 2.3.5 使用firewalld
+你可以通过图形界面工具 firewall-config 或者命令行客户端 firewall-cmd 启用或者关闭防火墙特性。
+
+#### 2.3.5.1 firewall-cmd
+```
+状态：firewall-cmd --state
+firewall-cmd --state && echo "Running" || echo "Not running"
+
+加载：firewall-cmd --reload
+获取区域：firewall-cmd --get-zones
+获取所有支持的服务：firewall-cmd --get-services
+获取所有支持的ICMP类型：firewall-cmd --get-icmptypes
+列出全部启用的区域的特性：firewall-cmd --list-all-zones
+输出区域 <zone> 全部启用的特性：firewall-cmd [--zone=<zone>] --list-all
+获取默认区域的网络设置：firewall-cmd --get-default-zone
+设置默认区域：firewall-cmd --set-default-zone=<zone>
+获取活动的区域：firewall-cmd --get-active-zones
+将接口增加到区域：firewall-cmd [--zone=<zone>] --add-interface=<interface>
+修改接口所属区域：firewall-cmd [--zone=<zone>] --change-interface=<interface>
+从区域中删除一个接口：firewall-cmd [--zone=<zone>] --remove-interface=<interface>
+查询区域中是否包含某接口：firewall-cmd [--zone=<zone>] --query-interface=<interface>
+列举区域中启用的服务：firewall-cmd [ --zone=<zone> ] --list-services
+启用应急模式阻断所有网络连接，以防出现紧急状况：firewall-cmd --panic-on
+禁用应急模式：firewall-cmd --panic-off
+查询应急模式：firewall-cmd --query-panic
+此命令返回应急模式的状态：firewall-cmd --query-panic && echo "On" || echo "Off"
+```
+
+##### 2.3.5.1.1 处理运行时区域
+```
+处理运行时区域：
+运行时模式下对区域进行的修改不是永久有效的。重新加载或者重启后修改将失效
+启用区域中的一种服务：firewall-cmd [--zone=<zone>] --add-service=<service> [--timeout=<seconds>]
+使区域中的 ipp-client 服务生效60秒:firewall-cmd --zone=home --add-service=ipp-client --timeout=60
+启用默认区域中的http服务:firewall-cmd --add-service=http
+禁用区域中的某种服务：firewall-cmd [--zone=<zone>] --remove-service=<service>
+禁止 home 区域中的 http 服务:firewall-cmd --zone=home --remove-service=http
+查询区域中是否启用了特定服务：firewall-cmd [--zone=<zone>] --query-service=<service>
+启用区域端口和协议组合：
+firewall-cmd [--zone=<zone>] --add-port=<port>[-<port>]/<protocol> [--timeout=<seconds>]
+禁用端口和协议组合：
+firewall-cmd [--zone=<zone>] --remove-port=<port>[-<port>]/<protocol>
+查询区域中是否启用了端口和协议组合：
+firewall-cmd [--zone=<zone>] --query-port=<port>[-<port>]/<protocol>
+启用区域中的 IP 伪装功能:
+firewall-cmd [--zone=<zone>] --add-masquerade
+禁用区域中的 IP 伪装：
+firewall-cmd [--zone=<zone>] --remove-masquerade
+查询区域的伪装状态：
+firewall-cmd [--zone=<zone>] --query-masquerade
+启用区域的 ICMP 阻塞功能：
+firewall-cmd [--zone=<zone>] --add-icmp-block=<icmptype>
+禁止区域的 ICMP 阻塞功能：
+firewall-cmd [--zone=<zone>] --remove-icmp-block=<icmptype>
+查询区域的 ICMP 阻塞功能：
+firewall-cmd [--zone=<zone>] --query-icmp-block=<icmptype>
+阻塞区域的响应应答报文:
+firewall-cmd --zone=public --add-icmp-block=echo-reply
+在区域中启用端口转发或映射：
+firewall-cmd [--zone=<zone>] --add-forward-port=port=<port>[-<port>]:proto=<protocol> { :toport=<port>[-<port>] | :toaddr=<address> | :toport=<port>[-<port>]:toaddr=<address> }
+禁止区域的端口转发或者端口映射：
+firewall-cmd [--zone=<zone>] --remove-forward-port=port=<port>[-<port>]:proto=<protocol> { :toport=<port>[-<port>] | :toaddr=<address> | :toport=<port>[-<port>]:toaddr=<address> }
+查询区域的端口转发或者端口映射：
+firewall-cmd [--zone=<zone>] --query-forward-port=port=<port>[-<port>]:proto=<protocol> { :toport=<port>[-<port>] | :toaddr=<address> | :toport=<port>[-<port>]:toaddr=<address> }
+将区域 home 的 ssh 转发到 127.0.0.2：
+firewall-cmd --zone=home --add-forward-port=port=22:proto=tcp:toaddr=127.0.0.2
+```
+##### 2.3.5.1.2 处理永久区域
+```
+处理永久区域：
+获取永久选项所支持的服务
+firewall-cmd --permanent --get-services
+获取永久选项所支持的ICMP类型列表
+firewall-cmd --permanent --get-icmptypes
+获取支持的永久区域
+firewall-cmd --permanent --get-zones
+启用区域中的服务
+firewall-cmd --permanent [--zone=<zone>] --add-service=<service>
+禁用区域中的一种服务
+firewall-cmd --permanent [--zone=<zone>] --remove-service=<service>
+查询区域中的服务是否启用
+firewall-cmd --permanent [--zone=<zone>] --query-service=<service>
+永久启用 home 区域中的 ipp-client 服务
+firewall-cmd --permanent --zone=home --add-service=ipp-client
+永久启用区域中的一个端口-协议组合
+firewall-cmd --permanent [--zone=<zone>] --add-port=<port>[-<port>]/<protocol>
+永久禁用区域中的一个端口-协议组合
+firewall-cmd --permanent [--zone=<zone>] --remove-port=<port>[-<port>]/<protocol>
+查询区域中的端口-协议组合是否永久启用
+firewall-cmd --permanent [--zone=<zone>] --query-port=<port>[-<port>]/<protocol>
+永久启用 home 区域中的 https (tcp 443) 端口
+firewall-cmd --permanent --zone=home --add-port=443/tcp
+永久启用区域中的伪装
+firewall-cmd --permanent [--zone=<zone>] --add-masquerade
+永久禁用区域中的伪装
+firewall-cmd --permanent [--zone=<zone>] --remove-masquerade
+查询区域中的伪装的永久状态
+firewall-cmd --permanent [--zone=<zone>] --query-masquerade
+永久启用区域中的ICMP阻塞
+firewall-cmd --permanent [--zone=<zone>] --add-icmp-block=<icmptype>
+永久禁用区域中的ICMP阻塞
+firewall-cmd --permanent [--zone=<zone>] --remove-icmp-block=<icmptype>
+查询区域中的ICMP永久状态
+firewall-cmd --permanent [--zone=<zone>] --query-icmp-block=<icmptype>
+阻塞公共区域中的响应应答报文:
+firewall-cmd --permanent --zone=public --add-icmp-block=echo-reply
+在区域中永久启用端口转发或映射
+firewall-cmd --permanent [--zone=<zone>] --add-forward-port=port=<port>[-<port>]:proto=<protocol> { :toport=<port>[-<port>] | :toaddr=<address> | :toport=<port>[-<port>]:toaddr=<address> }
+永久禁止区域的端口转发或者端口映射
+firewall-cmd --permanent [--zone=<zone>] --remove-forward-port=port=<port>[-<port>]:proto=<protocol> { :toport=<port>[-<port>] | :toaddr=<address> | :toport=<port>[-<port>]:toaddr=<address> }
+查询区域的端口转发或者端口映射状态
+firewall-cmd --permanent [--zone=<zone>] --query-forward-port=port=<port>[-<port>]:proto=<protocol> { :toport=<port>[-<port>] | :toaddr=<address> | :toport=<port>[-<port>]:toaddr=<address> }
+将 home 区域的 ssh 服务转发到 127.0.0.2
+firewall-cmd --permanent --zone=home --add-forward-port=port=22:proto=tcp:toaddr=127.0.0.2
+```
+
+##### 2.3.5.1.3 直接选项
+```
+将命令传递给防火墙:
+firewall-cmd --direct --passthrough { ipv4 | ipv6 | eb } <args>
+为表 <table> 增加一个新链 <chain> :
+firewall-cmd --direct --add-chain { ipv4 | ipv6 | eb } <table> <chain>
+从表 <table> 中删除链 <chain>:
+firewall-cmd --direct --remove-chain { ipv4 | ipv6 | eb } <table> <chain>
+查询 <chain> 链是否存在与表 <table>. 如果是，返回0,否则返回1:
+firewall-cmd --direct --query-chain { ipv4 | ipv6 | eb } <table> <chain>
+获取用空格分隔的表 <table> 中链的列表:
+firewall-cmd --direct --get-chains { ipv4 | ipv6 | eb } <table>
+为表 <table> 增加一条参数为 <args> 的链 <chain> ，优先级设定为 <priority>:
+firewall-cmd --direct --add-rule { ipv4 | ipv6 | eb } <table> <chain> <priority> <args>
+从表 <table> 中删除带参数 <args> 的链 <chain>:
+firewall-cmd --direct --remove-rule { ipv4 | ipv6 | eb } <table> <chain> <args>
+查询 带参数 <args> 的链 <chain> 是否存在表 <table> 中. 如果是，返回0,否则返回1:
+firewall-cmd --direct --query-rule { ipv4 | ipv6 | eb } <table> <chain> <args>
+获取表 <table> 中所有增加到链 <chain> 的规则，并用换行分隔:
+firewall-cmd --direct --get-rules { ipv4 | ipv6 | eb } <table> <chain>
+
+````
+# firewalld 特性
