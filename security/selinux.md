@@ -77,9 +77,8 @@ type:用来将主体与客体划分为不同的组，组每个主体和系统中
 ```
 
 # 设置
-配置文件：/etc/selinux/config
-
-策略位置：/etc/selinux/<策略名>/policy/
+配置文件：/etc/selinux/config  
+策略位置：/etc/selinux/<策略名>/policy/  
 
 ## 模式设置
 ```
