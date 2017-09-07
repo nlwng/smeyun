@@ -173,7 +173,8 @@ allow_smbd_anon_write --> on
 ```
 ## 4.2 SElinux与nfs
 ```
-selinux对nfs的限制好像不是很严格，默认状态下，不对nfs的安全上下文进行标记，而且在默认状态的策略下，nfs的目标策略允许nfs_export_all_ro
+selinux对nfs的限制好像不是很严格，默认状态下，不对nfs的安全上下文进行标记，
+而且在默认状态的策略下，nfs的目标策略允许nfs_export_all_ro
 nfs_export_all_ro
 nfs_export_all_rw值为0
 所以说默认是允许访问的。
