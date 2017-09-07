@@ -1,8 +1,47 @@
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [1 firwall介绍](#1-firwall介绍)
+	- [1.1 静态防火墙](#11-静态防火墙)
+- [2 firwall解析](#2-firwall解析)
+	- [2.1 区域](#21-区域)
+		- [2.1.1 预定义的服务](#211-预定义的服务)
+		- [2.1.2 端口和协议](#212-端口和协议)
+		- [2.1.3 ICMP 阻塞](#213-icmp-阻塞)
+		- [2.1.4 伪装](#214-伪装)
+		- [2.1.5 端口转发](#215-端口转发)
+	- [2.2 可用区域](#22-可用区域)
+		- [2.2.1 丢弃](#221-丢弃)
+		- [2.2.2 阻塞](#222-阻塞)
+		- [2.2.3 公开](#223-公开)
+		- [2.2.4 外部](#224-外部)
+		- [2.2.5 隔离区（dmz）](#225-隔离区dmz)
+		- [2.2.6 工作](#226-工作)
+		- [2.2.7 家庭](#227-家庭)
+		- [2.2.8 内部](#228-内部)
+		- [2.2.9 受信任的](#229-受信任的)
+- [3 firwall cli](#3-firwall-cli)
+- [4 firewall example](#4-firewall-example)
+
+<!-- /TOC -->
+# 1 firwall介绍
+## 1.1 静态防火墙
+如果你想使用自己的 iptables 和 ip6tables 静态防火墙规则, 那么请安装 iptables-services  
+并且禁用 firewalld ，启用 iptables 和ip6tables
+```
+yum install iptables-services
+systemctl mask firewalld.service
+systemctl enable iptables.service
+systemctl enable ip6tables.service
+
+systemctl stop firewalld.service
+systemctl start iptables.service
+systemctl start ip6tables.service
+```
 
 # 2 firwall解析
 ## 2.1 区域
-网络区域定义了网络连接的可信等级。这是一个一对多的关系,  
-这意味着一次连接可以仅仅是一个区域的一部分，而一个区域可以用于很多连接
+网络区域定义了网络连接的可信等级。这是一个一对多的关系,  这意味着一次连接可以仅仅是
+一个区域的一部分，而一个区域可以用于很多连接
 ### 2.1.1 预定义的服务
 服务是端口和/或协议入口的组合。备选内容包括 netfilter 助手模块以及 IPv4、IPv6地址
 ### 2.1.2 端口和协议
@@ -21,11 +60,23 @@
 任何进入的网络连接都被拒绝，并返回 IPv4 的 icmp-host-prohibited 报文或者 IPv6  
 的 icmp6-adm-prohibited 报文。只允许由该系统初始化的网络连接
 ### 2.2.3 公开
-用以可以公开的部分。你认为网络中其他的计算机不可信并且可能伤害你的计算机。  
-只允许选中的连接接入。（You do not trust the other computers on networks   
-to not harm your computer. Only selected incoming connections are accepted.）  
+用以可以公开的部分。你认为网络中其他的计算机不可信并且可能伤害你的计算机，只允许选中的连接接入
 ### 2.2.4 外部
 用在路由器等启用伪装的外部网络。你认为网络中其他的计算机不可信并且可能伤害你的计算机。只允许选中的连接接入
+### 2.2.5 隔离区（dmz）
+用以允许隔离区（dmz）中的电脑有限地被外界网络访问。只接受被选中的连接
+### 2.2.6 工作
+用在工作网络。你信任网络中的大多数计算机不会影响你的计算机。只接受被选中的连接
+### 2.2.7 家庭
+用在家庭网络。你信任网络中的大多数计算机不会影响你的计算机。只接受被选中的连接
+### 2.2.8 内部
+用在内部网络。你信任网络中的大多数计算机不会影响你的计算机。只接受被选中的连接
+### 2.2.9 受信任的
+允许所有网络连接
+
+
+
+
 
 # 3 firwall cli
 ```
