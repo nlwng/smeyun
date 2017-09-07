@@ -16,6 +16,7 @@
 	- [4.3 SElinux与ftp](#43-selinux与ftp)
 	- [4.4 SElinux与http](#44-selinux与http)
 	- [4.5 SElinux与公共目录共享](#45-selinux与公共目录共享)
+	- [4.6 SELinux对Apache的保护](#46-selinux对apache的保护)
 
 <!-- /TOC -->
 
@@ -213,4 +214,21 @@ httpd_disable_trans=0
 public_content_t
 public_content_rw_t
 其它各服务的策略的bool值，应根据具体情况做相应的修改。
+```
+
+## 4.6 SELinux对Apache的保护
+```
+新安装的wordpress位于/vogins/share/wordpress下，按照系统的默认策略，
+/vogins,/vogins/share的SELinux属性为file_t，而这是不允许httpd进程直接访问的：
+
+1) 改变/vogins,/vogins/share的SELinux属性
+Shell>chcon –t var_t /vogins
+Shell>chcon –t var_t /vogins/share
+2) 改变wrodpress目录的SELinux属性
+Shell>chcon –R –t httpd_sys_content_t wordpress
+3) 允许apache进程访问mysql
+setsebool -Phttpd_can_network_connect=1
+4) 关于Apache里虚拟主机的配制就里就不多说，重新启动apache，就可以正常访问wordpress
+Shell>/etc/init.d/httpd start
+注意：如果出现不能访问的情况，请查看/var/log/messages里的日志。按照提示就可以解决了。
 ```
