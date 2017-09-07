@@ -21,8 +21,9 @@
 # selinux介绍
 ```
 SELinux(Security-Enhanced Linux) 是美国国家安全局（NAS）对于强制访问控 制的实现，
-在这种访问控制体系的限制下，进程只能访问那些在他的任务中所需要文件。大部分使用 SELinux 的人使用的都是SELinux就绪的发行版，
-例如 Fedora、Red Hat Enterprise Linux (RHEL)、Debian 或 Gentoo。它们都是在内核中启用SELinux 的，并且提供一个可定制的安全策略，
+在这种访问控制体系的限制下，进程只能访问那些在他的任务中所需要文件。大部分使用 SELinux
+的人使用的都是SELinux就绪的发行版，例如 Fedora、Red Hat Enterprise Linux (RHEL)、
+Debian 或 Gentoo。它们都是在内核中启用SELinux 的，并且提供一个可定制的安全策略，
 还提供很多用户层的库和工具，它们都可以使用 SELinux 的功能
 ```
 # SElinux
@@ -158,7 +159,8 @@ setsebool -Pallow_ftpd_anon_write=1
 [root@redhatfiles]# setsebool -P allow_ftpd_anon_write=1
 [root@redhatfiles]# getsebool allow_ftpd_anon_write
 allow_ftpd_anon_write--> on
-说明：如果仅仅是安全上下文中设置了vsftpd进程对某一个目录的访问，配置文件中也允许可写，但是selinux中策略中不允许可写，仍然不可写。所以基于selinux保护的服务中，安全性要高于很多。
+说明：如果仅仅是安全上下文中设置了vsftpd进程对某一个目录的访问，配置文件中也允许可写，但
+是selinux中策略中不允许可写，仍然不可写。所以基于selinux保护的服务中，安全性要高于很多。
 ```
 
 # SElinux应用
