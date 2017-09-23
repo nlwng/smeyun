@@ -129,9 +129,11 @@ yum install stunnel
 
 复制代码代码如下:  
 ```
+cat > /etc/stunnel/stunnel.conf <<EOF
 cert = /etc/stunnel/stunnel.pem
 client = yes
 [squid]
 accept = 5000
-connect = squid_host:squid_port
+connect = <Server IP>:5000
+EOF
 ```
