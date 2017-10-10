@@ -30,7 +30,7 @@
 ```
 设置BIOS
 想要pxe安装系统，启动项肯定要改成pxe优先级最高。而且BIOS里有一个Network Setup
-总的Onboard Ethernet Contorller给调整为enable
+的Onboard Ethernet Contorller给调整为enable
 
 H3c:
 H3C-5204E交换机DHCPSnooping功能（启用后默认所有端口DHCP为非信任）
