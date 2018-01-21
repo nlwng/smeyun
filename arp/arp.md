@@ -12,6 +12,8 @@
 - [fping](#fping)
 - [arpspoof](#arpspoof)
 - [ifstat](#ifstat)
+- [mtr](#mtr)
+- [nethogs](#nethogs)
 
 <!-- /TOC -->
 
@@ -98,3 +100,32 @@ ettercap -Tq -i enp4s0
 # ifstat
 流量监控;  
 sudo atp-get install ifstat
+
+#mtr
+MTR 是一款强大的网络诊断工具，网络管理员使用 MTR 可以诊断和隔离网络问题，并且为上游 ISP 提供有用的网络状态报告。
+```
+apt-get install mtr-tiny
+yum install mtr
+
+mtr www.ubuntu.org
+mtr --report www.ubuntu.org
+mtr -rw example.com
+```
+
+#nethogs
+按进程实时统计网络带宽利用率
+```
+centos:
+yum install gcc-c++ libpcap-devel.x86_64 libpcap.x86_64 ncurses*
+
+ubuntu:
+apt-get install build-essential libncurses5-dev libpcap-dev
+
+git clone https://github.com/raboof/nethogs.git
+tar xf v0.8.1.tar.gz
+cd ./nethogs-0.8.1/
+make && sudo make install
+
+5秒刷新一次：
+nethogs -d 5
+```
