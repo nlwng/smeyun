@@ -13,6 +13,7 @@ now = datetime.datetime.now()
 
 regions='us-east-1'
 
+#def lambda_handler(event, context):
 def manager_instances():
     ReservationId_list=[]
     start_list = []
