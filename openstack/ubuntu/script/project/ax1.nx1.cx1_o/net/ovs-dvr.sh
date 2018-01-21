@@ -64,3 +64,55 @@ sudo ovs-vsctl add-port br-ex eth0
 ethtool -K INTERFACE_NAME gro off
 
 for i in {nova-compute,neutron-openvswitch-agent,neutron-metadata-agent,neutron-l3-agent};do service $i restart;done
+
+
+
+@neil
+##Controller节点
+crudini --set /etc/neutron/neutron.conf DEFAULT core_plugin ml2
+crudini --set /etc/neutron/neutron.conf DEFAULT service_plugins router
+crudini --set /etc/neutron/neutron.conf DEFAULT allow_overlapping_ips True
+crudini --set /etc/neutron/neutron.conf DEFAULT router_distributed True
+crudini --set /etc/neutron/neutron.conf DEFAULT l3_ha True
+crudini --set /etc/neutron/neutron.conf DEFAULT l3_ha_net_cidr 169.254.192.0/18
+crudini --set /etc/neutron/neutron.conf DEFAULT max_l3_agents_per_router 3
+crudini --set /etc/neutron/neutron.conf DEFAULT max_l3_agents_per_router 2
+
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini type_drivers flat,vxlan
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini tenant_network_types vxlan
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini mechanism_drivers openvswitch,l2population
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini extension_drivers port_security
+
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_flat flat_networks external
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_vxlan vni_ranges 1:100
+
+##Controller节点 or Network
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs local_ip 10.10.10.11
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs bridge_mappings external:br-ex
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini agent enable_distributed_routing True
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini agent tunnel_types vxlan
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini agent l2_population True
+
+crudini --set /etc/neutron/l3_agent.ini DEFAULT ha_vrrp_auth_password password
+crudini --set /etc/neutron/l3_agent.ini DEFAULT interface_driver openvswitch
+crudini --set /etc/neutron/l3_agent.ini DEFAULT external_network_bridge ''
+crudini --set /etc/neutron/l3_agent.ini DEFAULT agent_mode dvr_snat
+
+Controller节点上重启：
+for i in {nova-api,openvswitch-switch,neutron-openvswitch-agent,neutron-l3-agent,neutron-dhcp-agent,neutron-metadata-agent};do service $i restart;done
+
+## 计算节点
+apt-get install neutron-l3-agent  neutron-metadata-agent neutron-plugin-ml2
+
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs local_ip 10.10.10.31
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs bridge_mappings external:br-ex
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini agent enable_distributed_routing True
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini agent tunnel_types vxlan
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini agent l2_population True
+crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+
+crudini --set /etc/neutron/l3_agent.ini DEFAULT interface_driver openvswitch
+crudini --set /etc/neutron/l3_agent.ini DEFAULT external_network_bridge ''
+crudini --set /etc/neutron/l3_agent.ini DEFAULT agent_mode dvr
+
+for i in {nova-compute,neutron-openvswitch-agent,neutron-metadata-agent,neutron-l3-agent};do service $i restart;done
