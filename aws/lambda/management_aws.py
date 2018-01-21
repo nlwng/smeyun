@@ -51,19 +51,18 @@ def manager_instances():
                 #start instances
                 if len(start_list) > 0:
                     print("%s Starting>  %s" % (now, start_list))
-                    ret = ec2.start_instances(instance_ids=start_list, dry_run=False)
+                    ret = ec2.start_instances(InstanceIds=start_list, DryRun=False)
                     print("%s Started >  %s" % (now, ret))
 
                 # stop instances
                 if len(stop_list) > 0:
                     print("%s Stopping> %s" % (now, stop_list))
-                    ret = ec2.stop_instances(instance_ids=stop_list, dry_run=False)
+                    ret = ec2.stop_instances(InstanceIds=stop_list, DryRun=False)
                     print("%s Stopped > %s" % (now, ret))
 
         except Exception as e:
             if "credentials" not in e.message:  # skip: AWS was not able to validate the provided access credentials
-                print
-                '%s Exception error in %s:%s %s => %s \n %s' % (now, regions, Instances_name, ec2_instances, e.message, e)
+                print('%s Exception error in %s:%s %s => %s \n %s' % (now, regions, Instances_name, ec2_instances, e.message, e))
 
 manager_instances()
 
