@@ -1376,7 +1376,7 @@ public class HelloWorld {
 
 图示；
 
-![images/concrete-bindings.png](images/concrete-bindings.png)
+![1558668647851](D:\smeyun\doc\Spring Boot 入门\1558668647851.png)
 
 每一个日志的实现框架都有自己的配置文件。使用slf4j以后，**配置文件还是做成日志实现框架自己本身的配置文件；**
 
@@ -1386,7 +1386,7 @@ a（slf4j+logback）: Spring（commons-logging）、Hibernate（jboss-logging）
 
 统一日志记录，即使是别的框架和我一起统一使用slf4j进行输出？
 
-![](images/legacy.png)
+![1558668780986](D:\smeyun\doc\Spring Boot 入门\1558668780986.png)
 
 **如何让系统中所有的日志都统一到slf4j；**
 
@@ -1399,6 +1399,10 @@ a（slf4j+logback）: Spring（commons-logging）、Hibernate（jboss-logging）
 
 
 ## 3、SpringBoot日志关系
+
+
+
+![1558669151156](D:\smeyun\doc\Spring Boot 入门\1558669151156.png)
 
 ```xml
 		<dependency>
@@ -1420,7 +1424,7 @@ SpringBoot使用它来做日志功能；
 
 底层依赖关系
 
-![](images/搜狗截图20180131220946.png)
+![1558669400710](D:\smeyun\doc\Spring Boot 入门\1558669400710.png)
 
 总结：
 
@@ -1439,7 +1443,9 @@ public abstract class LogFactory {
     static LogFactory logFactory = new SLF4JLogFactory();
 ```
 
-![](images/搜狗截图20180131221411.png)
+中间转换包：
+
+![](D:\smeyun\doc\Spring Boot 入门\1558669514621.png)
 
 
 
@@ -1727,6 +1733,7 @@ public class ResourceProperties implements ResourceLoaderAware {
 				return mapping;
 			}
 
+  
 			@Bean
 			public ResourceHttpRequestHandler faviconRequestHandler() {
 				ResourceHttpRequestHandler requestHandler = new ResourceHttpRequestHandler();
@@ -1747,7 +1754,7 @@ public class ResourceProperties implements ResourceLoaderAware {
 
 http://www.webjars.org/
 
-![](images/搜狗截图20180203181751.png)
+![1558681613137](D:\smeyun\doc\Spring Boot 入门\1558681613137.png)
 
 localhost:8080/webjars/jquery/3.3.1/jquery.js
 
@@ -1780,13 +1787,15 @@ localhost:8080/abc ===  去静态资源文件夹里面找abc
 
 ==4）、所有的 **/favicon.ico  都是在静态资源文件下找；==
 
+配置默认文件夹：
 
+![1558682857637](D:\smeyun\doc\Spring Boot 入门\1558682857637.png)
 
 ## 3、模板引擎
 
 JSP、Velocity、Freemarker、Thymeleaf
 
-![](images/template-engine.png)
+![1558683169688](D:\smeyun\doc\Spring Boot 入门\1558683169688.png)
 
 
 
@@ -1864,7 +1873,7 @@ public class ThymeleafProperties {
 
 	th：任意html属性；来替换原生属性的值
 
-![](images/2018-02-04_123955.png)
+![1558685900145](D:\smeyun\doc\Spring Boot 入门\1558685900145.png)
 
 
 
@@ -2174,6 +2183,10 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
 
 ```
 
+静态文件设置：
+
+![1558690428076](D:\smeyun\doc\Spring Boot 入门\1558690428076.png)
+
 ### 2）、国际化
 
 **1）、编写国际化配置文件；**
@@ -2188,7 +2201,11 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
 
 1）、编写国际化配置文件，抽取页面需要显示的国际化消息
 
-![](images/搜狗截图20180211130721.png)
+![](D:\smeyun\doc\Spring Boot 入门\1558691152553.png)
+
+![1558691199267](D:\smeyun\doc\Spring Boot 入门\1558691199267.png)
+
+
 
 
 
