@@ -1334,6 +1334,8 @@ Negative matches:（没有启动，没有匹配成功的自动配置类）
 
 JUL、JCL、Jboss-logging、logback、log4j、log4j2、slf4j....
 
+![1558668147094](D:\smeyun\doc\Spring Boot 入门\1558668147094.png)
+
 | 日志门面  （日志的抽象层）                                   | 日志实现                                             |
 | ------------------------------------------------------------ | ---------------------------------------------------- |
 | ~~JCL（Jakarta  Commons Logging）~~    SLF4j（Simple  Logging Facade for Java）    **~~jboss-logging~~** | Log4j  JUL（java.util.logging）  Log4j2  **Logback** |
