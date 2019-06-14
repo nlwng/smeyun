@@ -1969,6 +1969,305 @@ ansible-playbook之修改ssh端口和limits参数控制：
                 - setlimits
 ```
 
+### 3.21 通过传值传入模版
+
+```yaml
+- name: get api config file
+  copy: dest={{ item.dest }} content={{ item.content }}
+  with_items:
+  	- { dest:"{{ ops_agent_file }}"},content: "{{ filecontent }}"
+  when:
+  	- filecontent is defined
+```
+
+### 3.22 利用callback返回脚本执行实际返回结果
+
+1.首先修改ansible
+
+
+
+1.1.1  下面是AWX中的环境配置 RESOURCES --> Inventories --> VARIABLES 中设置固定参数
+
+```cfg
+deprecation_warning: False
+bin_ansible_callbacks: true
+callback_plugins: human_log 
+stdout_callback: human_log
+```
+
+1. 1.2 ADMINSTRATION--> Settings --> ANSIBLE CALLBACK PLUGINS
+
+```YAML
+/var/lib/awx/projects/runcommand/callback_plugins
+```
+
+1.2.1 修改ansible.cfg文件
+
+```cfg
+callback_whitelist = human_log 
+callback_plugins   = /etc/ansible/callback_plugins
+bin_ansible_callbacks = True
+deprecation_warnings=False
+```
+
+2. callback脚本,ansible 2.0版本
+
+```python
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Inspired from: https://github.com/redhat-openstack/khaleesi/blob/master/plugins/callbacks/human_log.py
+# Further improved support Ansible up to 2.6
+
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
+
+# Fields to reformat output for
+# FIELDS = ['cmd', 'command', 'start', 'end', 'delta', 'msg', 'stdout', 'stderr', 'results']
+
+FIELDS = ['command', 'msg', 'stdout', 'stderr', 'results']
+
+class CallbackModule(object):
+
+    """
+    Ansible callback plugin for human-readable result logging
+    """
+    CALLBACK_VERSION = 2.0
+    CALLBACK_TYPE = 'notification'
+    CALLBACK_NAME = 'human_log'
+    CALLBACK_NEEDS_WHITELIST = False
+
+    def human_log(self, data):
+        #print(data.__dict__)
+
+        adata = data._result
+        if type(adata) == dict:
+            
+            for field in FIELDS:
+                no_log = adata.get('_ansible_no_log')
+                if field in adata.keys() and adata[field] and no_log != True:
+                    output = self._format_output(adata[field])
+                    #print("{1}".format(field, output.replace("\\n","\n")),"\n")
+        
+            hos = {'host':str(data._host)}
+            resput = {'log': output} 
+            datas = dict(hos,**resput)
+        datas=json.dumps(datas)
+        print(datas)
+
+    def _format_output(self, output):
+        # Strip unicode
+        if type(output) == unicode:
+            output = output.encode(sys.getdefaultencoding(), 'replace')
+
+        # If output is a dict
+        if type(output) == dict:
+            return json.dumps(output, indent=2)
+
+        # If output is a list of dicts
+        if type(output) == list and type(output[0]) == dict:
+            # This gets a little complicated because it potentially means
+            # nested results, usually because of with_items.
+            real_output = list()
+            for index, item in enumerate(output):
+                copy = item
+                if type(item) == dict:
+                    for field in FIELDS:
+                        if field in item.keys():
+                            copy[field] = self._format_output(item[field])
+                real_output.append(copy)
+            return json.dumps(output, indent=2)
+
+        # If output is a list of strings
+        if type(output) == list and type(output[0]) != dict:
+            # Strip newline characters
+            real_output = list()
+            for item in output:
+                if "\n" in item:
+                    for string in item.split("\n"):
+                        real_output.append(string)
+                else:
+                    real_output.append(item)
+
+            # Reformat lists with line breaks only if the total length is
+            # >75 chars
+            if len("".join(real_output)) > 75:
+                return "\n" + "\n".join(real_output)
+            else:
+                return " ".join(real_output)
+
+        # Otherwise it's a string, (or an int, float, etc.) just return it
+        return str(output)
+
+
+    ####### V2 METHODS ######
+    def v2_on_any(self, *args, **kwargs):
+        pass
+
+    def v2_runner_on_failed(self, result, ignore_errors=False):
+        self.human_log(result)
+
+    def v2_runner_on_ok(self, result):
+
+        self.human_log(result)
+
+    def v2_runner_on_skipped(self, result):
+        pass
+
+    def v2_runner_on_unreachable(self, result):
+        self.human_log(result)
+
+    def v2_runner_on_no_hosts(self, task):
+        pass
+
+    def v2_runner_on_async_poll(self, result):
+        self.human_log(result)
+
+    def v2_runner_on_async_ok(self, host, result):
+        self.human_log(result)
+
+    def v2_runner_on_async_failed(self, result):
+        self.human_log(result)
+
+    def v2_playbook_on_start(self, playbook):
+        pass
+
+    def v2_playbook_on_notify(self, result, handler):
+        pass
+
+    def v2_playbook_on_no_hosts_matched(self):
+        pass
+
+    def v2_playbook_on_no_hosts_remaining(self):
+        pass
+
+    def v2_playbook_on_task_start(self, task, is_conditional):
+        pass
+
+    def v2_playbook_on_vars_prompt(self, varname, private=True, prompt=None,
+                                   encrypt=None, confirm=False, salt_size=None,
+                                   salt=None, default=None):
+        pass
+
+    def v2_playbook_on_setup(self):
+        pass
+
+    def v2_playbook_on_import_for_host(self, result, imported_file):
+        pass
+
+    def v2_playbook_on_not_import_for_host(self, result, missing_file):
+        pass
+
+    def v2_playbook_on_play_start(self, play):
+        pass
+
+    def v2_playbook_on_stats(self, stats):
+        pass
+
+    def v2_on_file_diff(self, result):
+        pass
+
+    def v2_playbook_on_item_ok(self, result):
+        pass
+
+    def v2_playbook_on_item_failed(self, result):
+        pass
+
+    def v2_playbook_on_item_skipped(self, result):
+        pass
+
+    def v2_playbook_on_include(self, included_file):
+        pass
+
+    def v2_playbook_item_on_ok(self, result):
+        pass
+
+    def v2_playbook_item_on_failed(self, result):
+        pass
+
+    def v2_playbook_item_on_skipped(self, result):
+        pass
+
+```
+
+test.yaml 
+
+```yaml
+---
+- hosts: mydev 
+
+  tasks:
+   - debug: msg="hello"
+  
+   - name: check ls 
+     shell: sh /tmp/test.sh
+```
+
+上文返回结果为：
+
+```shell
+#ansible-playbook test.yaml 
+
+PLAY [mydev] ****************************************************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] ******************************************************************************************************************************************************************************************************************
+ok: [172.168.1.136]
+ [WARNING]: Failure using method (v2_runner_on_ok) in callback plugin (<ansible.plugins.callback./etc/ansible/callback_plugins/human_log.CallbackModule object at 0x7f2d9dea4e90>): local variable 'output' referenced before assignment
+
+ok: [172.168.1.144]
+
+TASK [debug] ****************************************************************************************************************************************************************************************************************************
+ok: [172.168.1.136] => {
+    "msg": "hello"
+}
+{"host": "172.168.1.136", "log": "hello"}
+ok: [172.168.1.144] => {
+    "msg": "hello"
+}
+{"host": "172.168.1.144", "log": "hello"}
+
+TASK [check ls] *************************************************************************************************************************************************************************************************************************
+changed: [172.168.1.144]
+{"host": "172.168.1.144", "log": "222222222222"}
+changed: [172.168.1.136]
+{"host": "172.168.1.136", "log": "111111111"}
+
+PLAY RECAP ******************************************************************************************************************************************************************************************************************************
+172.168.1.136              : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+172.168.1.144              : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
+```
+
+### 3.23 给不同IP分配不同参数
+
+需求：给不同IP分配不同参数，笔者需要给3个zookeeper节点分配不同的myid
+
+有myid1 myid2 myid3 有191-193 三台服务器,用什么方法可以在playbook中,将myid1 发送到191,myid2发送到192,myid3发送到193
+
+```yaml
+myid{{ ansible_play_hosts.index(inventory_hostname) + 1 }}
+```
+
+
+
 ## 4. ansible相关案列-Windows
 
 ### 4.1 Ansible 监控windows2008

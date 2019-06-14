@@ -1,4 +1,26 @@
-# **一、**Spring Boot 入门
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 一、**Spring Boot 入门
 
 ## 1、Spring Boot 简介
 
@@ -65,7 +87,7 @@ http://www.gulixueyuan.com/ 谷粒学院
 
 整合maven进来；
 
-![1558574668489](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1558574668489.png)
+![1558574668489](D:\smeyun\doc\Spring Boot 入门\1558574668489.png)
 
 ## 4、Spring Boot HelloWorld
 
@@ -267,7 +289,7 @@ public @interface EnableAutoConfiguration {
 	
 		会给容器中导入非常多的自动配置类（xxxAutoConfiguration）；就是给容器中导入这个场景需要的所有组件，并配置好这些组件；		
 
-![1558578010980](D:\Doc\Jave\Spring Boot 入门\1558578010980.png)
+![1558578010980](D:\smeyun\doc\Spring Boot 入门\1558578010980.png)
 
 
 
@@ -277,15 +299,15 @@ public @interface EnableAutoConfiguration {
 
 debug:查看metadata信息
 
-![1558576832675](D:\Doc\Jave\Spring Boot 入门\1558576832675.png)
+![1558576832675](D:\smeyun\doc\Spring Boot 入门\1558576832675.png)
 
 
 
 计算AutoConfigurationPackages.register注册包信息：
 
-![1558576894925](D:\Doc\Jave\Spring Boot 入门\1558576894925.png)
+![1558576894925](D:\smeyun\doc\Spring Boot 入门\1558576894925.png)
 
-![1558576942384](D:\Doc\Jave\Spring Boot 入门\1558576942384.png)
+![1558576942384](D:\smeyun\doc\Spring Boot 入门\1558576942384.png)
 
 
 
@@ -309,23 +331,23 @@ IDE都支持使用Spring的项目创建向导快速创建一个Spring Boot项目
 
 - - 
 
-![1558578247241](D:\Doc\Jave\Spring Boot 入门\1558578247241.png)
+![1558578247241](D:\smeyun\doc\Spring Boot 入门\1558578247241.png)
 
-![](D:\Doc\Jave\Spring Boot 入门\1558578289234.png)
+![](D:\smeyun\doc\Spring Boot 入门\1558578289234.png)
 
-![1558578347948](D:\Doc\Jave\Spring Boot 入门\1558578347948.png)
+![1558578347948](D:\smeyun\doc\Spring Boot 入门\1558578347948.png)
 
-![1558578412605](D:\Doc\Jave\Spring Boot 入门\1558578412605.png)
+![1558578412605](D:\smeyun\doc\Spring Boot 入门\1558578412605.png)
 
 删掉选中文件：
 
-![1558578491134](D:\Doc\Jave\Spring Boot 入门\1558578491134.png)
+![1558578491134](D:\smeyun\doc\Spring Boot 入门\1558578491134.png)
 
 
 
 将@ResponseBody 和@Controller组合成@RestController，可以包含二者功能
 
-![1558579201939](D:\Doc\Jave\Spring Boot 入门\1558579201939.png)
+![1558579201939](D:\smeyun\doc\Spring Boot 入门\1558579201939.png)
 
 默认生成的Spring Boot项目；
 
@@ -335,7 +357,7 @@ IDE都支持使用Spring的项目创建向导快速创建一个Spring Boot项目
   - templates：保存所有的模板页面；（Spring Boot默认jar包使用嵌入式的Tomcat，默认不支持JSP页面）；可以使用模板引擎（freemarker、thymeleaf）；
   - application.properties：Spring Boot应用的配置文件；可以修改一些默认设置；
 
-![1558579826195](D:\Doc\Jave\Spring Boot 入门\1558579826195.png)
+![1558579826195](D:\smeyun\doc\Spring Boot 入门\1558579826195.png)
 
 ### 2、STS使用 Spring Starter Project快速创建项目
 
@@ -388,7 +410,7 @@ server:
 </server>
 ```
 
-![1558580843351](D:\Doc\Jave\Spring Boot 入门\1558580843351.png)
+![1558580843351](D:\smeyun\doc\Spring Boot 入门\1558580843351.png)
 
 ## 2、YAML语法：
 
@@ -726,7 +748,7 @@ public class SpringbootCloudApplicationTests {
 
 调整
 
-![1558600690360](D:\Doc\Jave\Spring Boot 入门\1558600690360.png)
+![1558600690360](D:\smeyun\doc\Spring Boot 入门\1558600690360.png)
 
 
 
@@ -746,7 +768,7 @@ public class SpringbootCloudApplicationTests {
 
 如果说，我们专门编写了一个javaBean来和配置文件进行映射，我们就直接使用@ConfigurationProperties；
 
-![1558600943371](D:\Doc\Jave\Spring Boot 入门\1558600943371.png)
+![1558600943371](D:\smeyun\doc\Spring Boot 入门\1558600943371.png)
 
 
 
@@ -779,7 +801,7 @@ public class Person {
     private Dog dog;
 ```
 
-![1558601311885](D:\Doc\Jave\Spring Boot 入门\1558601311885.png)
+![1558601311885](D:\smeyun\doc\Spring Boot 入门\1558601311885.png)
 
 #### 3.4、@PropertySource&@ImportResource&@Bean
 
@@ -818,7 +840,7 @@ public class Person {
 
 ```
 
-![1558601889416](D:\Doc\Jave\Spring Boot 入门\1558601889416.png)
+![1558601889416](D:\smeyun\doc\Spring Boot 入门\1558601889416.png)
 
 
 
@@ -833,7 +855,7 @@ Spring Boot里面没有Spring的配置文件，我们自己编写的配置文件
 导入Spring的配置文件让其生效
 ```
 
-![1558602261448](D:\Doc\Jave\Spring Boot 入门\1558602261448.png)
+![1558602261448](D:\smeyun\doc\Spring Boot 入门\1558602261448.png)
 
 不来编写Spring的配置文件
 
@@ -875,7 +897,7 @@ public class MyAppConfig {
 
 
 
-![1558602172579](D:\Doc\Jave\Spring Boot 入门\1558602172579.png)
+![1558602172579](D:\smeyun\doc\Spring Boot 入门\1558602172579.png)
 
 ##  4、配置文件占位符 ##
 
@@ -960,7 +982,7 @@ spring:
 	
 		-Dspring.profiles.active=dev
 
-![1558664979208](D:\Doc\Jave\Spring Boot 入门\1558664979208.png)
+![1558664979208](D:\smeyun\doc\Spring Boot 入门\1558664979208.png)
 
 ## 6、配置文件加载位置
 
@@ -2246,7 +2268,7 @@ public class MessageSourceAutoConfiguration {
 
 3）、去页面获取国际化的值；
 
-![](images/搜狗截图20180211134506.png)
+![1558941182301](D:\smeyun\doc\Spring Boot 入门\1558941182301.png)
 
 
 
@@ -2312,6 +2334,10 @@ public class MessageSourceAutoConfiguration {
 		}
 默认的就是根据请求头带来的区域信息获取Locale进行国际化
 ```
+
+![1558941407991](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1558941407991.png)
+
+
 
 4）、点击链接切换国际化
 
@@ -2689,15 +2715,17 @@ insert的公共片段在div标签中
 
 		1）、浏览器，返回一个默认的错误页面
 
-![](images/搜狗截图20180226173408.png)
+![](D:\smeyun\doc\Spring Boot 入门\1559027959620.png)
 
   浏览器发送请求的请求头：
 
-![](images/搜狗截图20180226180347.png)
+
 
 		2）、如果是其他客户端，默认响应一个json数据
 
-![](images/搜狗截图20180226173527.png)
+![](D:\smeyun\doc\Spring Boot 入门\1559028761488.png)
+
+![1559029181186](D:\smeyun\doc\Spring Boot 入门\1559029181186.png)
 
 		![](images/搜狗截图20180226180504.png)
 
@@ -2922,7 +2950,7 @@ public class MyErrorAttributes extends DefaultErrorAttributes {
 
 SpringBoot默认使用Tomcat作为嵌入式的Servlet容器；
 
-![](images/搜狗截图20180301142915.png)
+![1559099969498](D:\smeyun\doc\Spring Boot 入门\1559099969498.png)
 
 
 
@@ -3679,6 +3707,7 @@ https://docs.docker.com/engine/reference/commandline/docker/
 
 ```shell
 docker pull mysql
+docker pull centos/mysql-57-centos7
 ```
 
 
@@ -3736,6 +3765,10 @@ docker run --name mysql03 -v /conf/mysql:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWOR
 
 docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 指定mysql的一些配置参数
+
+#docker exec -it mysql01 /bin/bash
+>GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION;
+>flush privileges;
 ```
 
 
@@ -3826,6 +3859,17 @@ schema-*.sql、data-*.sql
 5、操作数据库：自动配置了JdbcTemplate操作数据库
 
 ## 2、整合Druid数据源
+
+```yaml
+<!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>druid</artifactId>
+    <version>1.1.17</version>
+</dependency>
+```
+
+
 
 ```java
 导入druid数据源
@@ -4412,6 +4456,292 @@ public class HelloServiceAutoConfiguration {
 
 ```
 
-# 更多SpringBoot整合示例
+更多SpringBoot整合示例
 
 https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples
+
+# 九、spring boot实战
+
+使用约定标注来注解Bean类
+
+```java
+@Component: 标注一个普通的spring Bean类
+@Controller: 标注一个控制器组件类
+@Service： 标注一个业务逻辑组件类
+@Repository: 标注一个DAO组件类
+```
+
+
+
+## 9.1 简单的数库查询与前台页面展示
+
+```java
+1.创建
+基于spring boot=1.5.21.RELEASE版本 创建mysql web jdbc 工程
+2.创建相关数据库
+spring:
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://192.168.99.100:3306/jdbc?useSSL=false
+    driver-class-name: com.mysql.jdbc.Driver
+    schema:
+      - classpath:employee.sql
+      - classpath:department.sql
+      
+3.创建HelloController.java
+
+@Controller
+public class HelloController {
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    @ResponseBody
+    @GetMapping("/query")
+    public Map<String,Object> map(){
+        List<Map<String,Object>> list =jdbcTemplate.queryForList("select * from employee");
+        return list.get(0);
+    }
+}
+
+4.启动工程在数据库中插入数据，访问http://127.0.0.1:8080/query
+{"id":1,"lastName":"张三","email":"zhangsan","gender":1,"d_id":1}
+```
+
+
+
+
+
+
+
+
+
+# 十、名词解释
+
+## 1.JRE、JDK、SDK
+
+JRE：Java Runtime Environment
+
+JDK：Java Development Kit
+
+从英文可以看出，JRE是Java的运行环境，JDK是Java的开发工具包。那顾名思义，要运行Java程序，就一定要用到JRE，要开发Java程序，就要用到JDK。那JRE与JDK会不会有什么关系呢？接着，我们回顾一下Oracle官网上的Java SE 8的组成描述[2]：
+
+![img](D:\smeyun\doc\Spring Boot 入门\311012-20170221135024757-711394726.png)
+
+大家从图中可以看到，JRE包含了Java虚拟机、Java基础类库等一系列需要运行Java的环境。而JDK除了包含JRE有的东西以外，同时多了开发时所需要用到的如javac等Tools和Tools API的内容。也就是说，JRE是JDK的一个子集，JDK包含了JRE的所有内容。也许细心的朋友也发现了，在官网上下载JDK安装的时候，会在JDK的目录下包含一个JRE，如图：
+
+![img](D:\smeyun\doc\Spring Boot 入门\311012-20170221135026085-624588294.png)
+
+有些初学开发者在配Eclipse的JRE环境的时候就惆怅了，究竟要配JDK呢，还是配JRE呢。看完上面那个图，问题应该就解决了。JDK除含有JRE的内容外，还包括开发的工具等内容，所以要是一个开发者，那就应该配JDK作为JRE环境了。
+
+最后来说说SDK有时什么东西。SDK英文全称是Software Development Kit，翻译成中文就是软件开发工具包，一般都是一些软件工程师为特定的软件包、软件框架、硬件平台、操作系统等建立应用软件时的开发工具的集合[3]。所以我们也可以说，JDK是Java的SDK。
+
+
+
+## 2.API
+
+API，英文全称是Application Programming Interface，中文意思是应用程序编程接口。那接口又是什么东西呢？我们可以简单的想象成，接口就是我们的那些插座，只要我们把符合要求的插头插上插座，不用理插座怎么实现，能都用得上电。编程中的接口也是同样的道理，我们不需要关心接口的具体实现，只需要按照接口定义好的规则去调用，就可能实现想要的效果，这就是接口。那说回API，理解完接口（Interface）后，看回API的全称，大概就应该了解它指的是提供给编程人员调用的一些封装了实现的接口。具体到我们编程的时候，经常说"这个怎么用，查一下API"，意思通常就是查一下API的说明文档。例如要查一下Java基础类中某个类怎么用，通常就是上Oracle的官网上查相关文档：http://docs.oracle.com/javase/8/docs/api/。
+
+![img](D:\smeyun\doc\Spring Boot 入门\311012-20170221135030866-1295686908.png)
+
+例如上图，我们就可以看到，BufferedInputStream类中有什么方法，各个方法有什么用，怎么调用，返回什么结果。查完后，我们就会使用了。
+
+
+
+## 3.IDE
+
+IDE，英文全称是Integrated Development Environment，中文意思是集成开发环境，也就是提供给开发人员进行程序开发的应用程序，包括但不限于编辑器、编译器、调试器和图形用户界面等工具。例如我们用于Java开发的Eclipse就是一个IDE。
+
+![img](D:\smeyun\doc\Spring Boot 入门\311012-20170221135032757-1848798491.png)
+
+
+
+## 4.JDBC
+
+JDBC，英文全称是Java Data Base Connectivity，中文意思是Java数据库连接，是一种用于执行SQL语句的Java API。参考上部分对API的解释，可知道JDBC提供了一个基准，数据库厂商与第三方中间件厂商根据基准实现对数据库的调用。而开发人员只需根据JDBC API的标准来进行数据库的调用，无需理会后面的怎么实现的。由于JDBC API提供了统一的接口，所以不管你是调用Sql Server，还是Oracle，还是Mysql，写好的代码都不需要怎么改动。这也是实现接口的好处所在。
+
+要实现一个JDBC程序，简单分为下面六个步骤[4]：
+
+1.引入JDBC类所需要的包。
+
+2.注册JDBC驱动程序，所谓驱动程序，可以简单理解为实现了JDBC接口的那些类集合。
+
+3.打开一个连接
+
+4.执行一个查询
+
+5.从结果中提取数据
+
+6.清理环境
+
+代码示例及注释如下
+
+![img](D:\smeyun\doc\Spring Boot 入门\311012-20170221135035476-300736526.png)
+
+
+
+## 5.JVM
+
+到JVM，相信大伙们都听得很多，觉得是个深奥的东西，但又不知道深奥在哪里，不明觉厉了。这里并不打算对其展开很深入的讲解，因为内容可以写成一本书了，只是对其的重要作用作一些描述，让大家有个概念，知道它究竟用来干什么的。
+
+我们首先来看看JVM的英文全称为：Java Virtual Machine，中文意思则为Java虚拟机。顾名思义，它是一种根据计算设备规范，虚构出来的计算机。还记得在[《](http://www.huangzijian.me/archives/53.html)[Java](http://www.huangzijian.me/archives/53.html)[之路——Java](http://www.huangzijian.me/archives/53.html)[初接触》](http://www.huangzijian.me/archives/53.html)里面说过，Java出来的口号是"Write Once，Run Anywhere"吗？JVM就是实现这一功能的关键。怎么实现呢？先看一下网上的一幅图[5]：
+
+![img](D:\smeyun\doc\Spring Boot 入门\311012-20170221135037710-1089917896.png)
+
+我们抓住图中的几个关键词：Java源文件、Java字节码、类装载器、Java虚拟机（JVM）和硬件，来简单说一下JVM怎么实现Write Once, Run Anywhere。其实原理很简单，任务Java源代码，通过Java编译器后，都很根据统一的规则，编译成Java字节码，也就是我们的那堆class文件。只要是同一套源代码生成出来的Java字节码就是一样的。但是不同的机器，有不同的底层硬件，那同一套字节码怎么在不同的硬件环境中运行了？这就要靠JVM了。类装载器将字节码装载到Java虚拟机（JVM）中，JVM就会根据所运行在的操作系统、硬件平台上的不同，最终生成不同的硬件指令，从而可以在指定的操作系统及硬件上运行。也就是说，无论你什么操作系统、硬件，只要在其上安装了Java虚拟机（JVM），JVM就能将输入的Java字节码转换到指定的机器指令运行，从而屏蔽了底层运行平台的差别，实现"Write Once，Run Anywhere"的目标了。
+
+JVM除了是实现"Write Once，Run Anywhere"这一功能的关键之外，Java程序运行时候的内存溢出、性能、
+
+垃圾回收、数据存放（堆、栈、方法区等）等内容都是JVM所涉及的。这里附上JVM的一个体系结构图[6]，给大家有个印象。
+
+![img](D:\smeyun\doc\Spring Boot 入门\311012-20170221135041023-1963060401.png)
+
+
+
+## 6.POJO、DTO、VO、BO、MO
+
+这变成里面，明明就是一个类，但又会被赋予了各种称呼。当大家讲一大堆VO、PO、BO、DTO、POJO后，相信你马上会被O晕。究竟这些O有是个啥意思呢？这里我大概解释一下常见的几个O。
+
+POJO，英文全称Plain Old Java Object，其实主要是对比重量级的EJB2.x来说，它描述的是一个轻量级的Java对象。它说的就是一个很普通的，很常规的，没有加特效进去的Java对象，也就是我们21天学会Java等书上学到的Java对象。之所以起个POJO的名字，估计是因为大家认为有个名字的对象更有吸引力。事实上也如此！
+
+VO，英文全称Value Object，值对象。其实就如java.lang.Integer这种保存值的对象。这种值对象，我们通常认为是不会随着时间而变化的，是固定的。所以通常我们要修改一个值对象（VO）的时候，我们是要创建一个新的，而非直接更新的内部的数据。
+
+DTO，英文全称Data Transfer Object，中文意思为数据传输对象。顾名思义，就是用来在网络中传输数据的。根据下图[7]，我们可以看到DTO在整个应用中的位置：
+
+![img](D:\smeyun\doc\Spring Boot 入门\311012-20170221135041804-1245033647.png)
+
+一个简单的应用程序通常有三部分组成：数据访问层（DAL）、业务逻辑层和表现层。图中的Client端相当于表现层。可以看到，Client将用户输入的数据包装成DTO后，传输到Service进行业务逻辑的处理，处理完后，又包装成DTO传输回去给Client端做表现层的展示。DTO就是这样的一个对象。通常我们用到的是贫血的DTO，也就是DTO中只有数据（属性），没有行为（方法）。
+
+在图中，大家还看到BO和MO，就是Bussiness Object和Model Object的缩写。其实就是对应层的一些用于存储数据的对象。那为什么各层要分这么多不同的Object，我认为主要原因有这几点：
+
+1.各层处理的数据并不一样，将数据转换成该层所使用要到的对象方便处理。
+
+2.从数据库里提取的数据，最终到表现层未必是全部用上的，实际用到什么数据就建立什么对象，以减少层与层之间的数据传输。
+
+3.各层处理的事情不一样，把不必要的内容传到某层上，会有安全风险。也就是说不同的层使用不同的Object可以提高安全性。
+
+## 7.DAO
+
+DAO，英文全称Data Access Object，中文意思是数据访问对象。看上去跟DTO只差1个字，有些人会混淆。但其实DAO跟DTO没有啥关系，所以大家别太纠结。那回归正题，DAO用来干什么呢？DAO主要用途就是与数据库打交道，提供数据访问的接口，让业务逻辑调用相关方法操作数据库，是加载业务逻辑层与数据库资源中间的层。DAO的例子网上一大堆，我就不重新写了，在网上找了一个，把DAO的接口类和具体实现类抽取出来，给大家看看[8]。
+
+定义接口类：
+
+```java
+import java.util.List;  
+import cn.mldn.lxh.vo.Emp;  
+  
+public interface IEmpDAO {  
+    public boolean doCreate(Emp emp) throws Exception;  
+    public List<Emp> findAll(String keyWord) throws Exception;  
+    public Emp findByid(int empno) throws Exception;  
+}
+
+```
+
+具体实现类：
+
+```java
+import java.sql.Connection;  
+import java.sql.PreparedStatement;  
+import java.sql.ResultSet;  
+import java.util.ArrayList;  
+import java.util.List;  
+  
+import cn.mldn.lxh.dao.IEmpDAO;  
+import cn.mldn.lxh.vo.Emp;  
+  
+public class EmpDAOImpl implements IEmpDAO {  
+    private Connection conn=null; //数据库连接对象  
+    private PreparedStatement pstmt = null;//数据库操作对象  
+    public EmpDAOImpl(Connection conn){//通过构造方法取得数据库连接  
+        this.conn=conn;  
+    }  
+    public boolean doCreate(Emp emp) throws Exception {  
+        boolean flag=false;  
+        String sql="INSERT INTO emp (empno,ename,job,hiredate,sal)VALUES(?,?,?,?,?)";  
+        this.pstmt=this.conn.prepareStatement(sql);//实例化PreparedStatement对象  
+        this.pstmt.setInt(1, emp.getEmpno());  
+        this.pstmt.setString(2, emp.getEname());  
+        this.pstmt.setString(3, emp.getJob());  
+        this.pstmt.setDate(4, new java.sql.Date(emp.getHiredate().getTime()));  
+        this.pstmt.setFloat(5, emp.getSal());  
+        if(this.pstmt.executeUpdate()>0){  
+            flag=true;  
+        }  
+        this.pstmt.close();  
+        return false;  
+    }  
+  
+    public List<Emp> findAll(String keyWord) throws Exception {  
+        List<Emp> all= new ArrayList<Emp>();  
+        String sql="SELECT empno,ename,job,hiredate,sal FROM emp WHERE ename LIKE ? OR job LIKE ?";  
+            this.pstmt=this.conn.prepareStatement(sql);  
+            this.pstmt.setString(1, "%"+keyWord+"%");  
+            this.pstmt.setString(2, "%"+keyWord+"%");  
+            ResultSet rs=this.pstmt.executeQuery();  
+            Emp emp=null;  
+            while(rs.next()){  
+                emp=new Emp();  
+                emp.setEmpno(rs.getInt(1));  
+                emp.setEname(rs.getString(2));  
+                emp.setJob(rs.getString(3));  
+                emp.setHiredate(rs.getDate(4));  
+                emp.setSal(rs.getFloat(5));  
+                all.add(emp);  
+            }  
+            this.pstmt.close();  
+            return all;  
+    }  
+  
+    public Emp findByid(int empno) throws Exception {  
+        Emp emp=null;  
+        String sql="SELECT empno,ename,job,hiredate,sal FROM emp WHERE empno=?";  
+        this.pstmt = this.conn.prepareStatement(sql);  
+        this.pstmt.setInt(1, empno);  
+        ResultSet rs = this.pstmt.executeQuery();  
+        if(rs.next()){  
+            emp = new Emp();  
+            emp.setEmpno(rs.getInt(1));  
+            emp.setEname(rs.getString(2));  
+            emp.setJob(rs.getString(3));  
+            emp.setHiredate(rs.getDate(4));  
+            emp.setSal(rs.getFloat(5));  
+        }  
+        this.pstmt.close();  
+        return emp;  
+    }  
+
+}
+```
+
+
+
+## 8.servlet
+
+**Servlet**（Server Applet），全称**Java Servlet**，未有中文译文。是用[Java](https://zh.wikipedia.org/wiki/Java)编写的[服务器](https://zh.wikipedia.org/wiki/服务器)端[程序](https://zh.wikipedia.org/wiki/程序)。其主要功能在于交互式地浏览和修改数据，生成动态[Web](https://zh.wikipedia.org/wiki/Web)内容。狭义的Servlet是指Java语言实现的一个[接口](https://zh.wikipedia.org/wiki/接口)，广义的Servlet是指任何实现了这个Servlet接口的[类](https://zh.wikipedia.org/wiki/类_(计算机科学))，一般情况下，人们将Servlet理解为后者。
+
+Servlet运行于支持Java的[应用服务器](https://zh.wikipedia.org/wiki/应用服务器)中。从实现上讲，Servlet可以响应任何类型的请求，但绝大多数情况下Servlet只用来扩展基于[HTTP](https://zh.wikipedia.org/wiki/HTTP)[协议](https://zh.wikipedia.org/wiki/协议)的[Web服务器](https://zh.wikipedia.org/wiki/Web服务器)。
+
+最早支持Servlet标准的是JavaSoft的Java Web Server。此后，一些其它的基于Java的Web服务器开始支持标准的Servlet。
+
+![1559114678023](D:\smeyun\doc\Spring Boot 入门\1559114678023.png)
+
+
+
+工作模式：
+
+- 客户端发送请求至服务器
+
+- 服务器启动并调用Servlet，Servlet根据客户端请求生成响应内容并将其传给服务器
+
+- 服务器将响应返回客户端
+
+- 其他
+
+  
+
+
+
+
+
