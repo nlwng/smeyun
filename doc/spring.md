@@ -1,3 +1,7 @@
+s100
+
+
+
 
 
 # 一、Spring基础
@@ -62,6 +66,21 @@
 | @Service                                         | 标注Service实现类                                            | 本质和@Component没有区别，只是更加明确         | 分层架构中定义组件 |
 | @Controller                                      | 标注web、controller实现类                                    | 本质和@Component没有区别，只是更加明确         | 分层架构中定义组件 |
 | @Bean                                            |                                                              | 当前配置类为默认配置类，自动调用               |                    |
+| @Override                                        | 重写，重载                                                   | 自雷重写父类的方法                             |                    |
+| @RequestMapping                                  | 是一个用来处理请求地址映射的注解，可用于类或方法上。用于类上，表示类中的所有响应请求的方法都是以该地址作为父路径。 | 配置url映射                                    |                    |
+| @RestController                                  | 是@ResponseBody和@Controller的组合注解                       |                                                |                    |
+
+
+
+### 1.3 for 循环
+
+- ***this.tracks.for + Enter 可以快速得到for循环***
+
+```java
+        for (String track : this.tracks) {
+            System.out.println("音乐:" + track);
+        }
+```
 
 
 
@@ -984,7 +1003,7 @@ public class AppTest {
 }
 ```
 
-#### 3.2.3 用在成员变量上的方式进行依赖注入
+#### 3.2.3 用成员变量的方式进行依赖注入
 
 - 这个方式就是spring通过反射机制做的依赖注入
 - 注入效率低，但是简洁
@@ -1627,9 +1646,2071 @@ public class UserDaoTest {
 }
 ```
 
+### 6.2 构造函数注入场景- 普通方式
+
+UserServiceNormal 
+
+- 通过构造函数关联依赖
+
+```java
+public class UserServiceNormal implements UserService {
+
+    private UserDao userDao;
+
+    //无参构造函数
+    public UserServiceNormal() {
+        super();
+    }
+
+    //有参构造函数
+    public UserServiceNormal(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    @Override
+    public void add() {
+        userDao.add();
+
+    }
+}
+```
+
+UserService
+
+```java
+public interface UserService {
+
+    void add();
+}
+```
+
+UserDao
+
+```java
+public interface UserDao {
+    void add();
+}
+```
+
+UserDaoNormal
+
+```java
+public class UserDaoNormal implements UserDao {
+
+    @Override
+    public void add() {
+
+        System.out.println("添加用户到数据库中。。。。");
+
+    }
+}
+```
+
+AppConfig
+
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public UserDao userDaoNormal(){
+        System.out.println("创建UserDao对象");
+
+        return new UserDaoNormal();
+    }
+
+    @Bean
+    public UserService userServiceNormal(){
+        System.out.println("创建UserService对象");
+        UserDao userDao = userDaoNormal();
+        return new UserServiceNormal(userDao);
+    }
+
+}
+```
+
+UserServiceTest
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = AppConfig.class)
+public class UserServiceTest {
+
+    @Autowired
+    private UserService userService;
+
+    @Test
+    public void testAdd(){
+
+        userService.add();
+    }
 
 
-### 6.2 Java Config中依赖注入
+}
+```
+
+### 6.3 构造函数注入场景- 优雅方式
+
+AppConfig
+
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public UserDao userDaoNormal(){
+        System.out.println("创建UserDao对象");
+
+        return new UserDaoNormal();
+    }
+
+    @Bean
+    public UserService userServiceNormal(UserDao userDao){
+        System.out.println("创建UserService对象");
+        
+        //UserDao userDao = userDaoNormal();
+        return new UserServiceNormal(userDao);
+    }
+
+}
+```
+
+- 实际编程中不会做函数的调用，而是在参数中取获取UserDao
+
+### 6.4 通过setter方法依赖注入
+
+UserServiceNormal
+
+```java
+public class UserServiceNormal implements UserService {
+
+    private UserDao userDao;
+
+    //setter方法注入
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    @Override
+    public void add() {
+        userDao.add();
+
+    }
+}
+```
+
+AppConfig
+
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public UserDao userDaoNormal(){
+        System.out.println("创建UserDao对象");
+
+        return new UserDaoNormal();
+    }
+
+    @Bean
+    public UserService userServiceNormal(UserDao userDao){
+        System.out.println("创建UserService对象");
+        //赋值给一个变量userService
+        UserServiceNormal userService = new UserServiceNormal();
+        //调用userService的setter方法，将userDao注入
+        userService.setUserDao(userDao);
+        //返回userService
+        return userService;
+
+    }
+
+}
+```
+
+### 6.5 通过任意函数注入
+
+UserServiceNormal
+
+```java
+
+public class UserServiceNormal implements UserService {
+
+    private UserDao userDao;
+
+    //任意函数注入
+    public void prepare(UserDao userDao){
+        this.userDao = userDao;
+    }
+
+    @Override
+    public void add() {
+        userDao.add();
+
+    }
+}
+```
+
+AppConfig
+
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public UserDao userDaoNormal(){
+        System.out.println("创建UserDao对象");
+
+        return new UserDaoNormal();
+    }
+
+    @Bean
+    public UserService userServiceNormal(UserDao userDao){
+        System.out.println("创建UserService对象");
+        UserServiceNormal userService = new UserServiceNormal();
+        //任意函数注入
+        userService.prepare(userDao);
+        return userService;
+
+    }
+
+}
+```
+
+### 6.6 XML装配
+
+#### 6.6.1 创建xml配置规范
+
+applicationContext.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+</beans>
+```
+
+#### 6.6.2 xml定义第bean
+
+CompactDisc
+
+```java
+public class CompactDisc {
+
+    public CompactDisc() {
+        super();
+        System.out.println("CompacDisc构造函数。。。。" + this.toString());
+    }
+
+    public void play(){
+        System.out.println("播放CD音乐。。。。。" + this.toString());
+
+    }
+}
+```
+
+ApplicationSpring
+
+```java
+public class ApplicationSpring {
+
+    public static void main(String[] args) {
+        System.out.println("ApplicationSpring is running......");
+
+        ClassPathXmlApplicationContext context =  new ClassPathXmlApplicationContext("applicationContext.xml");
+        //初始化cd
+        CompactDisc cd = context.getBean(CompactDisc.class);
+        //调用play方法
+        cd.play();
+    }
+}
+```
+
+applicationContext.xml
+
+- xml 定义bean
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean class="com.cloud.deam.soundsystem.CompactDisc" />
+</beans>
+```
+
+输出结果
+
+```
+ApplicationSpring is running......
+CompacDisc构造函数。。。。com.cloud.deam.soundsystem.CompactDisc@2669b199
+播放CD音乐。。。。。com.cloud.deam.soundsystem.CompactDisc@2669b199
+```
+
+
+
+***多个重名bean设置id区分：***
+
+```xml
+    <bean id="CompactDisc1" class="com.cloud.deam.soundsystem.CompactDisc" />
+    <bean id="CompactDisc2" class="com.cloud.deam.soundsystem.CompactDisc" />
+```
+
+```xml
+    <bean name="CompactDisc1" class="com.cloud.deam.soundsystem.CompactDisc" />
+    <bean name="CompactDisc2" class="com.cloud.deam.soundsystem.CompactDisc" />
+```
+
+- name可以通过分号、空格、逗号分隔，设置不同的别名 name="CompactDisc1 CompactDisc12 CompactDisc13  "
+- id只能通过传字符进行传递
+
+ApplicationSpring -- 主方法
+
+```java
+public class ApplicationSpring {
+
+    public static void main(String[] args) {
+        System.out.println("ApplicationSpring is running......");
+
+        ClassPathXmlApplicationContext context =  new ClassPathXmlApplicationContext("applicationContext.xml");
+        //CompactDisc cd = context.getBean(CompactDisc.class);
+
+        CompactDisc cd1 = (CompactDisc) context.getBean("compactDisc1");
+        CompactDisc cd2 = (CompactDisc) context.getBean("compactDisc2");
+        
+        cd1.play();      
+        cd2.play();
+    }
+}
+```
+
+AppTest -- 测试类
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:applicationContext.xml")
+public class CompactDiscTest {
+
+
+    @Autowired
+    private CompactDisc CompactDisc1;
+
+    @Autowired
+    private CompactDisc CompactDisc2;
+
+    //过滤方式注入
+    @Autowired
+    @Qualifier("CompactDisc2")
+    private CompactDisc cd;
+
+
+    @Test
+    public void testPlay(){
+        CompactDisc1.play();
+        CompactDisc2.play();
+        cd.play();
+    }
+}
+```
+
+#### 6.6.3 xml注入 - 通过构造函数
+
+| 名称                  | 用途                                                         | 备注 |
+| --------------------- | ------------------------------------------------------------ | ---- |
+| <constructor-arg>元素 | 依赖Bean，有参构造函数依赖注入                               |      |
+| c-名称空间            | --c：c函数命令空间 :cd 构造函数的参数名字cd<br/>     public CDPlayer(CompactDisc cd)，-ref:表示的是CompactDisc2名称的引用<br/>	也可以写成c:0-ref="CompactDisc2" c:1-ref="CompactDisc2" 表示第一个 第二个参数 |      |
+|                       |                                                              |      |
+
+***<constructor-arg>元构造函数依赖注入***
+
+applicationContext.xml
+
+```xml
+    <bean id="cdPlayer1" class="com.cloud.deam.soundsystem.CDPlayer">
+        <!--下面写的是依赖Bean -->
+        <constructor-arg ref="CompactDisc1"/>        
+    </bean>
+```
+
+CDPlayerTest
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:applicationContext.xml")
+public class CDPlayerTest {
+
+    @Autowired
+    private CDPlayer cdPlayer;
+
+    @Test
+    public void Test01(){
+
+        cdPlayer.play();
+    }
+
+}
+```
+
+***c-名称空间依赖注入***
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="CompactDisc1" class="com.cloud.deam.soundsystem.CompactDisc" />
+    <bean id="CompactDisc2" class="com.cloud.deam.soundsystem.CompactDisc" />
+    <bean id="cdPlayer1" class="com.cloud.deam.soundsystem.CDPlayer">
+        <constructor-arg ref="CompactDisc1"/>
+    </bean>
+    
+    <!--c：c函数命令空间 :cd 构造函数的参数名字cd
+     public CDPlayer(CompactDisc cd)，-ref:表示的是CompactDisc2名称的引用
+	也可以写成c:0-ref="CompactDisc2" c:1-ref="CompactDisc2" 表示第一个 第二个参数
+     -->
+    <bean id="cdPlayer2" class="com.cloud.deam.soundsystem.CDPlayer" c:cd-ref="CompactDisc2"></bean>
+</beans>
+```
+
+CDPlayerTest
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:applicationContext.xml")
+public class CDPlayerTest {
+
+    @Autowired
+    private CDPlayer cdPlayer1;
+
+    @Autowired
+    private CDPlayer cdPlayer2;
+
+    @Test
+    public void Test01(){
+
+        cdPlayer1.play();
+        cdPlayer2.play();
+    }
+
+}
+```
+
+#### 6.6.4 注入简单类型 -通过构造函数
+
+- 给CompactDisc1 对象注入title、artist
+
+```xml
+    <bean id="CompactDisc1" class="com.cloud.deam.soundsystem.CompactDisc">
+        <constructor-arg name="title" value="I Do" />
+        <constructor-arg name="artist" value="莫文蔚" />
+    </bean>
+```
+
+```xml
+    <bean id="CompactDisc1" class="com.cloud.deam.soundsystem.CompactDisc">
+        <constructor-arg index="title" value="I Do" />
+        <constructor-arg index="artist" value="莫文蔚" />
+    </bean>
+```
+
+***-c方式注入简单类型：***
+
+```xml
+    <bean id="CompactDisc2" class="com.cloud.deam.soundsystem.CompactDisc"
+          c:title="爱在西元"
+          c:artist="周杰伦"
+    />
+```
+
+CompactDisc
+
+```java
+public class CompactDisc {
+
+    private String title;
+    private String artist;
+
+
+    public CompactDisc() {
+        super();
+        System.out.println("CompacDisc构造函数。。。。" + this.toString());
+    }
+
+
+
+    public CompactDisc(String title, String artist) {
+        this.title = title;
+        this.artist = artist;
+
+        System.out.println("CompacDisc构造函数。。。。" + this.toString());
+    }
+
+    public void play(){
+        System.out.println("播放CD音乐。。。。。" + this.toString() +" " +this.title+ " by " +this.artist);
+
+    }
+}
+```
+
+#### 6.6.5  注入list类型 -通过构造函数
+
+applicationContext.xml
+
+```xml
+    <bean id="CompactDisc1" class="com.cloud.deam.soundsystem.CompactDisc">
+        <constructor-arg name="title" value="I Do" />
+        <constructor-arg name="artist" value="莫文蔚" />
+        <constructor-arg name="tracks">
+            <list>
+                <value>I Do 1</value>
+                <value>I Do 2</value>
+                <value>I Do 3</value>
+            </list>
+        </constructor-arg>
+    </bean>
+```
+
+CompactDisc
+
+```java
+public class CompactDisc {
+
+    private String title;
+    private String artist;
+    
+    //声明一个list
+    private List<String> tracks;
+
+
+    public CompactDisc() {
+        super();
+        System.out.println("CompacDisc构造函数。。。。" + this.toString());
+    }
+
+
+
+    public CompactDisc(String title, String artist) {
+        this.title = title;
+        this.artist = artist;
+
+        System.out.println("CompacDisc有参构造函数。。。。" + this.toString());
+    }
+
+    //创建包含三个函数的构造函数
+    public CompactDisc(String title, String artist, List<String> tracks) {
+        this.title = title;
+        this.artist = artist;
+        this.tracks = tracks;
+
+        System.out.println("CompacDisc有三个参构造函数。。。。" + this.toString());
+    }
+
+    public void play(){
+        System.out.println("播放CD音乐。。。。。" + this.toString() +" " +this.title+ " by " +this.artist);
+        
+       //循环打印tracks内容
+        for (String track : this.tracks) {
+            System.out.println("音乐:" + track);
+        }
+
+    }
+}
+```
+
+***创建一个复杂对象类型***
+
+创建类型 Music 
+
+```java
+package com.cloud.deam.soundsystem;
+
+public class Music {
+
+    private String title;
+    private Integer duration;
+
+    //创建getter setter 方法
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    //创建无参构造方法
+
+    public Music() {
+        super();
+    }
+
+    //创建有参构造方法
+    public Music(String title, Integer duration) {
+        this.title = title;
+        this.duration = duration;
+    }
+}
+
+```
+
+CompactDisc
+
+```java
+public class CompactDisc {
+
+    private String title;
+    private String artist;
+    
+    //设置List为Music类型
+    private List<Music> tracks;
+
+
+    public CompactDisc() {
+        super();
+        System.out.println("CompacDisc构造函数。。。。" + this.toString());
+    }
+
+
+
+    public CompactDisc(String title, String artist) {
+        this.title = title;
+        this.artist = artist;
+
+        System.out.println("CompacDisc有参构造函数。。。。" + this.toString());
+    }
+
+    //设置List为Music类型
+    public CompactDisc(String title, String artist, List<Music> tracks) {
+        this.title = title;
+        this.artist = artist;
+        this.tracks = tracks;
+
+        System.out.println("CompacDisc有三个参构造函数。。。。" + this.toString());
+    }
+
+    public void play(){
+        System.out.println("播放CD音乐。。。。。" + this.toString() +" " +this.title+ " by " +this.artist);
+
+        for (Music track : this.tracks) {
+			//通过get方法获取属性
+            System.out.println("音乐:" + track.getTitle() + ".时长：" + track.getDuration());
+
+        }
+
+    }
+}
+
+```
+
+applicationContext.xml
+
+- 复杂的对象依赖注入
+
+```xml
+    <bean id="music1" class="com.cloud.deam.soundsystem.Music">
+        <constructor-arg value="I Do 1" />
+        <constructor-arg value="270" />
+    </bean>
+
+    <bean id="music2" class="com.cloud.deam.soundsystem.Music">
+        <constructor-arg value="I Do 2" />
+        <constructor-arg value="280" />
+    </bean>
+
+    <bean id="music3" class="com.cloud.deam.soundsystem.Music">
+        <constructor-arg value="I Do 3" />
+        <constructor-arg value="290" />
+    </bean>
+
+    <bean id="CompactDisc1" class="com.cloud.deam.soundsystem.CompactDisc">
+        <constructor-arg name="title" value="I Do" />
+        <constructor-arg name="artist" value="莫文蔚" />
+        <constructor-arg name="tracks">
+            <list>
+                <ref bean="music1" />
+                <ref bean="music2" />
+                <ref bean="music3" />
+            </list>
+        </constructor-arg>
+    </bean>
+```
+
+#### 6.6.6 注入set类型 -通过构造函数
+
+CompactDisc
+
+```java
+public class CompactDisc {
+
+    private String title;
+    private String artist;
+    
+    //设置set为Music类型
+    private List<Music> tracks;
+
+
+    public CompactDisc() {
+        super();
+        System.out.println("CompacDisc构造函数。。。。" + this.toString());
+    }
+
+
+
+    public CompactDisc(String title, String artist) {
+        this.title = title;
+        this.artist = artist;
+
+        System.out.println("CompacDisc有参构造函数。。。。" + this.toString());
+    }
+
+    //设置set为Music类型
+    public CompactDisc(String title, String artist, set<Music> tracks) {
+        this.title = title;
+        this.artist = artist;
+        this.tracks = tracks;
+
+        System.out.println("CompacDisc有三个参构造函数。。。。" + this.toString());
+    }
+
+    public void play(){
+        System.out.println("播放CD音乐。。。。。" + this.toString() +" " +this.title+ " by " +this.artist);
+
+        for (Music track : this.tracks) {
+			//通过get方法获取属性
+            System.out.println("音乐:" + track.getTitle() + ".时长：" + track.getDuration());
+
+        }
+
+    }
+}
+
+```
+
+applicationContext.xml
+
+```xml
+    <bean id="music1" class="com.cloud.deam.soundsystem.Music">
+        <constructor-arg value="I Do 1" />
+        <constructor-arg value="270" />
+    </bean>
+
+    <bean id="music2" class="com.cloud.deam.soundsystem.Music">
+        <constructor-arg value="I Do 2" />
+        <constructor-arg value="280" />
+    </bean>
+
+    <bean id="music3" class="com.cloud.deam.soundsystem.Music">
+        <constructor-arg value="I Do 3" />
+        <constructor-arg value="290" />
+    </bean>
+
+
+    <bean id="CompactDisc1" class="com.cloud.deam.soundsystem.CompactDisc">
+        <constructor-arg name="title" value="I Do" />
+        <constructor-arg name="artist" value="莫文蔚" />
+        <constructor-arg name="tracks">
+            <!-- set 类型设置-->
+            <set>
+                <ref bean="music1" />
+                <ref bean="music2" />
+                <ref bean="music3" />
+            </set>
+        </constructor-arg>
+    </bean>
+```
+
+- ***set和list区别在装配的时候重复的值在set中会被过滤***
+- ***set元素的顺序能够和插入一致。而list是无序的***
+
+
+
+#### 6.6.7 注入MAP集合 -通过构造函数
+
+CompactDisc
+
+```java
+public class CompactDisc {
+
+    private String title;
+    private String artist;
+    private Map<String, Music> tracks;
+
+
+    public CompactDisc() {
+        super();
+        System.out.println("CompacDisc构造函数。。。。" + this.toString());
+    }
+
+    public CompactDisc(String title, String artist) {
+        this.title = title;
+        this.artist = artist;
+
+        System.out.println("CompacDisc有参构造函数。。。。" + this.toString());
+    }
+
+    public CompactDisc(String title, String artist, Map<String,Music> tracks) {
+        this.title = title;
+        this.artist = artist;
+        this.tracks = tracks;
+
+        System.out.println("CompacDisc有三个参构造函数。。。。" + this.toString());
+    }
+
+    public void play(){
+        System.out.println("播放CD音乐。。。。。" + this.toString() +" " +this.title+ " by " +this.artist);
+
+        for (String key : this.tracks.keySet()) {
+            System.out.println("key:" + key );
+            Music music = this.tracks.get(key);
+            System.out.println("音乐:" + music.getTitle() + ".时长：" + music.getDuration());
+        }
+    }
+}
+```
+
+applicationContext.xml
+
+```xml
+    <bean id="music1" class="com.cloud.deam.soundsystem.Music">
+        <constructor-arg value="I Do 1" />
+        <constructor-arg value="270" />
+    </bean>
+
+    <bean id="music2" class="com.cloud.deam.soundsystem.Music">
+        <constructor-arg value="I Do 2" />
+        <constructor-arg value="280" />
+    </bean>
+
+    <bean id="music3" class="com.cloud.deam.soundsystem.Music">
+        <constructor-arg value="I Do 3" />
+        <constructor-arg value="290" />
+    </bean>
+
+
+    <bean id="CompactDisc1" class="com.cloud.deam.soundsystem.CompactDisc">
+        <constructor-arg name="title" value="I Do" />
+        <constructor-arg name="artist" value="莫文蔚" />
+        <constructor-arg name="tracks">
+            
+            //map类型注入需要使用entry
+            <map>
+                <entry key="m1" value-ref="music1"/>
+                <entry key="m2" value-ref="music2"/>
+                <entry key="m3" value-ref="music3"/>
+            </map>
+        </constructor-arg>
+    </bean>
+```
+
+#### 6.6.8 注入数组类型 -通过构造函数
+
+CompactDisc
+
+```java
+public class CompactDisc {
+
+    private String title;
+    private String artist;
+    //设置Music为数组类型
+    private Music[] tracks;
+
+
+    public CompactDisc() {
+        super();
+        System.out.println("CompacDisc构造函数。。。。" + this.toString());
+    }
+
+
+
+    public CompactDisc(String title, String artist) {
+        this.title = title;
+        this.artist = artist;
+
+        System.out.println("CompacDisc有参构造函数。。。。" + this.toString());
+    }
+
+    //设置Music为数组类型
+    public CompactDisc(String title, String artist, Music[] tracks) {
+        this.title = title;
+        this.artist = artist;
+        this.tracks = tracks;
+
+        System.out.println("CompacDisc有三个参构造函数。。。。" + this.toString());
+    }
+
+    public void play(){
+        System.out.println("播放CD音乐。。。。。" + this.toString() +" " +this.title+ " by " +this.artist);
+
+        for (Music track : this.tracks) {
+            System.out.println("音乐:" + track.getTitle() + ".时长：" + track.getDuration());
+
+        }
+
+    }
+}
+```
+
+applicationContext.xml
+
+```xml
+    <bean id="music1" class="com.cloud.deam.soundsystem.Music">
+        <constructor-arg value="I Do 1" />
+        <constructor-arg value="270" />
+    </bean>
+
+    <bean id="music2" class="com.cloud.deam.soundsystem.Music">
+        <constructor-arg value="I Do 2" />
+        <constructor-arg value="280" />
+    </bean>
+
+    <bean id="music3" class="com.cloud.deam.soundsystem.Music">
+        <constructor-arg value="I Do 3" />
+        <constructor-arg value="290" />
+    </bean>
+
+
+    <bean id="CompactDisc1" class="com.cloud.deam.soundsystem.CompactDisc">
+        <constructor-arg name="title" value="I Do" />
+        <constructor-arg name="artist" value="莫文蔚" />
+        <constructor-arg name="tracks">
+            <array>
+                <ref bean="music1"/>
+                <ref bean="music2"/>
+                <ref bean="music3"/>
+            </array>
+        </constructor-arg>
+    </bean>
+```
+
+#### 6.6.9 属性注入
+
+1.set注入属性注入
+
+applicationContext-properties.xml
+
+- property 注入元素
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="music1" class="com.cloud.deam.soundsystem.Music">
+        <property name="title" value="告白气球" />
+        <property name="duration" value="215" />
+    </bean>
+
+    <bean id="music2" class="com.cloud.deam.soundsystem.Music">
+
+       <property name="title"  value="爱情废材" />
+       <property name="duration" value="305" />
+    </bean>
+
+
+</beans>
+```
+
+Music
+
+- 属性注入只需set方法就可以
+- 属性的构造方法，会走无参构造函数
+
+```java
+public class Music {
+
+    //声明的是私有的成员变量
+    private String title;
+    private Integer duration;
+
+    //创建getter setter 方法
+    public String getTitle() {
+        return title;
+    }
+
+    //setTitle是属性
+    public void setTitle(String title) {
+        this.title = title;
+        System.out.println("--在" +this.toString() + "中注入title");
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    //setDuration是属性
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+        System.out.println("--在" +this.toString() + "中注入duration");
+    }
+
+    //创建无参构造方法
+
+    public Music() {
+        super();
+        System.out.println("Music的构造函数。。。"+this.toString());
+    }
+
+    //创建有参构造方法
+    public Music(String title, Integer duration) {
+        this.title = title;
+        this.duration = duration;
+
+    }
+}
+
+```
+
+AppTest
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:applicationContext-properties.xml")
+public class AppTest {
+
+    @Test
+    public void test(){
+    }
+}
+```
+
+测试结果
+
+```java
+
+Music的构造函数。。。com.cloud.deam.soundsystem.Music@255b53dc
+--在com.cloud.deam.soundsystem.Music@255b53dc中注入title
+--在com.cloud.deam.soundsystem.Music@255b53dc中注入duration
+Music的构造函数。。。com.cloud.deam.soundsystem.Music@482cd91f
+--在com.cloud.deam.soundsystem.Music@482cd91f中注入title
+--在com.cloud.deam.soundsystem.Music@482cd91f中注入duration
+```
+
+2.属性注入中注入数组列表
+
+CompactDisc
+
+- 设置get set方法
+
+```java
+public class CompactDisc {
+
+    private String title;
+    private String artist;
+    private Music[] tracks;
+
+
+    public CompactDisc() {
+        super();
+        System.out.println("CompacDisc构造函数。。。。" + this.toString());
+    }
+
+
+
+    public CompactDisc(String title, String artist) {
+        this.title = title;
+        this.artist = artist;
+
+        System.out.println("CompacDisc有参构造函数。。。。" + this.toString());
+    }
+
+    public CompactDisc(String title, String artist, Music[] tracks) {
+        this.title = title;
+        this.artist = artist;
+        this.tracks = tracks;
+
+        System.out.println("CompacDisc有三个参构造函数。。。。" + this.toString());
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+        System.out.println("--在" +this.toString() + "中注入title");
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
+        System.out.println("--在" +this.toString() + "中注入artist");
+    }
+
+    public Music[] getTracks() {
+        return tracks;
+    }
+
+    public void setTracks(Music[] tracks) {
+        this.tracks = tracks;
+        System.out.println("--在" +this.toString() + "中注入tracks");
+    }
+
+    public void play(){
+        System.out.println("播放CD音乐。。。。。" + this.toString() +" " +this.title+ " by " +this.artist);
+
+        for (Music track : this.tracks) {
+            System.out.println("音乐:" + track.getTitle() + ".时长：" + track.getDuration());
+
+        }
+
+    }
+}
+
+```
+
+applicationContext-properties.xml
+
+- 增加数组注入
+
+```xml
+    <bean id="compactDisc1" class="com.cloud.deam.soundsystem.CompactDisc">
+        <property name="title" value="周杰伦的床边故事"/>
+        <property name="artist" value="周杰伦"/>
+        <property name="tracks">
+            <array>
+                <ref bean="music1"/>
+                <ref bean="music2"/>
+            </array>
+        </property>
+    </bean>
+```
+
+测试：
+
+- 会自动注入
+
+```
+Music的构造函数。。。com.cloud.deam.soundsystem.Music@255b53dc
+--在com.cloud.deam.soundsystem.Music@255b53dc中注入title
+--在com.cloud.deam.soundsystem.Music@255b53dc中注入duration
+Music的构造函数。。。com.cloud.deam.soundsystem.Music@482cd91f
+--在com.cloud.deam.soundsystem.Music@482cd91f中注入title
+--在com.cloud.deam.soundsystem.Music@482cd91f中注入duration
+CompacDisc构造函数。。。。com.cloud.deam.soundsystem.CompactDisc@123f1134
+--在com.cloud.deam.soundsystem.CompactDisc@123f1134中注入title
+--在com.cloud.deam.soundsystem.CompactDisc@123f1134中注入artist
+--在com.cloud.deam.soundsystem.CompactDisc@123f1134中注入tracks
+```
+
+3.属性注入中注入对象引
+
+CDPlayer
+
+- 构造set get方法
+
+```java
+public class CDPlayer {
+
+    private CompactDisc cd;
+    public CDPlayer() {
+        super();
+        System.out.println("CDPlayer的构造函数" + this.toString());
+    }
+
+    public CDPlayer(CompactDisc cd) {
+        this.cd = cd;
+        System.out.println("CDPlayer的有参构造函数"+ this.toString());
+    }
+
+    public CompactDisc getCd() {
+        return cd;
+    }
+
+    public void setCd(CompactDisc cd) {
+        this.cd = cd;
+        System.out.println("--在" +this.toString() + "中注入cd");
+    }
+
+    public void play(){
+        System.out.println("CDPlayer:"+ this.toString());
+        cd.play();
+    }
+
+}
+```
+
+applicationContext-properties.xml
+
+- 利用ref 引用compactDisc1 属性
+
+```xml
+    <bean id="CDPlayer1" class="com.cloud.deam.soundsystem.CDPlayer">
+        <property name="cd" ref="compactDisc1" />
+    </bean>
+```
+
+测试：
+
+- 注入CDPlayer
+- 引用CDPlayer，play方法
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:applicationContext-properties.xml")
+public class AppTest {
+
+    @Autowired
+    private CDPlayer cdPlayer;
+
+    @Test
+    public void test(){
+        cdPlayer.play();
+    }
+}
+```
+
+```
+Music的构造函数。。。com.cloud.deam.soundsystem.Music@1b68b9a4
+--在com.cloud.deam.soundsystem.Music@1b68b9a4中注入title
+--在com.cloud.deam.soundsystem.Music@1b68b9a4中注入duration
+Music的构造函数。。。com.cloud.deam.soundsystem.Music@75c072cb
+--在com.cloud.deam.soundsystem.Music@75c072cb中注入title
+--在com.cloud.deam.soundsystem.Music@75c072cb中注入duration
+CompacDisc构造函数。。。。com.cloud.deam.soundsystem.CompactDisc@1f1c7bf6
+--在com.cloud.deam.soundsystem.CompactDisc@1f1c7bf6中注入title
+--在com.cloud.deam.soundsystem.CompactDisc@1f1c7bf6中注入artist
+--在com.cloud.deam.soundsystem.CompactDisc@1f1c7bf6中注入tracks
+CDPlayer的构造函数com.cloud.deam.soundsystem.CDPlayer@20d3d15a
+--在com.cloud.deam.soundsystem.CDPlayer@20d3d15a中注入cd
+CDPlayer:com.cloud.deam.soundsystem.CDPlayer@20d3d15a
+播放CD音乐。。。。。com.cloud.deam.soundsystem.CompactDisc@1f1c7bf6 周杰伦的床边故事 by 周杰伦
+音乐:告白气球.时长：215
+音乐:爱情废材.时长：305
+```
+
+#### 6.6.10 P 名称空间注入
+
+- 集合和数组不支持
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="music1" class="com.cloud.deam.soundsystem.Music">
+        <property name="title" value="告白气球" />
+        <property name="duration" value="215" />
+    </bean>
+
+    <bean id="music2" class="com.cloud.deam.soundsystem.Music"
+          p:title="爱情废材"
+          p:duration="305" />
+
+
+    <bean id="compactDisc1" class="com.cloud.deam.soundsystem.CompactDisc" p:title="周杰伦的床边故事" p:artist="周杰伦">
+        <property name="tracks">
+            <array>
+                <ref bean="music1"/>
+                <ref bean="music2"/>
+            </array>
+        </property>
+    </bean>
+
+    <bean id="CDPlayer1" class="com.cloud.deam.soundsystem.CDPlayer" p:cd-ref="compactDisc1" />
+
+</beans>
+```
+
+#### 6.6.11 util名称空间注入
+
+- 处理集合数组注入
+- 使用util:list 和ref 进行关联
+
+```xml
+    <util:list id="tracklist">
+            <ref bean="music1"/>
+            <ref bean="music2"/>
+    </util:list>
+
+    <bean id="compactDisc1" class="com.cloud.deam.soundsystem.CompactDisc"
+          p:title="周杰伦的床边故事"
+          p:artist="周杰伦"
+          p:tracks-ref="tracklist" >
+    </bean>
+```
+
+### 6.7 xml装配总结
+
+- id 和name 的区别
+
+  - id ：整个id属性就是bean名字
+
+  - name: 可以使用分号、空格或逗号分隔开，每个部分是一个别名，通过任何别名都可以获取到bean对象
+
+- 通过构造函数依赖注入
+
+  - <constructor-arg> 元素
+  - c-名称空间
+  - 能注入 list、set、map、数组
+
+- 属性注入，类的set方法
+
+  - <property> 元素
+  - p-名称空间
+  - util-名称空间，可以和p名称结合处理复杂集合注入
+
+- 三种装配方式总结
+
+  - 自动装配 -推荐
+  - java装配 - 其次
+  - XML装配 - 最次
+
+## 7 高级装配
+
+### 7.1 bean的单例作用域
+
+1. bean单例作用域
+   - 默认情况下spring应用程序的上下文中所有的bean都是单例加载的
+   - 无论获取多少次，拿到的都是一个对象
+
+notepad
+
+```java
+public class Notepad {
+
+    public Notepad(){
+        super();
+        System.out.println("Notepad的构造函数。。。"+this.toString());
+
+    }
+}
+```
+
+applicationContext.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="notepad" class="com.cloud.demo.Notepad" />
+
+</beans>
+```
+
+测试：
+
+NotepadTest
+
+```java
+/**
+ * 1.无论我们是否去主动获取bean对象，Spring上下文件，一加载就会创建bean对象
+ * 2.无论获取多少次，拿到的都是一个对象
+ */
+
+public class NotepadTest {
+
+    @Test
+    public void test(){
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        //创建notepad对象，默认获得的是Object对象
+        Object notepad1 = (Notepad)context.getBean("notepad");
+        Object notepad2 = (Notepad)context.getBean("notepad");
+        System.out.println(notepad1 == notepad2);
+    }
+}
+```
+
+NotepadTestAutowired
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:applicationContext.xml")
+public class NotepadTestAutowired {
+
+    @Autowired
+    private Notepad notepad1;
+
+    @Autowired
+    private Notepad notepad2;
+
+    /**
+     * 1.无论我们是否去主动获取bean对象，Spring上下文件，一加载就会创建bean对象
+     * 2.无论获取多少次，拿到的都是一个对象
+     */
+
+    @Test
+    public void test(){
+        System.out.println(notepad1 == tepad2);
+    }
+}
+```
+### 7.2 bean的作用域
+   - xml单作用域
+
+```xml
+<bean id="notepad" class="com.cloud.demo.Notepad" scope="prototype"/>
+```
+
+输出：
+
+```
+Notepad的构造函数。。。com.cloud.demo.Notepad@1f1c7bf6
+Notepad的构造函数。。。com.cloud.demo.Notepad@214b199c
+false
+```
+
+### 7.3 自动装配中定义bean作用域
+
+Notepad2
+
+```java
+@Component
+//scope定义bean作用域3种方法
+//@Scope("prototype")
+//@Scope(scopeName = "prototype")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class Notepad2 {
+
+    public Notepad2(){
+        super();
+        System.out.println("Notepad2的构造函数。。。"+this.toString());
+
+    }
+}
+```
+
+applicationContext.xml
+
+- <context:component-scan base-package="com.cloud.demo"/>  启用全局扫描
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.cloud.demo"/>
+<bean id="notepad" class="com.cloud.demo.Notepad" scope="prototype"/>
+
+</beans>
+```
+
+### 7.4 javaconfig 装配中定义bean的作用域
+
+AppConfig
+
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public Notepad3 notepad3(){
+
+        return new Notepad3();
+    }
+}
+```
+
+
+
+Notepad3
+
+```JAVA
+public class Notepad3 {
+
+    public Notepad3(){
+        super();
+        System.out.println("Notepad的构造函数。。。"+this.toString());
+
+    }
+}
+```
+
+Notepad3Test
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = AppConfig.class)
+public class Notepad3Test {
+
+    @Autowired
+    private Notepad3 notepad1;
+
+    @Autowired
+    private Notepad3 notepad2;
+
+    @Test
+    public void test(){
+
+        System.out.println(notepad1 == notepad2);
+
+    }
+}
+```
+
+### 7.5 延迟加载
+
+- 延迟加载默认只能在singleton模式下
+
+xml模式下：
+
+```xml
+<bean id="notepad" class="com.cloud.demo.Notepad" scope="singleton" lazy-init="true"/>
+```
+
+自动装配：
+
+```java
+@Component
+@Scope("singleton")
+//@Scope(scopeName = "prototype")
+//@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Lazy
+public class Notepad2 {
+
+    public Notepad2(){
+        super();
+        System.out.println("Notepad2的构造函数。。。"+this.toString());
+
+    }
+}
+```
+
+java 类模式下：
+
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+    @Lazy
+    public Notepad3 notepad3(){
+
+        return new Notepad3();
+    }
+}
+```
+
+### 7.6 对象的初始化和销毁
+
+***xml模式：***
+
+```xml
+<bean id="notepad" class="com.cloud.demo.Notepad" scope="singleton" lazy-init="true"
+        destroy-method="destory"
+        init-method="init"/>
+
+</beans>
+```
+
+Notepad
+
+```java
+public class Notepad {
+
+    public Notepad(){
+        super();
+        System.out.println("Notepad的构造函数。。。"+this.toString());
+
+    }
+
+    //容器初始化自动调用init方法
+    public void init(){
+        System.out.println("Notepad的初始化方法");
+
+    }
+
+    //容器初始化自动调用销毁方法
+    public void destory(){
+        System.out.println("Notepad的销毁方法");
+    }
+
+}
+```
+
+NotepadTest
+
+```java
+public class NotepadTest {
+
+
+    @Test
+    public void test(){
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        //创建notepad对象，默认获得的是Object对象
+        Object notepad1 = (Notepad)context.getBean("notepad");
+//        Object notepad2 = (Notepad)context.getBean("notepad");
+//        System.out.println(notepad1 == notepad2);
+
+        //主动调用销毁方法,close方法自动调用destroy方法
+        //context.destroy();
+        context.close();
+
+
+    }
+}
+```
+
+***自动装配：***
+
+Notepad2
+
+```java
+@Component
+@Scope("singleton")
+//@Scope(scopeName = "prototype")
+//@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Lazy
+public class Notepad2 {
+
+    public Notepad2(){
+        super();
+        System.out.println("Notepad2的构造函数。。。"+this.toString());
+    }
+
+    //容器初始化自动调用init方法
+    @PostConstruct
+    public void init(){
+        System.out.println("Notepad2的初始化方法");
+
+    }
+
+    //容器初始化自动调用销毁方法
+    @PreDestroy
+    public void destory(){
+        System.out.println("Notepad2的销毁方法");
+    }
+
+}
+```
+
+Notepad2Test
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:applicationContext.xml")
+public class Notepad2Test {
+
+    @Autowired
+    private Notepad notepad1;
+
+    @Autowired
+    private Notepad notepad2;
+
+    /**
+     * 1.无论我们是否去主动获取bean对象，Spring上下文件，一加载就会创建bean对象
+     * 2.无论获取多少次，拿到的都是一个对象
+     */
+
+    @Test
+    public void test(){
+
+        System.out.println(notepad1 == notepad2);
+
+    }
+}
+```
+
+***java类：***
+
+Notepad3
+
+```java
+public class Notepad3 {
+
+    public Notepad3(){
+        super();
+        System.out.println("Notepad3的构造函数。。。"+this.toString());
+
+    }
+
+    //容器初始化自动调用init方法
+    @PostConstruct
+    public void init(){
+        System.out.println("Notepad3的初始化方法");
+
+    }
+
+    //容器初始化自动调用销毁方法
+    @PreDestroy
+    public void destory(){
+        System.out.println("Notepad3的销毁方法");
+    }
+}
+```
+
+Notepad3Test
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = AppConfig.class)
+public class Notepad3Test {
+
+    @Autowired
+    private Notepad3 notepad1;
+
+    //@Autowired
+    //private Notepad3 notepad2;
+
+    /**
+     * 1.无论我们是否去主动获取bean对象，Spring上下文件，一加载就会创建bean对象
+     * 2.无论获取多少次，拿到的都是一个对象
+     */
+
+    @Test
+    public void test(){
+
+        //System.out.println(notepad1 == notepad2);
+
+    }
+}
+```
+
+### 7.7 工厂方法创建bean对象
+
+- 主要是在xml方法中使用，
+- 自动装配和java方法不存在解决方案，直接写代码就可以了
+
+
+
+```xml
+    <!--静态工厂-->
+    <context:component-scan base-package="com.cloud.demo"/>
+    <bean id="person1" class="com.cloud.demo.PersonFactory" factory-method="createPerson" />
+
+    <!--实例工厂-->
+    <bean id="personFactory" class="com.cloud.demo.PersonFactory" />
+    <bean id="person2" factory-bean="personFactory" factory-method="createPerson2" />
+```
+
+ Person
+
+```java
+public class Person {
+}
+```
+
+PersonFactory
+
+```java
+/**
+ * 用工厂方法实现
+ */
+
+public class PersonFactory {
+
+
+    public static Person createPerson(){
+        System.out.println("静态工厂创建Person....");
+        return new Person();
+    }
+
+    public Person createPerson2(){
+
+        System.out.println("实例工厂创建Person....");
+        return new Person();
+    }
+
+}
+```
+
+PersonTest
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:applicationContext.xml")
+public class PersonTest {
+
+    @Autowired
+    Person person1;
+
+    @Autowired
+    Person person2;
+
+    @Test
+    public void test(){
+        System.out.println(person1);
+        System.out.println(person2);
+
+    }
+
+}
+```
+
+### 7.8 装配总结
+
+- 单例 Sinleton: 在整个应用程序中，只创建bean的一个实例
+
+- 原型 Prototype: 每次注入或通过Spring上下文获取的时候，都会创建一个新的bean实例
+
+- 会话 Session 在Web应用中，为每个会话创建一个bean实例
+
+- 请求 request 在应用中，为每个请求创建一个bean实例
+
+- 作用域配置
+
+  - xml配置  scope=“singleton”
+
+  - 自动装配 
+
+    @Component
+
+    @Scope("singleton")
+
+  - javaConfig配置
+
+    @Bean
+
+    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+
+- 延迟配置
+
+  - xml配置
+
+    lazy-init=“true”
+
+  - 自动装配
+
+    @Component
+
+    @Lazy
+
+  - JavaConfig
+
+    @Bean
+
+    @Lazy
+
+- 初始化方法和销毁方法
+
+  - xml配置
+
+    destory-method=“destory” init-method="init"
+
+  - 自动装配和JavaConfig
+
+    @PostConstruct
+
+    public void init() { system.out.println("Notepad2的初始化方法")；}
+
+    @PerDestroy
+
+    public void destroy() { system.out.println("Notepad2的销毁方法")；}
+
+- 工厂方法
+
+  - 静态工厂
+
+    ```xml
+    <bean id="person1" class="com.cloud.demo.PersonFactory" factory-method="createPerson" />
+    ```
+
+    
+
+  - 实例工厂
+
+    ```xml
+    <bean id="personFactory" class="com.cloud.demo.PersonFactory" />
+    <bean id="person2" factory-bean="personFactory" factory-method="createPerson2" />
+    ```
+
+## 8、 @Controller/@RestController/@RequestMapping
+
+### 8.1 @Controller 处理http请求
+
+```java
+@Controller
+//@ResponseBody
+public class HelloController {
+
+    @RequestMapping(value="/hello",method= RequestMethod.GET)
+    public String sayHello(){
+        return "hello";
+    }
+}
+```
+
+如果直接使用@Controller这个注解，当运行该SpringBoot项目后，在浏览器中输入：local:8080/hello,会得到如下错误提示： 
+
+出现这种情况的原因在于：没有使用模版。即@Controller 用来响应页面，@Controller必须配合模版来使用。spring-boot 支持多种模版引擎包括： 
+1，FreeMarker 
+2，Groovy 
+3，Thymeleaf （Spring 官网使用这个） 
+4，Velocity 
+
+5，JSP （貌似Spring Boot官方不推荐，STS创建的项目会在src/main/resources 下有个templates 目录，这里就是让我们放模版文件的，然后并没有生成诸如 SpringMVC 中的webapp目录）
+
+本文以Thymeleaf为例介绍使用模版，具体步骤如下：
+
+第一步：在pom.xml文件中添加如下模块依赖：
+
+```html
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+```
+
+第二步：修改控制器代码，具体为：
+
+```java
+/**
+ * Created by wuranghao on 2017/4/7.
+ */
+@Controller
+public class HelloController {
+
+    @RequestMapping(value="/hello",method= RequestMethod.GET)
+    public String sayHello(){
+        return "hello";
+    }
+}
+
+```
+
+第三步：在resources目录的templates目录下添加一个hello.html文件，具体工程目录结构如下：
+
+其中，hello.html文件中的内容为：
+
+```html
+ <h1>wojiushimogui</h1>
+```
+
+这样，再次运行此项目之后，在浏览器中输入：localhost:8080/hello
+
+就可以看到hello.html中所呈现的内容了。
+
+因此，我们就直接使用@RestController注解来处理http请求来，这样简单的多。
+
+
+
+### 8.2 @RestController
+
+Spring4之后新加入的注解，原来返回json需要@ResponseBody和@Controller配合。
+
+即@RestController是@ResponseBody和@Controller的组合注解。
+
+```java
+@RestController
+public class HelloController {
+
+    @RequestMapping(value="/hello",method= RequestMethod.GET)
+    public String sayHello(){
+        return "hello";
+    }
+}
+
+```
+
+与下面的代码作用一样
+
+```java
+@Controller
+@ResponseBody
+public class HelloController {
+
+    @RequestMapping(value="/hello",method= RequestMethod.GET)
+    public String sayHello(){
+        return "hello";
+    }
+}
+
+```
+
+### 8.3 @RequestMapping 配置url映射
+
+@RequestMapping此注解即可以作用在控制器的某个方法上，也可以作用在此控制器类上。
+
+当控制器在类级别上添加@RequestMapping注解时，这个注解会应用到控制器的所有处理器方法上。处理器方法上的@RequestMapping注解会对类级别上的@RequestMapping的声明进行补充。
+
+
+
+例子一：@RequestMapping仅作用在处理器方法上
+
+```java
+@RestController
+public class HelloController {
+
+    @RequestMapping(value="/hello",method= RequestMethod.GET)
+    public String sayHello(){
+        return "hello";
+    }
+}
+
+```
+
+以上代码sayHello所响应的url=localhost:8080/hello。
+
+
+
+例子二：@RequestMapping仅作用在类级别上
+
+```java
+/**
+ * Created by wuranghao on 2017/4/7.
+ */
+@Controller
+@RequestMapping("/hello")
+public class HelloController {
+
+    @RequestMapping(method= RequestMethod.GET)
+    public String sayHello(){
+        return "hello";
+    }
+}
+
+```
+
+以上代码sayHello所响应的url=localhost:8080/hello,效果与例子一一样，没有改变任何功能。
+
+
+
+例子三：@RequestMapping作用在类级别和处理器方法上
+
+```java
+/**
+ * Created by wuranghao on 2017/4/7.
+ */
+@RestController
+@RequestMapping("/hello")
+public class HelloController {
+
+    @RequestMapping(value="/sayHello",method= RequestMethod.GET)
+    public String sayHello(){
+        return "hello";
+    }
+    @RequestMapping(value="/sayHi",method= RequestMethod.GET)
+    public String sayHi(){
+        return "hi";
+    }
+}
+
+```
+
+这样，以上代码中的sayHello所响应的url=localhost:8080/hello/sayHello。
+
+sayHi所响应的url=localhost:8080/hello/sayHi。
+
+从这两个方法所响应的url可以回过头来看这两句话：当控制器在类级别上添加@RequestMapping注解时，这个注解会应用到控制器的所有处理器方法上。处理器方法上的@RequestMapping注解会对类级别上的@RequestMapping的声明进行补充。
+
+最后说一点的是@RequestMapping中的method参数有很多中选择，一般使用get/post.
+
+
+
+
 
 
 
@@ -2014,7 +4095,7 @@ public class UserControllerTest {
 
 ```java
     /**
-     * Ctrl + Insert 选(Constructor)创建有参的构造函数
+     * ALT + Insert 选(Constructor)创建有参的构造函数
      * @param cd
      */
     public CDPlayer(CompactDisc cd) {
@@ -2048,15 +4129,69 @@ public class UserControllerTest {
 
 鼠标定位到AuthorizingRealm类后面，快捷键：**Alt+Enter**；
 
+### 1.8 IDEA 使用
+
+1.鼠标控制文字大小，类提示
+
+![1562567470130](D:\smeyun\doc\spring\1562567470130.png)
+
+2.自动导包
+
+![1562567660434](D:\smeyun\doc\spring\1562567660434.png)
+
+
+
+3.显示行号和方法的分割符
+
+![1562567997320](D:\smeyun\doc\spring\1562567997320.png)
+
+4。多行显示类名
+
+![1562568226678](D:\smeyun\doc\spring\1562568226678.png)
+
+
+
+5.自动编译build
+
+![1562568450406](D:\smeyun\doc\spring\1562568450406.png)
+
+
+
+| 快捷键      | 功能             |      |
+| ----------- | ---------------- | ---- |
+| shift+enter | 切换到代码下一行 |      |
+| ctrl+d      | 复制一行         |      |
+| ctrl+y      | 删除一行         |      |
+
+
+
+
+
 
 
 ## 2.开发工具Eclipse
 
 
 
+# 五、spring boot开发实战
+
+Spring框架核心：
+
+- 解耦依赖 DI（依赖注入），系统模块化 AOP 
+
+| 注解        | 用途                         |        |
+| ----------- | ---------------------------- | ------ |
+| @Component  | 标注一个普通的spring bean 类 | 注入类 |
+| @Controller | 标注一个控制器组件类         |        |
+| @Service    | 标注一个业务逻辑组件类       |        |
+| @Repository | 标注一个DAO组件类            |        |
+|             |                              |        |
 
 
-# 五、相关参考文档
+
+
+
+# 六、相关参考文档
 
 spring 4.3.13 framework：
 

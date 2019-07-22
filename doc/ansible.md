@@ -1,6 +1,8 @@
 
 
-## a1. ansible 相关模块
+
+
+## 1. ansible 相关模块
 
 ### 1.1 file 模块
 
@@ -64,6 +66,86 @@ force：需要在两种情况下强制创建软链接，一种是源文件不存
 ```yaml
 [root@centos7 ~]# ansible test -m file -a "path=/tmp/liuhao state=absent"
 [root@centos7 ~]# ansible test -m file -a "path=/tmp/liuhao_testfile state=absent"
+```
+
+```yaml
+- name: Change file ownership, group and permissions
+  file:
+    path: /etc/foo.conf
+    owner: foo
+    group: foo
+    mode: '0644'
+
+- name: Create an insecure file
+  file:
+    path: /work
+    owner: root
+    group: root
+    mode: '1777'
+
+- name: Create a symbolic link
+  file:
+    src: /file/to/link/to
+    dest: /path/to/symlink
+    owner: foo
+    group: foo
+    state: link
+
+- name: Create two hard links
+  file:
+    src: '/tmp/{{ item.src }}'
+    dest: '{{ item.dest }}'
+    state: link
+  with_items:
+    - { src: x, dest: y }
+    - { src: z, dest: k }
+
+- name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
+  file:
+    path: /etc/foo.conf
+    state: touch
+    mode: u=rw,g=r,o=r
+
+- name: Touch the same file, but add/remove some permissions
+  file:
+    path: /etc/foo.conf
+    state: touch
+    mode: u+rw,g-wx,o-rwx
+
+- name: Touch again the same file, but dont change times this makes the task idempotent
+  file:
+    path: /etc/foo.conf
+    state: touch
+    mode: u+rw,g-wx,o-rwx
+    modification_time: preserve
+    access_time: preserve
+
+- name: Create a directory if it does not exist
+  file:
+    path: /etc/some_directory
+    state: directory
+    mode: '0755'
+
+- name: Update modification and access time of given file
+  file:
+    path: /etc/some_file
+    state: file
+    modification_time: now
+    access_time: now
+
+- name: Set access time based on seconds from epoch value
+  file:
+    path: /etc/another_file
+    state: file
+    access_time: '{{ "%Y%m%d%H%M.%S" | strftime(stat_var.stat.atime) }}'
+
+- name: Recursively change ownership of a directory
+  file:
+    path: /etc/foo
+    state: directory
+    recurse: yes
+    owner: foo
+    group: foo
 ```
 
 
@@ -394,7 +476,728 @@ register模块，ansible注册变量
          - /opt/other_location/somedir/
 ```
 
+###  1.9 rsync
 
+<https://stackoverflow.com/questions/3299951/how-to-pass-password-automatically-for-rsync-ssh-command>
+
+<https://stackoverflow.com/questions/24504430/ansible-prompts-password-when-using-synchronize>
+
+```
+/usr/bin/rsync -ratlz --rsh="/usr/bin/sshpass -p urwelcome ssh -o StrictHostKeyChecking=no -l root" /tmp/rsync  /tmp/rsync
+
+
+sshpass -p "urwelcome" rsync -ae "ssh -p remote_port_ssh" /local_dir  remote_user@remote_host:/remote_dir
+
+rsync -Pav -e "ssh -o StrictHostKeyChecking=no -i /tmp/tokenkey" root@172.168.1.145:/tmp/11111.txt . 
+```
+
+
+
+```yaml
+- name: Synchronization of src on the control machine to dest on the remote hosts
+  synchronize:
+    src: some/relative/path
+    dest: /some/absolute/path
+
+- name: Synchronization using rsync protocol (push)
+  synchronize:
+    src: some/relative/path/
+    dest: rsync://somehost.com/path/
+
+- name: Synchronization using rsync protocol (pull)
+  synchronize:
+    mode: pull
+    src: rsync://somehost.com/path/
+    dest: /some/absolute/path/
+
+- name:  Synchronization using rsync protocol on delegate host (push)
+  synchronize:
+    src: /some/absolute/path/
+    dest: rsync://somehost.com/path/
+  delegate_to: delegate.host
+
+- name: Synchronization using rsync protocol on delegate host (pull)
+  synchronize:
+    mode: pull
+    src: rsync://somehost.com/path/
+    dest: /some/absolute/path/
+  delegate_to: delegate.host
+
+- name: Synchronization without any --archive options enabled
+  synchronize:
+    src: some/relative/path
+    dest: /some/absolute/path
+    archive: no
+
+- name: Synchronization with --archive options enabled except for --recursive
+  synchronize:
+    src: some/relative/path
+    dest: /some/absolute/path
+    recursive: no
+
+- name: Synchronization with --archive options enabled except for --times, with --checksum option enabled
+  synchronize:
+    src: some/relative/path
+    dest: /some/absolute/path
+    checksum: yes
+    times: no
+
+- name: Synchronization without --archive options enabled except use --links
+  synchronize:
+    src: some/relative/path
+    dest: /some/absolute/path
+    archive: no
+    links: yes
+
+- name: Synchronization of two paths both on the control machine
+  synchronize:
+    src: some/relative/path
+    dest: /some/absolute/path
+  delegate_to: localhost
+
+- name: Synchronization of src on the inventory host to the dest on the localhost in pull mode
+  synchronize:
+    mode: pull
+    src: some/relative/path
+    dest: /some/absolute/path
+
+- name: Synchronization of src on delegate host to dest on the current inventory host.
+  synchronize:
+    src: /first/absolute/path
+    dest: /second/absolute/path
+  delegate_to: delegate.host
+
+- name: Synchronize two directories on one remote host.
+  synchronize:
+    src: /first/absolute/path
+    dest: /second/absolute/path
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: Synchronize and delete files in dest on the remote host that are not found in src of localhost.
+  synchronize:
+    src: some/relative/path
+    dest: /some/absolute/path
+    delete: yes
+    recursive: yes
+
+# This specific command is granted su privileges on the destination
+- name: Synchronize using an alternate rsync command
+  synchronize:
+    src: some/relative/path
+    dest: /some/absolute/path
+    rsync_path: su -c rsync
+
+# Example .rsync-filter file in the source directory
+# - var       # exclude any path whose last part is 'var'
+# - /var      # exclude any path starting with 'var' starting at the source directory
+# + /var/conf # include /var/conf even though it was previously excluded
+
+- name: Synchronize passing in extra rsync options
+  synchronize:
+    src: /tmp/helloworld
+    dest: /var/www/helloworld
+    rsync_opts:
+      - "--no-motd"
+      - "--exclude=.git"
+
+# Hardlink files if they didn't change
+- name: Use hardlinks when synchronizing filesystems
+  synchronize:
+    src: /tmp/path_a/foo.txt
+    dest: /tmp/path_b/foo.txt
+    link_dest: /tmp/path_a/
+
+# Specify the rsync binary to use on remote host and on local host
+- hosts: groupofhosts
+  vars:
+        ansible_rsync_path: /usr/gnu/bin/rsync
+
+  tasks:
+    - name: copy /tmp/localpath/ to remote location /tmp/remotepath
+      synchronize:
+        src: /tmp/localpath/
+        dest: /tmp/remotepath
+        rsync_path: /usr/gnu/bin/rsync
+```
+
+https://docs.ansible.com/ansible/latest/modules/synchronize_module.html
+
+### 1.10 fetch远端拉回
+
+- flat： yes 指定实际目录
+
+```yaml
+- name: fetch copy
+  fetch:        
+    src: /tmp/auto-rsync.sh
+    dest: /tmp/auto-rsync.sh                                                                                 
+    flat: yes
+```
+
+### 1.11 lineinfile 修改文件内容
+
+
+
+```yaml
+   - name: seline modify enforcing
+      lineinfile:
+         dest: /etc/selinux/config
+         regexp: '^SELINUX='
+         line: 'SELINUX=enforcing'
+         
+         
+ insertbefore匹配内容在前面添加：
+  
+     - name: httpd.conf modify 8080
+      lineinfile:
+         dest: /opt/playbook/test/http.conf
+         regexp: '^Listen'
+         insertbefore: '^#Port'   
+         line: 'Listen 8080'
+      tags:
+       - http8080 
+ insertafter匹配内容在后面添加：
+ 
+ - name: httpd.conf modify 8080
+      lineinfile:
+         dest: /opt/playbook/test/http.conf
+         regexp: '^Listen'
+         insertafter: '^#Port'   
+         line: 'Listen 8080'
+      tags:
+       - http8080
+       
+ 修改host：      
+    - name: modify hosts
+      lineinfile:
+         dest: /opt/playbook/test/hosts
+         regexp: '^127\.0\.0\.1'
+         line: '127.0.0.1 localhosts'
+         owner: root
+         group: root
+         mode: 0644
+      tags:
+       - hosts   
+
+删除文件某行：
+- name: delete 192.168.1.1
+      lineinfile:
+         dest:  /opt/playbook/test/hosts
+         state: absent
+         regexp: '^192\.'
+      tags:
+       - delete192       
+ 
+ 文件存在就添加一行：
+ 
+    - name: add a line
+      lineinfile:
+         dest:  /opt/playbook/test/hosts
+         line: '192.168.1.2 foo.lab.net foo'
+      tags:
+       - add_a_line 
+       
+       
+# NOTE: Before 2.3, option 'dest', 'destfile' or 'name' was used instead of 'path'
+- name: Ensure SELinux is set to enforcing mode
+  lineinfile:
+    path: /etc/selinux/config
+    regexp: '^SELINUX='
+    line: SELINUX=enforcing
+
+- name: Make sure group wheel is not in the sudoers configuration
+  lineinfile:
+    path: /etc/sudoers
+    state: absent
+    regexp: '^%wheel'
+
+- name: Replace a localhost entry with our own
+  lineinfile:
+    path: /etc/hosts
+    regexp: '^127\.0\.0\.1'
+    line: 127.0.0.1 localhost
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Ensure the default Apache port is 8080
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^Listen '
+    insertafter: '^#Listen '
+    line: Listen 8080
+
+- name: Ensure we have our own comment added to /etc/services
+  lineinfile:
+    path: /etc/services
+    regexp: '^# port for http'
+    insertbefore: '^www.*80/tcp'
+    line: '# port for http by default'
+
+- name: Add a line to a file if the file does not exist, without passing regexp
+  lineinfile:
+    path: /tmp/testfile
+    line: 192.168.1.99 foo.lab.net foo
+    create: yes
+
+# NOTE: Yaml requires escaping backslashes in double quotes but not in single quotes
+- name: Ensure the JBoss memory settings are exactly as needed
+  lineinfile:
+    path: /opt/jboss-as/bin/standalone.conf
+    regexp: '^(.*)Xms(\\d+)m(.*)$'
+    line: '\1Xms${xms}m\3'
+    backrefs: yes
+
+# NOTE: Fully quoted because of the ': ' on the line. See the Gotchas in the YAML docs.
+- name: Validate the sudoers file before saving
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%ADMIN ALL='
+    line: '%ADMIN ALL=(ALL) NOPASSWD: ALL'
+    validate: /usr/sbin/visudo -cf %s
+ 
+```
+
+### 1.12 template
+
+
+
+```yaml
+- name: copy key file
+  template:
+    src: tokenkey.j2
+    dest: /tmp/tokenkey
+    mode: 0600
+  #ignore_errors: yes
+  tags:
+   - copy_key
+```
+
+### 1.13 uri 模块
+
+```yaml
+- name: Check that you can connect (GET) to a page and it returns a status 200
+  uri:
+    url: http://www.example.com
+
+- name: Check that a page returns a status 200 and fail if the word AWESOME is not in the page contents
+  uri:
+    url: http://www.example.com
+    return_content: yes
+  register: this
+  failed_when: "'AWESOME' not in this.content"
+
+- name: Create a JIRA issue
+  uri:
+    url: https://your.jira.example.com/rest/api/2/issue/
+    user: your_username
+    password: your_pass
+    method: POST
+    body: "{{ lookup('file','issue.json') }}"
+    force_basic_auth: yes
+    status_code: 201
+    body_format: json
+
+- name: Login to a form based webpage, then use the returned cookie to access the app in later tasks
+  uri:
+    url: https://your.form.based.auth.example.com/index.php
+    method: POST
+    body_format: form-urlencoded
+    body:
+      name: your_username
+      password: your_password
+      enter: Sign in
+    status_code: 302
+  register: login
+
+- name: Login to a form based webpage using a list of tuples
+  uri:
+    url: https://your.form.based.auth.example.com/index.php
+    method: POST
+    body_format: form-urlencoded
+    body:
+    - [ name, your_username ]
+    - [ password, your_password ]
+    - [ enter, Sign in ]
+    status_code: 302
+  register: login
+
+- name: Connect to website using a previously stored cookie
+  uri:
+    url: https://your.form.based.auth.example.com/dashboard.php
+    method: GET
+    return_content: yes
+    headers:
+      Cookie: "{{ login.set_cookie }}"
+
+- name: Queue build of a project in Jenkins
+  uri:
+    url: http://{{ jenkins.host }}/job/{{ jenkins.job }}/build?token={{ jenkins.token }}
+    user: "{{ jenkins.user }}"
+    password: "{{ jenkins.password }}"
+    method: GET
+    force_basic_auth: yes
+    status_code: 201
+
+- name: POST from contents of local file
+  uri:
+    url: https://httpbin.org/post
+    method: POST
+    src: file.json
+
+- name: POST from contents of remote file
+  uri:
+    url: https://httpbin.org/post
+    method: POST
+    src: /path/to/my/file.json
+    remote_src: yes
+```
+
+网上案列
+
+我试图调用一些REST API并对Ansible服务执行一些POST请求。由于正文（JSON）发生变化，我正在尝试对某些文件执行循环。这里是剧本：[Ansible：循环文件做POST请求](https://jsproxy.ga/-----http://cn.voidcc.com/question/p-zphonmwv-bky.html)
+
+```
+- hosts: 127.0.0.1 
+    any_errors_fatal: true 
+
+    tasks: 
+    - name: do post requests            
+     uri: 
+     url: "https://XXXX.com" 
+     method: POST 
+     return_content: yes 
+     body_format: json 
+     headers: 
+      Content-Type: "application/json" 
+      X-Auth-Token: "XXXXXX" 
+     body: "{{ lookup('file', "{{ item }}") }}" 
+     with_file: 
+      - server1.json 
+      - server2.json 
+      - proxy.json 
+
+但是当我运行的剧本，我得到这个错误：
+
+the field 'args' has an invalid value, which appears to include a variable that is undefined. The error was: 'item' is undefined
+
+问题出在哪里？
+```
+
+- 主要问题是`with_`指令应该属于一个任务字典（一个缩进级别）。
+
+- 的第二个问题是，你应该用文件查找请使用`with_items`，或者干脆`"{{ item }}"`与`with_files`：
+
+- 此外，`{{ ... }}`结构不是必需的方式来引用每个变量 - 它是一个构造，打开一个Jinja2表达式，在其中使用va riables。对于一个变量它确实变成了：`{{ variable }}`，但一旦你打开它，你不需要再做了,完美写法为：
+
+  **body: "{{ lookup('file', item) }}" **
+
+  
+
+```yaml
+- name: do post requests            
+    uri: 
+    url: "https://XXXX.com" 
+    method: POST 
+    return_content: yes 
+    body_format: json 
+    headers: 
+     Content-Type: "application/json" 
+     X-Auth-Token: "XXXXXX" 
+    body: "{{ item }}" 
+    with_files: 
+    - server1.json 
+    - server2.json 
+    - proxy.json 
+    
+或
+- name: do post requests            
+    uri: 
+    url: "https://XXXX.com" 
+    method: POST 
+    return_content: yes 
+    body_format: json 
+    headers: 
+     Content-Type: "application/json" 
+     X-Auth-Token: "XXXXXX" 
+    body: "{{ lookup('file', item) }}" 
+    with_items: 
+    - server1.json 
+    - server2.json 
+    - proxy.json 
+    
+此外，{{ ... }}结构不是必需的方式来引用每个变量 - 它是一个构造，打开一个Jinja2表达式，在其中使用va riables。对于一个变量它确实变成了：{{ variable }}，但一旦你打开它，你不需要再做了，所以它
+```
+
+
+
+### 1.14 with_dict 循环字典
+
+1. 假设您有以下变量
+
+```yaml
+---
+users:
+  alice:
+    name: Alice Appleworth
+    telephone: 123-456-7890
+  bob:
+    name: Bob Bananarama
+    telephone: 987-654-3210
+```
+
+并且您想要打印每个用户的姓名和电话号码。您可以像这样使用with_dict循环遍历哈希的元素
+
+```yaml
+tasks:
+  - name: Print phone records
+    debug:
+      msg: "User {{ item.key }} is {{ item.value.name }} ({{ item.value.telephone }})"
+    with_dict: "{{ users }}"
+```
+
+
+
+2.假设字典为：
+
+```
+{
+  "queue": {
+    "first": {
+      "car": "bmw",
+      "year": "1990",
+      "model": "x3",
+      "color": "blue"
+    },
+    "second": {
+      "car": "bmw",
+      "year": "2000",
+      "model": "318",
+      "color": "red"
+    }
+  }
+}
+```
+
+我正在尝试打印颜色的值，仅将其与其他变量进行比较。我用了 `with_dict` 迭代json对象（存储在名为jsonVar的变量中），如下所示：
+
+```yaml
+您可以使用名为的查找插件读取json文件 file 并把它传递给 from_json jinja2过滤器。你也有错误 with_dict 循环，因为你必须循环 jsonVar['queue']， 不只是 jsonVar。这是一个完整的代码，
+
+---
+- hosts: your_host
+  vars:
+    jsonVar: "{{ lookup('file', 'var.json') | from_json }}"
+  tasks:
+    - name: test loop
+      with_dict: "{{ jsonVar['queue'] }}"
+      shell: |
+        if echo "blue" | grep -q "{{ item.value.color }}" ; then
+            echo "success"
+        fi
+        
+```
+
+你可以使用| json_query过滤器：
+
+[http://docs.ansible.com/ansible/playbooks_filters.html#json-query-filter](https://jsproxy.ga/-----http://docs.ansible.com/ansible/playbooks_filters.html#json-query-filter)
+
+但要确保您输入的文件也是适当的格式，否则您可以使用两个过滤器，第一个转换为适当的过滤器，第二个过滤器执行json查询
+
+例如： - `{{ variable_name | from_json | json_query('')}}`
+
+```yaml
+tasks: print the color
+set_fact:
+  color1 : "{{ jsonVar | from_json | json_query('queue.[0].['color']')}}"
+  color2 : "{{ jsonVar | from_json | json_query('queue.[1].['color']')}}"
+```
+
+
+
+### 1.15 `with_fileglob` 
+
+匹配单个目录中的所有文件，非递归，匹配模式。它调用Python的glob库，可以像这样使用：
+
+```yaml
+---
+- hosts: all
+
+  tasks:
+
+    # first ensure our target directory exists
+    - name: Ensure target directory exists
+      file:
+        dest: "/etc/fooapp"
+        state: directory
+
+    # copy each file over that matches the given pattern
+    - name: Copy each file over that matches the given pattern
+      copy:
+        src: "{{ item }}"
+        dest: "/etc/fooapp/"
+        owner: "root"
+        mode: 0600
+      with_fileglob:
+        - "/playbooks/files/fooapp/*"
+```
+
+### 1.16 `with_filetree` 
+
+递归匹配目录树中的所有文件，使您能够在保留权限和所有权的同时模拟目标系统上的完整文件树
+
+以下是我们如何在角色中使用with_filetree的示例：
+
+```yaml
+---
+- name: Create directories
+  file:
+    path: /web/{{ item.path }}
+    state: directory
+    mode: '{{ item.mode }}'
+  with_filetree: web/
+  when: item.state == 'directory'
+
+- name: Template files
+  template:
+    src: '{{ item.src }}'
+    dest: /web/{{ item.path }}
+    mode: '{{ item.mode }}'
+  with_filetree: web/
+  when: item.state == 'file'
+
+- name: Recreate symlinks
+  file:
+    src: '{{ item.src }}'
+    dest: /web/{{ item.path }}
+    state: link
+    force: yes
+    mode: '{{ item.mode }}'
+  with_filetree: web/
+  when: item.state == 'link'
+```
+
+### 1.17 遍历列表
+
+列表：
+
+```yaml
+---
+alpha: [ 'a', 'b', 'c', 'd' ]
+numbers:  [ 1, 2, 3, 4 ]
+```
+
+你想要'（a，1）'和'（b，2）'的集合。使用'with_together'来获取此信息：
+
+```yaml
+tasks:
+    - debug:
+        msg: "{{ item.0 }} and {{ item.1 }}"
+      with_together:
+        - "{{ alpha }}"
+        - "{{ numbers }}"
+```
+
+### 1.18 重试任务，Do-Until Loops
+
+有时您会想要重试任务，直到满足某个条件。这是一个例子：
+
+```yaml
+- shell: /usr/bin/foo
+  register: result
+  until: result.stdout.find("all systems go") != -1
+  retries: 5
+  delay: 10
+```
+
+上面的示例递归地运行shell模块，直到模块的结果在其stdout中“所有系统都进入”或者任务已经被重试了5次，延迟为10秒。 “重试”的默认值为3，“延迟”为5。
+
+
+
+### 1.19 简单的loops
+
+为了节省一些打字，重复的任务可以用简写的方式编写，如下所示：
+
+```yaml
+- name: add several users
+  user:
+    name: "{{ item }}"
+    state: present
+    groups: "wheel"
+  with_items:
+     - testuser1
+     - testuser2
+     
+如果您已在变量文件或“vars”部分中定义了YAML列表，则还可以执行以下操作：
+with_items: "{{ somelist }}"
+
+请注意，使用'with_items'迭代的项目类型不必是简单的字符串列表。如果您有哈希列表，则可以使用以下内容引用子键：
+
+- name: add several users
+  user:
+    name: "{{ item.name }}"
+    state: present
+    groups: "{{ item.groups }}"
+  with_items:
+    - { name: 'testuser1', groups: 'wheel' }
+    - { name: 'testuser2', groups: 'root' }
+    
+
+循环也可以嵌套：
+- name: give users access to multiple databases
+  mysql_user:
+    name: "{{ item[0] }}"
+    priv: "{{ item[1] }}.*:ALL"
+    append_privs: yes
+    password: "foo"
+  with_nested:
+    - [ 'alice', 'bob' ]
+    - [ 'clientdb', 'employeedb', 'providerdb' ]
+    
+    
+    
+    
+```
+
+<https://jsproxy.ga/-----https://docs.ansible.com/ansible/2.4/playbooks_loops.html>
+
+循环
+
+
+
+### 1.20 有条件执行 conditional execution
+
+*register*, *when*, _changed_when_, _failed_when_ 例子：
+
+```yaml
+- name: install jdk rpm (suse)
+  shell: zypper -n in {{ java_rpm }}
+  when: os_family == "suse"
+  register: install_java
+  changed_when: install_java.rc == 0 and "already installed" not in install_java.stdout
+
+- name: validate java home
+  shell: . /etc/profile && echo $JAVA_HOME
+  register: java_home_result
+  failed_when: java_home_result.stdout is not defined or java_home_result.stdout
+```
+
+有些配置只需要做一次，例如数据库初始化，虽然 Ansible 提供了『[run_once](http://docs.ansible.com/ansible/playbooks_delegation.html#run-once)』，但感觉不好用，还是直接用变量做开关来控制。
+
+```yaml
+---
+# ...
+
+  tasks:
+
+    # ...
+
+    - command: /opt/application/upgrade_db.py
+      run_once: true
+
+    # ...
+```
 
 
 
@@ -1019,6 +1822,90 @@ bar=2
 ```yaml
 如果想在一个host上访问另一个host的fact 必须设置gathering setting to smart, 否则,如果你想访问另一个机器的fact, 那你必须在另外一台机器上执行过gather_fact.
 　　inventory 里面声明的变量是否和上面有同样的要求, 待验证-???
+```
+
+### 2.7 Ansible使用YAML解析JSON
+
+我正在尝试分配一个变量来匹配我正在向在线服务提供商发出的API调用中显示的IP地址.
+
+```yaml
+这是我收到的JSON数据：
+TASK [manager : debug] *********************************************************
+ok: [localhost] => {
+    "msg": [
+        {
+            "address": "10.0.3.224",
+            "family": "inet",
+            "netmask": "24",
+            "scope": "global"
+        },
+        {
+            "address": "fe80::216:3eff:feb2:7330",
+            "family": "inet6",
+            "netmask": "64",
+            "scope": "link"
+        }
+    ]
+}
+
+如何解析第一个地址输出并将其值赋给YAML中的变量
+这是我试过的
+- debug: msg={{ output.stdout|from_json }}
+
+获取ip地址：
+msg = {{(output.stdout | from_json | first).address}}
+```
+
+导入json
+
+```
+
+```
+
+
+
+### 2.8 json字符串解析
+
+```yaml
+# replace future json.stdout variables with json_example
+json_example: |
+  {
+      "example_simple": {
+	  "name": "simple",
+	  "foo": "value",
+	  "item": "this"
+      },
+      "example_list": [
+	  {
+	      "name": "first",
+	      "foo": "bar",
+	      "item": "thud"
+	  },
+	  {
+	      "name": "second",
+	      "foo": "grunt",
+	      "item": "baz"
+	  }
+      ]
+  }
+  
+  在这个特定的片段中，我们希望从example_simple字典中获取名称值：
+- name: Get simple value.
+      set_fact:
+        simple_value: "{{ (json.stdout | from_json).example_simple.name }}"
+        
+        
+from_json过滤器允许Ansible把它当作一个变量，提取name变量的值。
+一个稍微复杂一点的例子是提取字典列表中的值example_list，在本例中，获取foo值:
+- name: Get foo value.
+      set_fact:
+        foo_value: "{{ (json.stdout | from_json).example_list | map(attribute='foo') | list }}"
+        
+这将返回Ansible列表。下一个调试语句也稍微复杂一些，因为它以逗号分隔的格式打印出列表：
+- name: Jinja list debug, printing out the list as comma seperated.
+      debug:
+        msg: "{% for each in foo_value %}{{ each }}{% if not loop.last %},{% endif %}{% endfor %}"
+
 ```
 
 
@@ -2256,6 +3143,99 @@ PLAY RECAP *********************************************************************
 172.168.1.144              : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
 ```
 
+
+
+***优化版本***
+
+```python
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
+import os,sys
+import urllib2
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
+
+
+class CallbackModule(object):
+
+    """
+    Ansible callback plugin for human-readable result logging
+    """
+    CALLBACK_VERSION = 2.0
+    CALLBACK_TYPE = 'notification'
+    CALLBACK_NAME = 'human_log'
+    CALLBACK_NEEDS_WHITELIST = False
+    runcommand_id=''
+    awx_job_id=''
+    API_URL=""
+    
+
+    ####### V2 METHODS ######
+
+    def v2_runner_on_failed(self, result, ignore_errors=False):
+        data = result
+        if 'rc' in data._result.keys() and data._result['stderr']:
+            time_str = self.Conf_time(str(data._result['delta']))
+
+            out_data={'hostIp':str(data._host),'resultCode':str(data._result['rc']),'execDuration':str(time_str),'logContent': str(data._result['stderr'])}
+            self.human_log(out_data)
+
+    def v2_runner_on_ok(self, result):
+        data = result
+        if 'rc' in data._result.keys() and data._result['stdout']:
+            time_str = self.Conf_time(str(data._result['delta']))
+            out_data={'hostIp':str(data._host),'resultCode':str(data._result['rc']),'execDuration':str(time_str),'logContent': str(data._result['stdout'])}
+            self.human_log(out_data)
+
+
+    def v2_playbook_on_start(self, playbook):
+        
+
+        taskdata = playbook._loader.__dict__['_FILE_CACHE']
+
+        dict1=json.dumps(taskdata)
+        jss = json.loads(dict1)
+        
+        for i in jss.values():
+            if type(i) == dict:
+                if i.get('runcommand_id'):
+                    self.runcommand_id = i.get('runcommand_id')
+                if i.get('awx_job_id'):                    
+                    self.awx_job_id = i.get('awx_job_id')
+                if i.get('api_url'):
+                    self.API_URL =  i.get('api_url')        
+        #print(self.runcommand_id) 
+
+    def v2_runner_on_unreachable(self, result):
+        data = result 
+        out_data={'hostIp':str(data._host),'resultCode':"5",,'execDuration':"0",'logContent': str(data._result['msg'])}
+        self.human_log(out_data)
+
+    def Conf_time(self,time_str):
+        line = time_str.split(":")
+        sec_line = line[2].split(".")
+        seconds = int(line[0])*3600000 + int(line[1])*60000 + int(sec_line[0])*1000 + int(sec_line[1])/1000
+        return int(seconds) 
+
+    def human_log(self,out_data, **kwargs):
+
+        data = dict(out_data,**{'nodeLogId':str(self.runcommand_id),'awxId':str(self.awx_job_id)})
+        if self.API_URL:
+        
+            headers = {'Content-Type': 'application/json'}
+            request = urllib2.Request(url=self.API_URL, headers=headers, data=json.dumps(data))
+            response = urllib2.urlopen(request)
+        print(data)
+```
+
+
+
 ### 3.23 给不同IP分配不同参数
 
 需求：给不同IP分配不同参数，笔者需要给3个zookeeper节点分配不同的myid
@@ -2264,6 +3244,605 @@ PLAY RECAP *********************************************************************
 
 ```yaml
 myid{{ ansible_play_hosts.index(inventory_hostname) + 1 }}
+```
+
+
+
+### 3.24 设置任务超时时间，和默认值
+
+
+
+```yaml
+---
+
+- hosts: all
+  remote_user: root
+
+  tasks:
+
+  - name: simulate long running op (15 sec), wait for up to 45 sec, poll every 5 sec
+    command: /bin/sleep 15
+    async: 45
+    #async: "{{ timeout:300 }}"
+    poll: 5
+```
+
+ 
+
+***设置timeout 默认值为300秒***
+
+```yaml
+#async: "{{ timeout:300 }}"
+```
+
+如果您想异步执行任务并在以后检查它，则可以执行类似于以下的任务：
+
+```yaml
+---
+# Requires ansible 1.8+
+- name: 'YUM - async task'
+  yum:
+    name: docker-io
+    state: present
+  async: 1000
+  poll: 0
+  register: yum_sleeper
+
+- name: 'YUM - check on async task'
+  async_status:
+    jid: "{{ yum_sleeper.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  retries: 30
+```
+
+如果要在限制并发运行的任务量的同时运行多个异步任务，可以这样做：
+
+```yaml
+#####################
+# main.yml
+#####################
+- name: Run items asynchronously in batch of two items
+  vars:
+    sleep_durations:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    durations: "{{ item }}"
+  include_tasks: execute_batch.yml
+  loop: "{{ sleep_durations | batch(2) | list }}"
+
+#####################
+# execute_batch.yml
+#####################
+- name: Async sleeping for batched_items
+  command: sleep {{ async_item }}
+  async: 45
+  poll: 0
+  loop: "{{ durations }}"
+  loop_control:
+    loop_var: "async_item"
+  register: async_results
+
+- name: Check sync status
+  async_status:
+    jid: "{{ async_result_item.ansible_job_id }}"
+  loop: "{{ async_results.results }}"
+  loop_control:
+    loop_var: "async_result_item"
+  register: async_poll_results
+  until: async_poll_results.finished
+  retries: 30
+```
+
+
+
+### 3.25 利用公钥私钥实现文件传输
+
+- 解决思路利用公钥私钥，生成传输专用key
+
+  
+
+```yaml
+---
+- name: delete add a line
+  lineinfile:
+    dest: ~/.ssh/authorized_keys
+    state: absent
+    regexp: 'public' 
+  #ignore_errors: yes
+  tags:
+   - delete_key
+
+- name: in key to remote
+  shell: mkdir -p ~/.ssh;chmod 700 ~/.ssh ;echo {{ pubkey }} >> ~/.ssh/authorized_keys;chmod 600 ~/.ssh/authorized_keys
+  delegate_to: 172.168.1.145
+  #ignore_errors: yes
+  tags:
+   - in_key
+
+- name: copy key file
+  template:
+    src: tokenkey.j2
+    dest: /tmp/tokenkey
+    mode: 0600
+  #ignore_errors: yes
+  tags:
+   - copy_key
+
+- name: pass file
+  shell: rsync -Pav -e "ssh -o StrictHostKeyChecking=no -i /tmp/tokenkey" test@172.168.1.145:/home/test/mongodb-linux-x86_64-4.0.0.tgz /home/test/
+  delegate_to: 172.168.1.144
+  #ignore_errors: yes
+  tags:
+   - pass_file
+
+- name: remove file
+  shell: rm -rf /tmp/tokenkey
+  #ignore_errors: yes
+  tags:
+   - rm_key
+
+- name: delete add a line
+  lineinfile:
+    dest: ~/.ssh/authorized_keys
+    state: absent
+    regexp: 'public'
+  #ignore_errors: yes
+  tags:
+   - delete_key
+```
+
+### 3.26 通过Ansible将Json发布到API
+
+```yaml
+My body_content.json:
+{
+  apiKey: '{{ KEY_FROM_VARS }}',
+  data1: 'foo',
+  data2: 'bar'
+}
+
+
+# Create an item via API
+- uri: 
+    url: "http://www.myapi.com/create"
+    method: POST
+    return_content: yes
+    HEADER_Content-Type: "application/json"
+    body: "{{ lookup('file','create_body.json') | to_json }}"
+    
+    
+我发布的内容低于我最终用于我的用例（Ansible 2.0）。如果您的json有效内容是内联（而不是文件），则此选项很有用。
+此任务期望204作为其成功返回代码。由于body_format是json，因此会自动推断头部
+
+- name: add user to virtual host
+  uri: 
+    url: http://0.0.0.0:15672/api/permissions/{{ rabbit_virtualhost }}/{{ rabbit_username }}
+    method: PUT
+    user: "{{ rabbit_username }}"
+    password: "{{ rabbit_password }}"
+    return_content: yes
+    body: {"configure":".*","write":".*","read":".*"}
+    body_format: json
+    status_code: 204
+    
+它基本上相当于：
+curl -i -u user:pass -H "content-type:application/json" -XPUT http://0.0.0.0:15672/api/permissions/my_vhost/my_user -d '{"configure":".*","write":".*","read":".*"}'
+```
+
+***ansible playbook执行curl -X***
+
+```yaml
+我想使用ansible playbook执行下一个命令：
+curl -X POST -d@mesos-consul.json -H "Content-Type: application/json" http://marathon.service.consul:8080/v2/apps
+
+最好的方法是使用 URI模块：
+tasks:
+- name: post to consul
+  uri:
+    url: http://marathon.service.consul:8080/v2/apps/
+    method: POST
+    body: "{{ lookup('file','mesos-consul.json') }}"
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+
+由于您的json文件位于远程计算机上，因此最简单的执行方法可能是使用shell模块：
+- name: post to consul
+  shell: 'curl -X POST -d@/full/path/to/mesos-consul.json -H "Content-Type: application/json" http://marathon.service.consul:8080/v2/apps'
+```
+
+### 3.27 通过“vars_files”或“group_vars/all”文件加载变量
+
+假设您想对一组用户进行循环，创建他们，并允许他们通过一组SSH密钥登录。
+
+在本例中，我们假设您定义了以下内容并通过“vars_files”或“group_vars/all”文件加载:
+
+```yaml
+---
+users:
+  - name: alice
+    authorized:
+      - /tmp/alice/onekey.pub
+      - /tmp/alice/twokey.pub
+    mysql:
+        password: mysql-password
+        hosts:
+          - "%"
+          - "127.0.0.1"
+          - "::1"
+          - "localhost"
+        privs:
+          - "*.*:SELECT"
+          - "DB1.*:ALL"
+  - name: bob
+    authorized:
+      - /tmp/bob/id_rsa.pub
+    mysql:
+        password: other-mysql-password
+        hosts:
+          - "db1"
+        privs:
+          - "*.*:SELECT"
+          - "DB2.*:ALL"
+```
+
+你可以循环遍历这些子元素，如下所示
+
+```yaml
+- name: Create User
+  user:
+    name: "{{ item.name }}"
+    state: present
+    generate_ssh_key: yes
+  with_items:
+    - "{{ users }}"
+
+- name: Set authorized ssh key
+  authorized_key:
+    user: "{{ item.0.name }}"
+    key: "{{ lookup('file', item.1) }}"
+  with_subelements:
+     - "{{ users }}"
+     - authorized
+```
+
+给定mysql主机和privs子键列表，您还可以迭代嵌套子项中的列表：
+
+```yaml
+- name: Setup MySQL users
+  mysql_user:
+    name: "{{ item.0.name }}"
+    password: "{{ item.0.mysql.password }}"
+    host: "{{ item.1 }}"
+    priv: "{{ item.0.mysql.privs | join('/') }}"
+  with_subelements:
+    - "{{ users }}"
+    - mysql.hosts
+```
+
+### 3.28 ansible安装mysql案列
+
+https://github.com/geerlingguy/ansible-role-mysql
+
+### 3.29 ansible分发文件
+
+笔者接到需求，awx任务接收json,执行任务，执行完成通过callback组件返回执行结果，但是结果需要的是多步结果
+
+main.yml
+
+```yaml
+---
+- include_tasks: addkey.yml
+- include_tasks: sync.yml
+- include_tasks: local.yml 
+- include_tasks: delkey.yml
+```
+
+addkey.yml
+
+```yaml
+---
+- name: create script 
+  template:
+    src: inkey.j2
+    dest: /var/lib/awx/projects/filetransfer/tmp/{{ node_log_id }}_inkey    
+  delegate_to: 127.0.0.1
+
+- name: run script
+  shell: sh /var/lib/awx/projects/filetransfer/tmp/{{ node_log_id }}_inkey     
+  delegate_to: 127.0.0.1
+  ignore_errors: yes
+  register: msss
+
+- name: copy token
+  template:
+    src: tokenkey.j2
+    dest: /tmp/tokenkey
+    mode: 0600
+  delegate_to: "{{ host }}"
+```
+
+delkey.yml
+
+```yaml
+---
+- name: remove token file
+  file:
+    path: "{{ item }}"
+    state: absent 
+  delegate_to: "{{ host }}"
+  with_items:
+    - "/tmp/tokenkey"
+    - "/tmp/{{ node_log_id }}"
+
+- name: create script 
+  template:
+    src: removekey.j2
+    dest: /var/lib/awx/projects/filetransfer/tmp/{{ node_log_id }}_remove    
+  delegate_to: 127.0.0.1
+
+- name: run script
+  shell: sh /var/lib/awx/projects/filetransfer/tmp/{{ node_log_id }}_remove
+  delegate_to: 127.0.0.1 
+
+- name: del script
+  shell: |
+    rm -rf /var/lib/awx/projects/filetransfer/tmp/*
+    rm -rf /var/lib/awx/projects/filetransfer/file/*
+  delegate_to: 127.0.0.1
+```
+
+sync.yml
+
+```yaml
+---
+- name: create sync script
+  template:
+    src: sync.j2
+    dest: /tmp/{{ node_log_id }}
+    mode: 0755
+  delegate_to: "{{ host }}"
+  ignore_errors: yes
+
+- name: run script
+  shell: sh /tmp/{{ node_log_id }}
+  ignore_errors: yes
+  async: 10
+  register: script_in
+
+#- debug: msg="{{ script_in }}"
+```
+
+local.yml
+
+```yaml
+---
+- name: create local script
+  template:
+    src: sync_loca.j2
+    dest: /var/lib/awx/projects/filetransfer/tmp/{{ node_log_id }}_local
+  ignore_errors: yes
+  delegate_to: 127.0.0.1    
+
+- name: get file in dfs
+  shell: sh /var/lib/awx/projects/filetransfer/tmp/{{ node_log_id }}_local
+  ignore_errors: yes
+  delegate_to: 127.0.0.1
+
+- name: create dir
+  file:
+    path: "{{ target_path }}"
+    state: directory
+  ignore_errors: yes
+
+- name: put remote
+  copy: 
+    src: /var/lib/awx/projects/filetransfer/file/ 
+    dest: "{{ target_path }}"
+  register: script_in2
+  ignore_errors: yes
+
+- name: check file
+  shell: ls -l "{{ target_path }}"
+  ignore_errors: yes 
+  register: check_file
+    
+
+- debug: msg="{{ msss }},{{ script_in }},{{ script_in2 }},{{ check_file }}"
+  ignore_errors: yes
+
+#script_in msg={{ script_in }}{{ check_file }}
+
+```
+
+
+
+templates:
+
+inkey.j2
+
+```jinja2
+{% for item in jobNodeFileDTOList  %}
+{% if item.sourceType == "REMOTE_SERVER"  %}
+{% if item.sourceFileList %}
+{% for sourceitem in item.sourceFileList  %} 
+sshpass -p {{ item.sourceLaunchVarBase.password }} ssh -o StrictHostKeyChecking=no {{ item.sourceLaunchVarBase.username }}@{{ item.sourceLaunchVarBase.host }} 'mkdir -p ~/.ssh;chmod 700 ~/.ssh;echo {{ pubkey }} >> ~/.ssh/authorized_keys;chmod 600 ~/.ssh/authorized_keys'
+{% endfor %}
+{% endif %}
+{% endif %}
+{% endfor %}
+```
+
+removekey.j2
+
+```jinja2
+{% for item in jobNodeFileDTOList  %}
+{% if item.sourceType == "REMOTE_SERVER"  %}
+sshpass -p {{ item.sourceLaunchVarBase.password }} ssh -o StrictHostKeyChecking=no {{ item.sourceLaunchVarBase.username }}@{{ item.sourceLaunchVarBase.host }} 'sed -i '/public/d' 
+{% endif %}
+{% endfor %}
+```
+
+sync.jrsync相关cmd：
+
+***sshpass -d12 /usr/bin/rsync --delay-updates -F --compress --delete-after --archive '--rsh=/usr/bin/ssh -S none -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' '--out-format=<<CHANGED>>%i %n%L' /root/aqpay ' '"***
+
+```jinja2
+#!/bin/bash
+
+{% for item in jobNodeFileDTOList  %}
+ {% if item.sourceType == "REMOTE_SERVER"  %}
+ {% if item.sourceFileList %}
+ {% for sourceitem in item.sourceFileList  %} 
+ rsync -Pav -e "ssh -S none -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /tmp/tokenkey" {{ item.sourceLaunchVarBase.username }}@{{ item.sourceLaunchVarBase.host }}:{{ sourceitem }} {{ target_path }}
+ {% endfor %}
+ {% endif %}
+ {% if item.sourceDirList  %}     
+ {% for sourcediritem in item.sourceDirList  %}   
+ rsync -Pav -e "ssh -S none -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /tmp/tokenkey" {{ item.sourceLaunchVarBase.username }}@{{ item.sourceLaunchVarBase.host }}:{{ sourcediritem }} {{ target_path }}
+ {% endfor %}
+ {% endif %}
+{% endif %}
+{% endfor %}
+
+```
+
+sync_local.j2
+
+```jinja2
+{% for item in jobNodeFileDTOList  %}
+{% if item.sourceType == "LOCAL"  %}
+/usr/bin/fdfs_download_file /etc/fdfs/client.conf {{ item.annexUrl }} /var/lib/awx/projects/filetransfer/file/{{ item.fileName }} 
+{% endif %}
+{% endfor %}
+```
+
+tokenkey.j2  私钥文件
+
+
+
+callback_plugins文件：
+
+```python
+#coding=utf-8
+
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
+import os,sys
+import urllib2
+import logging
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
+
+#INFO DEBUG WARNING 
+logging.basicConfig(level=logging.WARNING,
+                    filename='output.log',
+                    datefmt='%Y/%m/%d %H:%M:%S',
+                    #format='%(asctime)s - %(name)s - %(levelname)s - %(lineno)d -%(module)s - %(message)s')
+                    format='%(asctime)s -human_log- %(levelname)s - %(lineno)d -%(module)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+
+class CallbackModule(object):
+
+    """
+    Ansible callback plugin for human-readable result logging
+    """
+    CALLBACK_VERSION = 2.0
+    CALLBACK_TYPE = 'notification'
+    CALLBACK_NAME = 'sync_log'
+    CALLBACK_NEEDS_WHITELIST = False
+    runcommand_id=''
+    awx_job_id=''
+    API_URL=""
+    std_res=""
+    std_times= 0
+    std_rc= 0
+
+    ####### V2 METHODS ######
+
+    def v2_runner_on_ok(self, result):
+        data = result
+        #print(data._result)
+        if str(data._host) != "127.0.0.1":
+            logger.debug("v2_runner_on_ok: %s"%data._host)
+            logger.info("v2_runner_on_ok.data.__dict__: %s"%data.__dict__)
+            
+            if str(data._task) == "TASK: filetransfer : debug":
+                debug_result = data._result
+                
+                for key,value in debug_result.items():
+                    if key == "msg":
+                        for res_tun in value:
+                            for k,v in res_tun.items():
+                                
+                                #累加str结果
+                                if k == "stderr" or k == "stdout" : 
+                                    if v:
+                                        self.std_res += "%s\n\n"%v
+								#累加rc结果
+                                if k == "rc":
+                                    if v:
+                                        self.std_rc += v
+								#累加时间并计算
+                                if k == "delta":
+                                    if v:
+                                        self.std_times += self.Conf_time(v)
+                                #拼接输出结果
+                                out_data={"hostIp":str(data._host),"resultCode":str(self.std_rc),"execDuration":str(self.std_times),"logContent": str(self.std_res)}
+                
+                        logger.debug("v2_runner_on_ok.out_data: %s"%out_data)
+                        self.human_log(out_data)
+
+
+    def v2_playbook_on_start(self, playbook):
+
+        taskdata = playbook._loader.__dict__['_FILE_CACHE']
+        dict1=json.dumps(taskdata)
+        jss = json.loads(dict1)
+        
+        logger.info("v2_playbook_on_start.taskdata: %s"%taskdata) 
+       # print(taskdata) 
+        for i in jss.values():            
+            if type(i) == dict:
+                if i.get('awx_job_template_name'):
+                    self.runcommand_id = i.get('node_log_id')
+                    self.awx_job_id = i.get('awx_job_id')
+                    self.API_URL = i.get('api_url')
+        
+    def Conf_time(self,time_str):
+        line = time_str.split(":")
+        sec_line = line[2].split(".")
+        seconds = int(line[0])*3600000 + int(line[1])*60000 + int(sec_line[0])*1000 + int(sec_line[1])/1000
+        return int(seconds) 
+
+    def human_log(self,out_data, **kwargs):
+        #print(out_data)
+                        
+        res_data = dict(out_data,**{"nodeLogId":str(self.runcommand_id),"awxId":str(self.awx_job_id)})
+        logger.warning("human_log.data: %s"%res_data) 
+                
+        if self.API_URL:   
+            headers = {'Content-Type': 'application/json'}
+            request = urllib2.Request(url=self.API_URL, headers=headers, data=json.dumps(res_data))
+            logger.warning("human_log.data: %s"%res_data)
+        try:
+            # pass
+            response = urllib2.urlopen(request)
+        except urllib2.HTTPError as e: 
+            logger.warning("human_log.HTTPError: %s"%e)
+
 ```
 
 
@@ -3004,11 +4583,241 @@ fact_caching_timeout = 86400
 # seconds
 ```
 
-### 5.5 官方集成API解决方案 AWX
+# 6 官方集成API解决方案 AWX
 
 <https://github.com/ansible/awx>
 
 安装手册：
 
 <https://github.com/ansible/awx/blob/devel/INSTALL.md>
+
+https://docs.ansible.com/ansible-tower/latest/html/
+
+下载地址：
+
+ https://releases.ansible.com/ansible-tower/setup/
+
+参考文档：https://docs.ansible.com/ansible-tower/latest/html/
+
+自动化神器 Ansible
+
+https://www.fastzhong.com/2017/02/28/ansible/>
+
+https://www.pyfdtic.com/2018/03/15/Ansible-基本原理与安装配置/
+
+
+
+破解安装：
+
+https://github.com/ansible/awx
+
+https://hub.docker.com/u/ansible
+
+
+
+在多租户Edge & DC环境中使用AWX和Ansible自动化& SFC
+
+https://pantheon.tech/awx-ansible-lightyio/
+
+
+
+api：
+
+https://docs.ansible.com/ansible-tower/latest/html/towerapi/api_ref.html#/Authentication/Authentication_applications_list_0
+
+https://access.redhat.com/documentation/en-us/red_hat_satellite/6.1/html/api_guide
+
+## 6.1 批量导入资产
+
+新版本的ansible-tower非常强大，笔者相信他一定能站起来。关于资产的导入`ansible tower`内部支持从云厂商或者私有虚拟化云直接导入机器，如果你使用的云厂商不支持，还可自己编写python/shell脚本来调用云厂商API添加到`ansible tower`资产中。抓紧 Let’s Go
+
+***1. 通过UI界面导入***
+
+点击`Inventories`点击添加按钮，会提示出两种`Inventory`：`Inventory 正常的资产`， `Smart Inventory 根据从Inventory筛选条件变化的`
+
+![1561360921209](D:\smeyun\doc\spring\1561360921209.png)
+
+
+
+
+
+![1561360958900](D:\smeyun\doc\spring\1561360958900.png)
+
+***2. 通过命令行`tower-manage`批量添加主机***
+
+通过Tower自带的命令行工具`tower-manage`来批量导入主机，可以从主机的`/etc/ansible/hosts`中直接导入
+
+```yaml
+tower-manage inventory_import --source=/etc/ansible/hosts --group-filter=test --inventory-name=测试环境 --keep-vars
+
+    1.569 INFO     Updating inventory 7: 测试环境
+    1.674 INFO     Reading Ansible inventory source: /etc/ansible/hosts
+    3.003 INFO     Processing JSON output...
+    3.004 INFO     Loaded 7 groups, 11 hosts
+    3.292 INFO     Inventory import completed for  (测试环境 - 17) in 1.7s
+    
+    
+--source            指定inventory文件
+--group-filter      从文件中通过组名过滤
+--host-filter       通过host name过滤
+--inventory-name    导入到指定名称资产清单
+--inventory-id      导入到指定ID的资产清单
+# name 和 id 选一个
+--overwrite         覆盖主机和组，默认不覆盖
+--overwrite-vars    覆盖主机变量
+--keep-vars         保持主机变量
+--enabled-value     导入的主机状态是否激活默认激活
+```
+
+
+
+## 6.2 创建凭证
+
+可以创建各种各样的凭证，连接云厂商Api的凭证/连接gitlab的凭证/连接Linux主机的凭证/自定义的凭证等等。。我们先创建一个Gitlab认证用来拉取我们的Playbook
+
+![1561361231212](D:\smeyun\doc\spring\1561361231212.png)
+
+
+
+![1561361247850](D:\smeyun\doc\spring\1561361247850.png)
+
+## 6.3.创建项目
+
+`playbook`拉取的方式主要有：
+
+```
+- Manual        从本地目录读取
+- Git           从Git拉取
+- Mercurial     从mer
+- SVN
+- RedHatInsights
+```
+
+这里选用Git从Gitlab上拉取
+
+![1561361316510](D:\smeyun\doc\spring\1561361316510.png)
+
+Options选项配置：
+
+```yaml
+- Clean 
+在从gitlab拉取前清除本地修改的playbook
+- Delete on Update 
+当更新时删除所有本地储存playbook
+- Update Revision on Launch 
+当Templates任务运行时，自动从git拉取更新
+```
+
+tower 测试playbook地址：https://jsproxy.ga/-----https://github.com/ansible/tower-example
+
+
+
+## 6.4 创建模版
+
+最后一步来了,创建`Templates`
+
+![1561361421411](D:\smeyun\doc\spring\1561361421411.png)
+
+Options选项配置：
+
+```yaml
+- Enable Privilege Escalation 
+# 默认脚本以awx用户执行playbook，开启后使用管理员身份
+- Allow Provisioning Callbacks 
+# 运行通过url回调来启动这个任务
+- Enable Concurrent Jobs 
+# 允许相同任务一起运行
+- Use Fact Cache 
+# 使用缓存
+```
+
+点击`SCHEDULES`可以添加计划任务
+
+## 6.5 重新生成token
+
+访问url： http://30.23.18.106/api/v2/tokens/
+
+- <application-id> 改成1，就会生成新的token，将其填入给api请求即可，这个值每次刷新都是不一样的。
+- token值组合： Bearer <token-value>
+
+```
+{
+    "description": "My Access Token",
+    "application": <application-id>,
+    "scope": "write"
+}
+```
+
+## 6.6 生产定制
+
+### 1.定制docker images
+
+在生产环境要求对task镜像做定制化的文件注入：
+
+```shell
+docker commit -m "add fastdfs" -a "yunhua" 302932323 ansible/awx_task:6.0.1
+docker commit -m "add fastdfs" -a "yunhua" 322343423 ansible/awx_web:6.0.1
+
+docker save ansible/awx_task.tar:6.0.1 -o awx_task.tar
+docker save ansible/awx_wab:6.0.1 -o awx_wab.tar
+```
+
+### 2.离线pip安装包制作
+
+```shell
+1.获取一份当前安装的清单文件
+pip3 freeze > requirements.txt
+
+2.下载清单中弄过的安装包
+mkdir -p /tmp/pkg
+pip3 download -r requirements.txt -d /tmp/pkg
+
+3.安装下载的离线包
+pip3 install --no-index --find-links=./pkg docker-compose
+
+注意， --no-index 表示我要导入包的顺序是无序的，因为包与包之间可能会存在依赖关系，所以我们要关闭这些依赖
+```
+
+Python pip离线安装package方法总结（以TensorFlow为例）
+
+https://imshuai.com/python-pip-install-package-offline-tensorflow
+
+
+
+## 6.7 故障处理记录
+
+### 6.7.1 清理消息队列
+
+方法1：直接改数据库
+
+```
+登录postgresql 容器
+docker exec -it postgres bash
+
+登录数据库：
+psql -U awx -d awx
+select * from main_unifiedjob where status like 'pand%';
+
+将任务修改为failed
+update main_unifiedjob set status="failed" where status like 'pand%';
+
+#退出
+\q
+```
+
+方法2：通过awx_web执行命令
+
+```
+docker exec -it awx_web bash
+awx-manage shell_plus
+
+from awx.main.models import UnifiedJob
+unified_job_obj=UnifiedJob()
+unified_job_obj.status = "pending"
+unified_job_obj.delete()
+```
+
+参考：https://github.com/ansible/awx/issues/955
+
+
 
