@@ -1,5 +1,0 @@
-logging:
-  path: d:/spring/log
-spring:
-  messages:
-    basename: il8n.login
