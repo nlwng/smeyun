@@ -47,28 +47,43 @@ s100
 
 ### 1.2 相关参数解析
 
-| 名称                                             | 用途                                                         | 备注                                           | 类型               |
-| ------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------- | ------------------ |
-| private                                          | 声明成员变量                                                 |                                                |                    |
-| 有参的构造函数                                   | 关联成员变量和无参构造函数的关系                             |                                                |                    |
-| public void play()                               | 构造一个方法play，执行具体逻辑                               |                                                |                    |
-| @Autowired                                       | 自动满足bean之间的依赖                                       | 自动装配，自动注入注解                         | 定义组件           |
-| @Component                                       | 表示这个累需要在应用程序中被创建，被扫描                     | 被spring上下文发现，自动发现注解               | 定义组件           |
-| @ComponentScan                                   | 自动发现应用程序中创建的类                                   | 自动扫描Component类                            | 定义配置           |
-| @Configuration                                   | 表示当前类是一个配置类                                       | 标注类为配置类                                 | 定义配置           |
-| @Test                                            | 表示当前类是一个测试类                                       |                                                |                    |
-| @RunWith(SpringJUnit4ClassRunner.class)          | 引入Spring单元测试模块                                       | 声明使用SpringJUnit4ClassRunner.class 测试单元 | spring测试环境     |
-| @ContextConfiguration(classes = AppConfig.class) | 加载配置类                                                   |                                                | spring测试环境     |
-| @Primary                                         | 首选bean                                                     | 设置实现类的首选                               | 自动装配歧义性     |
-| @Qualifier                                       | 给bean做注解                                                 | 调用的时候可以通过注解区分实现类               | 自动装配歧义性     |
-| @Resource                                        | @Resource 相当于@Autowired + @Qualifier("userServiceNormal") | java标准                                       | 自动装配歧义性     |
-| @Repository                                      | 标注数据dao实现类                                            | 本质和@Component没有区别，只是更加明确         | 分层架构中定义组件 |
-| @Service                                         | 标注Service实现类                                            | 本质和@Component没有区别，只是更加明确         | 分层架构中定义组件 |
-| @Controller                                      | 标注web、controller实现类                                    | 本质和@Component没有区别，只是更加明确         | 分层架构中定义组件 |
-| @Bean                                            |                                                              | 当前配置类为默认配置类，自动调用               |                    |
-| @Override                                        | 重写，重载                                                   | 自雷重写父类的方法                             |                    |
-| @RequestMapping                                  | 是一个用来处理请求地址映射的注解，可用于类或方法上。用于类上，表示类中的所有响应请求的方法都是以该地址作为父路径。 | 配置url映射                                    |                    |
-| @RestController                                  | 是@ResponseBody和@Controller的组合注解                       |                                                |                    |
+| 名称                                             | 用途                                                         | 备注                                                         | 类型                                              |
+| ------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------- |
+| private                                          | 声明成员变量                                                 |                                                              |                                                   |
+| 有参的构造函数                                   | 关联成员变量和无参构造函数的关系                             |                                                              |                                                   |
+| public void play()                               | 构造一个方法play，执行具体逻辑                               |                                                              |                                                   |
+| @Autowired                                       | 自动满足bean之间的依赖                                       | 自动装配，自动注入注解                                       | 定义组件                                          |
+| @Transactional                                   |                                                              | @Transactional 可以作用于接口、接口方法、类以及类方法上。当作用于类上时，该类的所有 public 方法将都具有该类型的事务属性，同时，我们也可以在方法级别使用该标注来覆盖类级别的定义。                                                但是 Spring 建议不要在接口或者接口方法上使用该注解，因为这只有在使用基于接口的代理时它才会生效。另外， @Transactional 注解应该只被应用到 public 方法上 | 事务管理                                          |
+| @Component                                       | 表示这个累需要在应用程序中被创建，被扫描                     | 被spring上下文发现，自动发现注解                             | 定义组件                                          |
+| @ComponentScanTransactional                      | 自动发现应用程序中创建的类                                   | 自动扫描Component类                                          | 定义配置                                          |
+| @Configuration                                   | 表示当前类是一个配置类                                       | 标注类为配置类                                               | 定义配置                                          |
+| @Test                                            | 表示当前类是一个测试类                                       |                                                              |                                                   |
+| @RunWith(SpringJUnit4ClassRunner.class)          | 引入Spring单元测试模块                                       | 声明使用SpringJUnit4ClassRunner.class 测试单元               | spring测试环境                                    |
+| @ContextConfiguration(classes = AppConfig.class) | 加载配置类                                                   |                                                              | spring测试环境                                    |
+| @Primary                                         | 首选bean                                                     | 设置实现类的首选                                             | 自动装配歧义性                                    |
+| @Qualifier                                       | 给bean做注解                                                 | 调用的时候可以通过注解区分实现类                             | 自动装配歧义性                                    |
+| @Resource                                        | @Resource 相当于@Autowired + @Qualifier("userServiceNormal") | java标准                                                     | 自动装配歧义性                                    |
+| @Repository                                      | 标注数据dao实现类                                            | 本质和@Component没有区别，只是更加明确                       | 分层架构中定义组件                                |
+| @Service                                         | 标注Service实现类                                            | 本质和@Component没有区别，只是更加明确                       | 分层架构中定义组件                                |
+| @Controller                                      | 标注web、controller实现类                                    | 本质和@Component没有区别，只是更加明确                       | 分层架构中定义组件                                |
+| @Bean                                            |                                                              | 当前配置类为默认配置类，自动调用                             |                                                   |
+| @Override                                        | 重写，重载                                                   | 自雷重写父类的方法                                           |                                                   |
+| @RequestMapping                                  | 是一个用来处理请求地址映射的注解，可用于类或方法上。用于类上，表示类中的所有响应请求的方法都是以该地址作为父路径。 | 配置url映射                                                  |                                                   |
+| @RestController                                  | 是@ResponseBody和@Controller的组合注解                       |                                                              |                                                   |
+| Extends-**继承类**                               | 全盘继承                                                     | 在类的声明中，通过关键字extends来创建一个类的子类。          | 对于class而言，Extends用于(单)继承一个类（class） |
+| implements-**实现接口**                          | 给这个类附加额外的功能                                       | 实现接口就是在接口中定义了方法，这个方法要你自己去实现，接口可以看作一个标准，比如定义了一个动物的接口，它里面有吃（eat()）这个方法，你就可以实现这个方法implements，这个方法是自己写，可以是吃苹果，吃梨子，香蕉，或者其他的。implements就是具体实现这个接口 | implements用于实现一个接口(interface)             |
+|                                                  |                                                              |                                                              |                                                   |
+|                                                  |                                                              |                                                              |                                                   |
+
+接口：
+
+接口一般是只有方法声明没有定义的。
+
+接口可以比作协议，比如我说一个协议是“杀人”那么这个接口你可以用 砍刀去实现，至于怎么杀砍刀可以去实现，当然你也可以用抢来实现杀人接口，但是你不能用杀人接口去杀人，因为杀人接口只不过是个功能说明，是个协议，具体怎么干，还要看他的实现类。那么一个包里面如果有接口，你可以不实现。这个不影响你使用其他类。
+
+
+
+
 
 
 
@@ -3710,9 +3725,196 @@ sayHi所响应的url=localhost:8080/hello/sayHi。
 
 
 
+## 9.Hibernate，JPA 对象关系映射之关联关系映射策略
+
+**1.单向OneToOne：**
+
+![1564457569725](D:\smeyun\doc\spring\1564457569725.png)
+
+单向一对一关系的拥有端
+
+```java
+@Entity 
+public class Person implements Serializable { 
+   private static final long serialVersionUID = 1L; 
+   @Id 
+   @GeneratedValue(strategy = GenerationType.AUTO) 
+   private Long id; 
+   private String name; 
+   private int age; 
+   @OneToOne 
+private Address address; 
+ 
+// 　 Getters & Setters 
+}
+```
+
+单向一对一关系的反端
+
+```java
+@Entity 
+public class Address implements Serializable { 
+   private static final long serialVersionUID = 1L; 
+   @Id 
+   @GeneratedValue(strategy = GenerationType.AUTO) 
+   private Long id; 
+   private String street; 
+   private String city; 
+private String country; 
+// Gettes& Setters 
+}
+```
 
 
 
+**2.双向OneToOne**
+
+![1564457592744](D:\smeyun\doc\spring\1564457592744.png)
+
+**双向一对一关系中的接受端**
+
+```java
+@Entity 
+public class Address implements Serializable { 
+   private static final long serialVersionUID = 1L; 
+   @Id 
+   @GeneratedValue(strategy = GenerationType.AUTO) 
+   private Long id; 
+   private String street; 
+   private String city; 
+private String country; 
+@OneToOne(mappedBy = "address") 
+private Person person; 
+// Gettes& Setters 
+ 
+}
+```
+
+**3.单向OneToMany**
+
+![1564457610750](D:\smeyun\doc\spring\1564457610750.png)
+
+##### 单向一对多关系的发出端
+
+```java
+public class Person implements Serializable { 
+   private static final long serialVersionUID = 1L; 
+   @Id 
+   @GeneratedValue(strategy = GenerationType.AUTO) 
+   private Long id; 
+   private String name; 
+   private int age; 
+   @OneToMany 
+   private List<CellPhone> cellPhones; 
+   // Getters and Setters 
+}
+```
+
+##### 单向一对多关系的接收端
+
+```java
+@Entity 
+public class CellPhone implements Serializable { 
+   private static final long serialVersionUID = 1L; 
+   @Id 
+   @GeneratedValue(strategy = GenerationType.AUTO) 
+   private Long id; 
+   private String manufacture; 
+   private String color; 
+   private Long  phoneNo; 
+   // Getters and Setters 
+}
+```
+
+
+
+**4.单向ManyToMany**
+
+![1564457732926](D:\smeyun\doc\spring\1564457732926.png)
+
+##### 单向多对多关系的发出端
+
+```java
+@Entity 
+public class Teacher implements Serializable { 
+   
+   private static final long serialVersionUID = 1L; 
+   @Id 
+   @GeneratedValue(strategy = GenerationType.AUTO) 
+   private Long id; 
+   private String name; 
+   private Boolean gender; 
+   private int age; 
+   private int height; 
+   @ManyToMany 
+private List<Student> students; 
+// Getters  and  Setters 
+}
+```
+
+
+
+##### 单向多对多关系的反端
+
+```java
+@Entity 
+public class Student implements Serializable { 
+   private static final long serialVersionUID = 1L; 
+   @Id 
+   @GeneratedValue(strategy = GenerationType.AUTO) 
+   private Long id; 
+   private String name; 
+   private Boolean gender; 
+   private int age; 
+   private int height; 
+  //Getters  and  Setters 
+}
+```
+
+
+
+**5.双向ManyToMany**
+
+![1564457832444](D:\smeyun\doc\spring\1564457832444.png)
+
+##### 双向多对多关系的拥有端
+
+```java
+@Entity 
+public class Teacher implements Serializable { 
+   
+   private static final long serialVersionUID = 1L; 
+   @Id 
+   @GeneratedValue(strategy = GenerationType.AUTO) 
+   private Long id; 
+   private String name; 
+   private Boolean gender; 
+   private int age; 
+   private int height; 
+   @ManyToMany 
+private List<Student> students; 
+// Getters  and  Setters 
+}
+```
+
+##### 双向多对多关系的反端
+
+```java
+@Entity 
+public class Student implements Serializable { 
+   private static final long serialVersionUID = 1L; 
+   @Id 
+   @GeneratedValue(strategy = GenerationType.AUTO) 
+   private Long id; 
+   private String name; 
+   private Boolean gender; 
+   private int age; 
+   private int height; 
+   @ManyToMany(mappedBy = "students") 
+   private List<Teacher> teachers; 
+   //Getters  and  Setters 
+}
+```
 
 
 

@@ -3845,6 +3845,122 @@ class CallbackModule(object):
 
 ```
 
+### 3.30 yum 
+
+```yaml
+- name: 安装最新版本的apache
+  yum: name=httpd state=latest
+
+- name: 移除apache
+  yum: name=httpd state=absent
+
+- name: 安装一个特殊版本的apache
+  yum: name=httpd-2.2.29-1.4.amzn1 state=present
+
+- name: 升级所有的软件包
+  yum: name=* state=latest
+
+- name: 从一个远程yum仓库安装nginx
+  yum: name=http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm state=present
+
+- name: 从本地仓库安装nginx
+  yum: name=/usr/local/src/nginx-release-centos-6-0.el6.ngx.noarch.rpm state=present
+
+- name: 安装整个Development tools相关的软件包
+  yum: name="@Development tools" state=present
+  
+  - name: install the latest version of Apache
+  yum:
+    name: httpd
+    state: latest
+
+- name: ensure a list of packages installed
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - httpd
+    - httpd-tools
+
+- name: remove the Apache package
+  yum:
+    name: httpd
+    state: absent
+
+- name: install the latest version of Apache from the testing repo
+  yum:
+    name: httpd
+    enablerepo: testing
+    state: present
+
+- name: install one specific version of Apache
+  yum:
+    name: httpd-2.2.29-1.4.amzn1
+    state: present
+
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+
+- name: upgrade all packages, excluding kernel & foo related packages
+  yum:
+    name: '*'
+    state: latest
+    exclude: kernel*,foo*
+
+- name: install the nginx rpm from a remote repo
+  yum:
+    name: http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+    state: present
+
+- name: install nginx rpm from a local file
+  yum:
+    name: /usr/local/src/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+    state: present
+
+- name: install the 'Development tools' package group
+  yum:
+    name: "@Development tools"
+    state: present
+
+- name: install the 'Gnome desktop' environment group
+  yum:
+    name: "@^gnome-desktop-environment"
+    state: present
+
+- name: List ansible packages and register result to print with debug later.
+  yum:
+    list: ansible
+  register: result
+
+- name: Install package with multiple repos enabled
+  yum:
+    name: sos
+    enablerepo: "epel,ol7_latest"
+
+- name: Install package with multiple repos disabled
+  yum:
+    name: sos
+    disablerepo: "epel,ol7_latest"
+
+- name: Install a list of packages
+  yum:
+    name:
+      - nginx
+      - postgresql
+      - postgresql-server
+    state: present
+
+- name: Download the nginx package but do not install it
+  yum:
+    name:
+      - nginx
+    state: latest
+    download_only: true
+
+```
+
 
 
 ## 4. ansible相关案列-Windows
@@ -4626,6 +4742,18 @@ api：
 https://docs.ansible.com/ansible-tower/latest/html/towerapi/api_ref.html#/Authentication/Authentication_applications_list_0
 
 https://access.redhat.com/documentation/en-us/red_hat_satellite/6.1/html/api_guide
+
+
+
+商业版本：
+
+https://releases.ansible.com/ansible-tower/setup/
+
+
+
+
+
+
 
 ## 6.1 批量导入资产
 
