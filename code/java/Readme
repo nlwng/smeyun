@@ -1,1 +1,24 @@
 2019-7-30 start
+
+git commod
+
+查看项目的分支们(包括本地和远程)
+#git branch -a
+
+删除本地分支
+#git branch -d <BranchName>
+
+删除远程分支
+#git push origin --delete <BranchName>
+
+新建一个本地分支
+#git checkout -b dbg_lichen_star
+
+把新建的本地分支push到远程服务器，远程分支与本地分支同名（当然可以随意起名）
+#git push origin dbg_lichen_star:dbg_lichen_star
+
+删除远程分支
+#git push origin :<BranchName>
+
+or
+#git push origin --delete <BranchName>
