@@ -72,8 +72,8 @@ s100
 | @RestController                                  | 是@ResponseBody和@Controller的组合注解                       |                                                              |                                                   |
 | Extends-**继承类**                               | 全盘继承                                                     | 在类的声明中，通过关键字extends来创建一个类的子类。          | 对于class而言，Extends用于(单)继承一个类（class） |
 | implements-**实现接口**                          | 给这个类附加额外的功能                                       | 实现接口就是在接口中定义了方法，这个方法要你自己去实现，接口可以看作一个标准，比如定义了一个动物的接口，它里面有吃（eat()）这个方法，你就可以实现这个方法implements，这个方法是自己写，可以是吃苹果，吃梨子，香蕉，或者其他的。implements就是具体实现这个接口 | implements用于实现一个接口(interface)             |
-|                                                  |                                                              |                                                              |                                                   |
-|                                                  |                                                              |                                                              |                                                   |
+| DAO                                              | DAO是传统MVC中Model的关键角色，全称是Data Access Object。DAO直接负责数据库的存取工作，乍一看两者非常类似，但从架构设计上讲两者有着本质的区别： | DAO则没有摆脱数据的影子，仍然停留在数据操作的层面上，DAO则是相对数据库而言 |                                                   |
+| Repository                                       | Repository蕴含着真正的OO概念，即一个数据仓库角色，负责所有对象的持久化管理。 | Repository是相对对象而言，                                   | https://segmentfault.com/a/1190000012346333       |
 
 接口：
 
