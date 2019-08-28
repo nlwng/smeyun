@@ -1,0 +1,109 @@
+[DEFAULT]
+enabled_apis = osapi_compute,metadata
+transport_url = rabbit://openstack:pass@controller
+my_ip = 30.23.8.197
+use_neutron = True
+firewall_driver = nova.virt.firewall.NoopFirewallDriver
+volume_api_class = nova.volume.cinder.API
+vif_plugging_is_fatal = False
+vif_plugging_timeout = 0
+[api]
+auth_strategy = keystone
+[api_database]
+connection = mysql+pymysql://nova:pass@127.0.0.1/nova_api
+[barbican]
+[cache]
+[cells]
+[cinder]
+os_region_name = RegionOne
+[compute]
+[conductor]
+[console]
+[consoleauth]
+[cors]
+[crypto]
+[database]
+connection = mysql+pymysql://nova:pass@controller/nova
+[devices]
+[ephemeral_storage_encryption]
+[filter_scheduler]
+[glance]
+api_servers = http://30.23.8.197:9292
+[guestfs]
+[healthcheck]
+[hyperv]
+[ironic]
+[key_manager]
+[keystone]
+[keystone_authtoken]
+auth_url = http://30.23.8.197:5000/v3
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+memcached_servers = 127.0.0.1:11211
+token_cache_time = 3600
+cache = true
+username = nova
+password = pass
+[libvirt]
+virt_type = qemu
+[matchmaker_redis]
+[metrics]
+[mks]
+[neutron]
+url = http://30.23.8.197:9696
+auth_url = http://30.23.8.197:5000
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+region_name = RegionOne
+project_name = service
+username = neutron
+password = pass
+service_metadata_proxy = true
+metadata_proxy_shared_secret = pass
+[notifications]
+[osapi_v21]
+[oslo_concurrency]
+lock_path = /var/lib/nova/tmp
+[oslo_messaging_amqp]
+[oslo_messaging_kafka]
+[oslo_messaging_notifications]
+[oslo_messaging_rabbit]
+[oslo_messaging_zmq]
+[oslo_middleware]
+[oslo_policy]
+[pci]
+[placement]
+os_region_name = RegionOne
+project_domain_name = Default
+project_name = service
+auth_type = password
+user_domain_name = Default
+auth_url = http://30.23.8.197:5000/v3
+username = placement
+password = pass
+[quota]
+[rdp]
+[remote_debug]
+[scheduler]
+discover_hosts_in_cells_interval = 300
+[serial_console]
+[service_user]
+[spice]
+[upgrade_levels]
+[vault]
+[vendordata_dynamic_auth]
+[vmware]
+[vnc]
+enabled = True
+server_listen = 30.23.8.197
+vncserver_proxyclient_address = 30.23.8.197
+vncserver_listen = 0.0.0.0
+novncproxy_base_url = http://30.23.8.197:6080/vnc_auto.html
+[workarounds]
+disable_libvirt_livesnapshot=false
+[wsgi]
+[xenserver]
+[xvp]

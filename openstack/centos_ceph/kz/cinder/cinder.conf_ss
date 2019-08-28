@@ -1,0 +1,71 @@
+[DEFAULT]
+transport_url = rabbit://openstack:pass@127.0.0.1
+auth_strategy = keystone
+my_ip = 30.23.8.197
+enabled_backends = ceph
+glance_api_servers = http://controller:9292
+
+backup_driver = cinder.backup.drivers.ceph
+backup_ceph_conf = /etc/ceph/ceph.conf
+backup_ceph_pool = volumes
+backup_ceph_stripe_unit = 0
+backup_ceph_stripe_count = 0
+restore_discard_excess_bytes = true
+
+[backend]
+[backend_defaults]
+[barbican]
+[brcd_fabric_example]
+[cisco_fabric_example]
+[coordination]
+[cors]
+
+[database]
+connection = mysql+pymysql://cinder:pass@127.0.0.1/cinder
+
+[fc-zone-manager]
+[healthcheck]
+[key_manager]
+
+[keystone_authtoken]
+auth_uri = http://30.23.8.197:5000
+auth_url = http://30.23.8.197:5000
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = cinder
+password = pass
+
+[matchmaker_redis]
+[nova]
+
+[oslo_concurrency]
+lock_path = /var/lib/cinder/tmp
+
+[oslo_messaging_amqp]
+[oslo_messaging_kafka]
+[oslo_messaging_notifications]
+[oslo_messaging_rabbit]
+[oslo_messaging_zmq]
+[oslo_middleware]
+[oslo_policy]
+[oslo_reports]
+[oslo_versionedobjects]
+[profiler]
+[service_user]
+[ssl]
+[vault]
+
+[ceph]
+volume_driver = cinder.volume.drivers.rbd.RBDDriver
+rbd_pool = volumes
+rdb_user = cinder
+rbd_ceph_conf = /etc/ceph/ceph.conf
+rbd_flatten_volume_from_snapshot = false
+rbd_max_clone_depth = 5
+glance_api_version = 2
+volume_clear_size = 100
+rbd_user = openstack
+volume_backend_name=ceph
+rbd_secret_uuid = 457eb676-33da-42ec-9a8c-9293d545c337

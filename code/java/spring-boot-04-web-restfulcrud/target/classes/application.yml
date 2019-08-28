@@ -1,0 +1,30 @@
+logging:
+  path: d:/spring/log
+spring:
+  messages:
+    basename: il8n.login
+
+#禁用模版缓存
+  thymeleaf:
+    cache: false
+#指定日期格式默认为dd/MM/yyyy
+  mvc:
+    date-format: yyyy-MM-dd
+
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://192.168.99.100:3306/jdbc?useUnicode=true&amp;characterEncoding=utf-8
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  http:
+    encoding:
+      charset: utf-8
+      force: true
+      enabled: true
+server:
+  tomcat:
+    uri-encoding: UTF-8

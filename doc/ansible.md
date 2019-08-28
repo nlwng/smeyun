@@ -3961,6 +3961,34 @@ class CallbackModule(object):
 
 ```
 
+### 3.31 检测端口
+
+利用wait_for检查端口是否使用
+
+```
+- name: Check all port numbers are accessible from current host
+  wait_for:
+    host: mywebserver.com
+    port: "{{ item }}"
+    state: started         # Port should be open
+    delay: 0               # No wait before first check (sec)
+    timeout: 3             # Stop checking after timeout (sec)
+  ignore_errors: yes
+  with_items:
+    - 443
+    - 80
+    - 80443
+    
+    
+    
+- name: Wait 300 seconds for port 8000 of any IP to close active connections, don't start checking for 10 seconds
+  wait_for:
+    host: 0.0.0.0
+    port: 8000
+    delay: 10
+    state: drained
+```
+
 
 
 ## 4. ansible相关案列-Windows

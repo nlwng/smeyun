@@ -65,7 +65,7 @@ s100
 | @Resource                                        | @Resource 相当于@Autowired + @Qualifier("userServiceNormal") | java标准                                                     | 自动装配歧义性                                    |
 | @Repository                                      | 标注数据dao实现类                                            | 本质和@Component没有区别，只是更加明确                       | 分层架构中定义组件                                |
 | @Service                                         | 标注Service实现类                                            | 本质和@Component没有区别，只是更加明确                       | 分层架构中定义组件                                |
-| @Controller                                      | 标注web、controller实现类                                    | 本质和@Component没有区别，只是更加明确                       | 分层架构中定义组件                                |
+| @Controller                                      | 标注web、controller实现类， **API接口**                      | 本质和@Component没有区别，只是更加明确                       | 分层架构中定义组件                                |
 | @Bean                                            |                                                              | 当前配置类为默认配置类，自动调用                             |                                                   |
 | @Override                                        | 重写，重载                                                   | 自雷重写父类的方法                                           |                                                   |
 | @RequestMapping                                  | 是一个用来处理请求地址映射的注解，可用于类或方法上。用于类上，表示类中的所有响应请求的方法都是以该地址作为父路径。 | 配置url映射                                                  |                                                   |
@@ -3727,7 +3727,7 @@ sayHi所响应的url=localhost:8080/hello/sayHi。
 
 ## 9.Hibernate，JPA 对象关系映射之关联关系映射策略
 
-**1.单向OneToOne：**
+### **1.单向OneToOne：**
 
 ![1564457569725](D:\smeyun\doc\spring\1564457569725.png)
 
@@ -3767,7 +3767,7 @@ private String country;
 
 
 
-**2.双向OneToOne**
+###  2.双向OneToOne
 
 ![1564457592744](D:\smeyun\doc\spring\1564457592744.png)
 
@@ -3790,11 +3790,11 @@ private Person person;
 }
 ```
 
-**3.单向OneToMany**
+### **3.单向OneToMany**
 
 ![1564457610750](D:\smeyun\doc\spring\1564457610750.png)
 
-##### 单向一对多关系的发出端
+单向一对多关系的发出端
 
 ```java
 public class Person implements Serializable { 
@@ -3810,7 +3810,7 @@ public class Person implements Serializable {
 }
 ```
 
-##### 单向一对多关系的接收端
+单向一对多关系的接收端
 
 ```java
 @Entity 
@@ -3828,11 +3828,11 @@ public class CellPhone implements Serializable {
 
 
 
-**4.单向ManyToMany**
+### **4.单向ManyToMany**
 
 ![1564457732926](D:\smeyun\doc\spring\1564457732926.png)
 
-##### 单向多对多关系的发出端
+单向多对多关系的发出端
 
 ```java
 @Entity 
@@ -3852,9 +3852,7 @@ private List<Student> students;
 }
 ```
 
-
-
-##### 单向多对多关系的反端
+单向多对多关系的反端
 
 ```java
 @Entity 
@@ -3873,11 +3871,11 @@ public class Student implements Serializable {
 
 
 
-**5.双向ManyToMany**
+### **5.双向ManyToMany**
 
 ![1564457832444](D:\smeyun\doc\spring\1564457832444.png)
 
-##### 双向多对多关系的拥有端
+双向多对多关系的拥有端
 
 ```java
 @Entity 
@@ -3897,7 +3895,7 @@ private List<Student> students;
 }
 ```
 
-##### 双向多对多关系的反端
+双向多对多关系的反端
 
 ```java
 @Entity 
@@ -4388,6 +4386,327 @@ Spring框架核心：
 | @Service    | 标注一个业务逻辑组件类       |        |
 | @Repository | 标注一个DAO组件类            |        |
 |             |                              |        |
+
+
+
+##  1 SpringBoot+MyBatis+Thymeleaf 注册登录
+
+Controller，作为接受页面数据的工具
+
+Dao是操作数据库的工具
+
+Domin是放的实体类
+
+Service主要是操作数据检查合法性,通过Service来发出指令
+
+
+
+注册（登录与其相同）：
+
+- 前端页面（templates）把用户的注册信息传递给Controller
+- Conteoller把注册信息交给Service去处理
+- Service里面和Dao层一起处理业务逻辑（结合数据库判断数据合法性）
+- Service把处理结果返回给Controller
+- Controller在把结果传递给前端页面，这是用户就能看见注册结果了
+   C->V->M->V->C 的流程不多说了。
+
+![1564542677567](D:\smeyun\doc\spring\1564542677567.png)
+
+
+
+1.1 view
+
+前端展示页面，基于thymeleaf模版：index.html  
+
+```html
+<!--index.html-->
+<!--模板源码应该很好理解，不理解的话去看看教程就OK-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+</head>
+<body>
+<!--这里result会报错，不要担心这是idea的bug，不影响你的项目->
+<h1> <span th:text="${result}"></span></h1>
+<h1>欢迎 ： <span  th:text="${session.user}?${session.user.getUsername()}:'（您未登录）'" ></span> </h1>
+<a th:href="@{/register}">点击注册</a>
+<a th:href="@{/login}" th:if="${session.user==null}">点击登录</a>
+<a th:href="@{/loginOut}" th:unless="${session.user==null}">退出登陆</a>
+</body>
+</html>
+```
+
+login.html
+
+```java
+<!--login.html-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆</title>
+</head>
+<body>
+<h1>欢迎登陆</h1>
+ <!--这个地方user也会报错，不用担心-->
+<!--注意下面name，和id都写上就OK-->
+<form th:action="@{/login}" th:object="${user}" method="post">
+    <label for="username">username:</label>
+    <input type="text" name="username"  id="username" />
+    <label for="password">password:</label>
+    <input type="text" name="password" id="password" />
+    <input type="submit" value="submit">
+</form>
+</body>
+</html>
+```
+
+register.html
+
+```java
+<!--register.html-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎注册</title>
+</head>
+<body>
+<h1>欢迎注册</h1>
+<form th:action="@{/register}" th:object="${user}" method="post">
+    <label for="username">username:</label>
+    <input type="text" id="username" name="username"/>
+    <label for="password">password:</label>
+    <input type="text" id="password" name="password"/>
+    <input type="submit" value="submit">
+</form>
+</body>
+</html>
+```
+
+TIp:页面的重点放在input的一些属性上，我们输入的值最终会被映射到user（domin）里面
+
+
+
+1.2 后端
+
+1.2.1 入口main
+
+添加mapper扫描的包路径，为数据库连接做准备
+
+```java
+@SpringBootApplication
+//Mapper扫描（这里的值就是dao目录的值，按照我刚贴的目录结构来做就行）
+@MapperScan("com.example.demo.dao")
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+```
+
+1.2.2 API接口 controller：
+
+实现的功能主要有三个，注册登录注销，那么我们的Controller如下
+
+```java
+package com.example.demo.controller;
+@Controller
+@EnableAutoConfiguration
+public class IndexController {
+    //自动注入userService，用来处理业务
+    @Autowired
+    private UserService userService;
+     /**
+      * 域名访问重定向
+      * 作用：输入域名后重定向到index（首页）
+      * */
+    @RequestMapping("")
+    public String index(HttpServletResponse response) {
+        //重定向到 /index
+        return response.encodeRedirectURL("/index");
+    }
+    /**
+     * 首页API
+     * 作用：显示首页
+     * */
+    @RequestMapping("/index")
+    public String home(Model model) {
+        //对应到templates文件夹下面的index
+        return "index";
+    }
+    /**
+     * 注册API
+     * @method：post
+     * @param user（从View层传回来的user对象）
+     * @return 重定向
+     * */
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String registerPost(Model model,
+                               //这里和模板中的th:object="${user}"对应起来
+                               @ModelAttribute(value = "user") User user,
+                               HttpServletResponse response) {
+        //我们可以用Sout这种最原始打印方式来检查数据的传输
+        System.out.println("Controller信息:"+user.getUsername());
+        System.out.println("Controller密码:"+user.getPassword());
+        //使用userService处理业务
+        String result = userService.register(user);
+        //将结果放入model中，在模板中可以取到model中的值
+        //这里就是交互的一个重要地方，我们可以在模板中通过这些属性值访问到数据
+        model.addAttribute("result", result);
+        //开始重定向，携带数据过去了。
+        return response.encodeRedirectURL("/index");
+    }
+    /**
+     * 登录API
+     * @method：post
+     * @param user（从View层传回来的user对象）
+     * @return 重定向
+     * */
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public String loginPost(Model model,
+                            @ModelAttribute(value = "user") User user,
+                            HttpServletResponse response,
+                            HttpSession session) {
+        String result = userService.login(user);
+        if (result.equals("登陆成功")) {
+           //session是作为用户登录信息保存的存在
+            session.setAttribute("user",user);
+        }
+        model.addAttribute("result", result);
+        return response.encodeRedirectURL("/index");
+    }
+    /**
+     * 注销API
+     * @method：get
+     * @return 首页
+     * */
+    @RequestMapping(value = "/loginOut", method = RequestMethod.GET)
+    public String loginOut(HttpSession session) {
+        //从session中删除user属性，用户退出登录
+        session.removeAttribute("user");
+        return "index";
+    }
+}
+```
+
+Tip:不会使用单元测试或调试的话可以用System.out.print这种最原始的方法来检查数据哦
+
+1.2.3 sevice
+
+其实就是与dao联系起来做数据合法性检验的。
+
+```java
+@Service
+public class UserService {
+    //自动注入一个userDao
+    @Autowired
+    private UserDao userDao;
+
+    //用户注册逻辑
+    public String  register(User user) {
+        System.out.println(user.getUsername());
+        User x = userDao.getOneUser(user.getUsername());
+        //判断用户是否存在
+        if (x == null) {
+            userDao.setOneUser(user);
+            return "注册成功";
+        }
+        else {
+            return x.getUsername()+"已被使用";
+        }
+    }
+    //用户登陆逻辑
+    public String login(User user) {
+        //通过用户名获取用户
+        User dbUser = userDao.getOneUser(user.getUsername());
+
+        //若获取失败
+        if (dbUser == null) {
+            return "该用户不存在";
+        }
+        //获取成功后，将获取用户的密码和传入密码对比
+        else if (!dbUser.getPassword().equals(user.getPassword())){
+            return "密码错误";
+        }
+        else {
+            //若密码也相同则登陆成功
+            //让传入用户的属性和数据库保持一致
+            user.setId(dbUser.getId());
+            return "登陆成功";
+        }
+    }
+}
+```
+
+Tip：这里也是可以使用sout来测试数据
+
+
+
+1.2.4 Dao
+
+Dao目录下面放的各种dao文件是我们的数据库操作接口（抽象数据类），例如我们的UserDao内容如下，两个操作，增加用户，查询用户。
+所以在以后的项目中，如果需求大的话，我们可以编写更多功能。
+
+```java
+package com.example.demo.dao;
+
+//这个注解代表这是一个mybatis的操作数据库的类
+@Repository
+public interface UserDao {
+    // 根据username获得一个User类
+    @Select("select * from user where username=#{name}")
+    User getOneUser(String name);
+
+
+    //插入一个User
+    @Insert("insert into user (username,password) values(#{username},#{password})")
+    boolean setOneUser(User user);
+
+}
+```
+
+Tip:注意字段对应 比如#{name}最后会被String name 的name所替换
+
+
+
+1.2.5 实体类
+
+domin目录下面放实体类，我们第一步先把实体类做出来，为整体的流程做协调，根据我们的数据库设计字段，来设计实体类
+
+```java
+package com.example.demo.domin;
+public class User {
+    private int id;
+    private String username;
+    private String password;
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getUsername() {
+        return username;
+    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
+```
+
+
 
 
 
